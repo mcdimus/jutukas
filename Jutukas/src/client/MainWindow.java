@@ -1,33 +1,31 @@
 package client;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JSeparator;
-import javax.swing.KeyStroke;
-import javax.swing.AbstractAction;
-import java.awt.event.ActionEvent;
-import javax.swing.Action;
-import javax.swing.JTextPane;
-import java.awt.BorderLayout;
-import javax.swing.JList;
-import javax.swing.JSplitPane;
-import javax.swing.JScrollPane;
-import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.JPanel;
-import javax.swing.JLabel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
+import javax.swing.KeyStroke;
 
 public class MainWindow {
 
@@ -94,11 +92,17 @@ public class MainWindow {
 		Component horizontalStrut = Box.createHorizontalStrut(200);
 		scrollPane.setViewportView(horizontalStrut);
 
-		JEditorPane dtrpnhelloWorld = new JEditorPane();
+		final JEditorPane dtrpnhelloWorld = new JEditorPane();
 		dtrpnhelloWorld.setContentType("text/html");
 		dtrpnhelloWorld.setText("<h1>Hello world</h1>");
 		dtrpnhelloWorld.setEditable(false);
 		splitPane.setRightComponent(dtrpnhelloWorld);
+		
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent arg0) {
+				dtrpnhelloWorld.setText(textField.getText());
+			}
+		});
 	}
 
 	@SuppressWarnings("serial")
