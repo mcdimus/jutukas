@@ -1,0 +1,10 @@
+Wed Nov 30 00:13:41 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 00:13:51 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 00:13:51 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 00:13:51 EET 2011 --- /127.0.0.1: Wrong URL path: /favicon.ico
+Wed Nov 30 00:13:51 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 00:13:51 EET 2011 --- /127.0.0.1: Wrong URL path: /favicon.ico
+Wed Nov 30 00:14:57 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 00:14:58 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 00:15:12 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 00:15:13 EET 2011 --- Connection accepted: /127.0.0.1
