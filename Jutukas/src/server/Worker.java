@@ -11,8 +11,6 @@ import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-import client.KnownHostsManager;
-
 public class Worker implements Runnable {
 
 	private Socket socket;
