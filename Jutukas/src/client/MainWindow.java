@@ -56,7 +56,7 @@ public class MainWindow {
 	private void initialize() {
 //		KnownHostsManager khm = new KnownHostsManager();
 //		khm.getMapOfKnownHosts();
-//		khm.addNewHost("Dmitri", "0.0.0.0");
+//		khm.addNewHosts("[[\"Tanel Tammet\",\"22.33.44.55:6766\"],[\"Dmitri Laud\",\"22.33.44.11:6666\"]]");
 		frame = new JFrame();
 		frame.setTitle("Jutukas");
 		frame.setSize(800, 500);
