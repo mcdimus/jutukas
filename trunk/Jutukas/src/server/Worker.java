@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -49,10 +50,11 @@ public class Worker implements Runnable {
 			// findname, sendname, ...
 			String command = strtok.nextToken("?").substring(1);
 			// ?param1=value1&param2=value2
-			String parameters = strtok.nextToken(" ").substring(1);
+			String parameters = URLDecoder.decode(strtok.nextToken(" ")
+					.substring(1), "UTF-8");
+			System.out.println(parameters);
 			// getParametersValues(parameters);
 			if (command.equals("findname")) {
-				System.out.println("I shall find the name");
 				// findName();
 			} else if (command.equals("sendname")) {
 				System.out.println("I shall accept the name");
@@ -79,19 +81,14 @@ public class Worker implements Runnable {
 	}
 
 	private void findName() {
-		String name = parametersValues[0], ip = parametersValues[1], addr = null;
+		String name = parametersValues[0], ip = parametersValues[1];
 		int TTL = Integer.parseInt(parametersValues[2]);
 		TTL--;
 		if (Server.knownHosts.getMapOfKnownHosts().containsKey(name)) {
-			addr = String.format("http://%s/chat/sendname?name=%s&ip=%s&"
-					+ "ttl=%s", ip, name, Server.knownHosts
-					.getMapOfKnownHosts().get(name), TTL);
-		} else {
-//			if (TTL != 0) {
-//				for (name )
-//			}
-		}
-		if (addr != null) {
+			String addr = String
+					.format("http://%s/chat/sendname?name=%s&ip=%s&" + "ttl=%s",
+							ip, name, Server.knownHosts.getMapOfKnownHosts()
+									.get(name), TTL);
 			try {
 				URL url = new URL(addr);
 				URLConnection urlcon = url.openConnection();
@@ -101,7 +98,14 @@ public class Worker implements Runnable {
 				br.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.exit(0);
+			}
+		} else {
+			if (TTL != 0) {
+				for (String value: Server.knownHosts.getMapOfKnownHosts().values()) {
+					String addr = String.format("http://%s/chat/findname?name=%s&ip=%s&"
+							+ "ttl=%s", value, name, ip, TTL);
+					new Sender(addr, 1);
+				}
 			}
 		}
 	}

@@ -23,9 +23,9 @@ public class Server implements Runnable {
 	 * The file for the server log.
 	 */
 	private static BufferedWriter file;
-	
 	public static KnownHostsManager knownHosts;
-
+	ServerSocket acceptSocket;
+	
 	/**
 	 * Run method.
 	 * 
@@ -33,7 +33,7 @@ public class Server implements Runnable {
 	 */
 	public void run() {
 		try {
-			ServerSocket acceptSocket = new ServerSocket(PORT);
+			acceptSocket = new ServerSocket(PORT);
 			Server.print(new Date() + " --- Server is listening on port "
 					+ PORT);
 			while (true) {
