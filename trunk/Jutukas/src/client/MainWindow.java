@@ -1,7 +1,6 @@
 package client;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -11,7 +10,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -20,10 +18,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
@@ -31,6 +25,7 @@ public class MainWindow {
 
 	private JFrame frame;
 	private JTextField textField;
+	private final JEditorPane editorPanel = new JEditorPane();
 
 	/**
 	 * Launch the application.
@@ -86,29 +81,19 @@ public class MainWindow {
 		Box horizontalBox = Box.createHorizontalBox();
 		panel.add(horizontalBox);
 
-		JSplitPane splitPane = new JSplitPane();
-		frame.getContentPane().add(splitPane, BorderLayout.CENTER);
-
-		JScrollPane scrollPane = new JScrollPane();
-		splitPane.setLeftComponent(scrollPane);
-
-		Component horizontalStrut = Box.createHorizontalStrut(200);
-		scrollPane.setViewportView(horizontalStrut);
-
-		final JEditorPane dtrpnhelloWorld = new JEditorPane();
-		dtrpnhelloWorld.setContentType("text/html");
-		dtrpnhelloWorld.setText("<h1>Hello world</h1><br><i>blablalbalb</i>");
-		dtrpnhelloWorld.setEditable(false);
-		splitPane.setRightComponent(dtrpnhelloWorld);
+		editorPanel.setContentType("text/html");
+		editorPanel.setText("<h1>Hello world</h1><br><i>blablalbalb</i>");
+		editorPanel.setEditable(false);
 		
+		frame.getContentPane().add(editorPanel);
+
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
-				dtrpnhelloWorld.setText(textField.getText());
+				editorPanel.setText(textField.getText());
 			}
 		});
 	}
 
-	@SuppressWarnings("serial")
 	private void createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -128,12 +113,24 @@ public class MainWindow {
 		menuFile.setMnemonic('F');
 		menuBar.add(menuFile);
 
-		JMenuItem menuItemOpenLastSession = new JMenuItem("Open last session");
+		JMenuItem menuItemOpenLastSession = new JMenuItem(new AbstractAction("Open last session") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		menuItemOpenLastSession.setAccelerator(KeyStroke.getKeyStroke(
 				KeyEvent.VK_O, InputEvent.CTRL_MASK));
 		menuFile.add(menuItemOpenLastSession);
 
-		JMenuItem menuItemSaveSession = new JMenuItem("Save session");
+		JMenuItem menuItemSaveSession = new JMenuItem(new AbstractAction("Save session") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		menuItemSaveSession.setAccelerator(KeyStroke.getKeyStroke(
 				KeyEvent.VK_S, InputEvent.CTRL_MASK));
 		menuFile.add(menuItemSaveSession);
@@ -150,64 +147,75 @@ public class MainWindow {
 		menuFile.add(menuItemQuit);
 	}
 
+	@SuppressWarnings("serial")
 	private void createMenuEdit(JMenuBar menuBar) {
 		JMenu menuEdit = new JMenu("Edit");
 		menuEdit.setMnemonic('E');
 		menuBar.add(menuEdit);
 
-		JMenuItem menuItemFindUser = new JMenuItem("Find user...");
+		JMenuItem menuItemFindUser = new JMenuItem(new AbstractAction("Find user...") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		menuItemFindUser.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,
 				InputEvent.CTRL_MASK));
 		menuEdit.add(menuItemFindUser);
 
-		JMenuItem menuItemKnownUsersList = new JMenuItem("Known users list");
+		JMenuItem menuItemKnownUsersList = new JMenuItem(new AbstractAction("Known users list") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		menuItemKnownUsersList.setAccelerator(KeyStroke.getKeyStroke(
 				KeyEvent.VK_L, InputEvent.CTRL_MASK));
 		menuEdit.add(menuItemKnownUsersList);
 
-		JMenuItem menuItemUpdateUsersList = new JMenuItem("Update users list");
+		JMenuItem menuItemUpdateUsersList = new JMenuItem(new AbstractAction("Update users list") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		menuItemUpdateUsersList.setAccelerator(KeyStroke.getKeyStroke(
 				KeyEvent.VK_U, InputEvent.CTRL_MASK));
 		menuEdit.add(menuItemUpdateUsersList);
 	}
 
+	@SuppressWarnings("serial")
 	private void createMenuView(JMenuBar menuBar) {
 		JMenu menuView = new JMenu("View");
 		menuView.setMnemonic('V');
 		menuBar.add(menuView);
 
-		// ButtonGroup for radio buttons
-		ButtonGroup viewButtonGroup = new ButtonGroup();
+		JMenuItem menuItemClearChat = new JMenuItem(new AbstractAction("Clear chat") {
 
-		JRadioButtonMenuItem radioButtonMenuItemHideSidePane = new JRadioButtonMenuItem(
-				"Hide side pane");
-		menuView.add(radioButtonMenuItemHideSidePane);
-		viewButtonGroup.add(radioButtonMenuItemHideSidePane);
-
-		JRadioButtonMenuItem radioButtonMenuItemNewRadioItem = new JRadioButtonMenuItem(
-				"Show online users");
-		radioButtonMenuItemNewRadioItem.setSelected(true);
-		menuView.add(radioButtonMenuItemNewRadioItem);
-		viewButtonGroup.add(radioButtonMenuItemNewRadioItem);
-
-		JRadioButtonMenuItem radioButtonMenuItemShowAllUsers = new JRadioButtonMenuItem(
-				"Show all users");
-		menuView.add(radioButtonMenuItemShowAllUsers);
-		viewButtonGroup.add(radioButtonMenuItemShowAllUsers);
-
-		JSeparator separator = new JSeparator();
-		menuView.add(separator);
-
-		JMenuItem menuItemClearChat = new JMenuItem("Clear chat");
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		menuView.add(menuItemClearChat);
 
 	}
 
+	@SuppressWarnings("serial")
 	private void createMenuHelp(JMenuBar menuBar) {
 		JMenu menuHelp = new JMenu("Help");
 		menuBar.add(menuHelp);
 
-		JMenuItem menuItemAbout = new JMenuItem("About...");
+		JMenuItem menuItemAbout = new JMenuItem(new AbstractAction("About...") {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		menuHelp.add(menuItemAbout);
 
 	}
