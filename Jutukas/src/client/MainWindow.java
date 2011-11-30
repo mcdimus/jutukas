@@ -59,6 +59,9 @@ public class MainWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+//		KnownHostsManager khm = new KnownHostsManager();
+//		khm.getMapOfKnownHosts();
+//		khm.addNewHost("Dmitri", "0.0.0.0");
 		frame = new JFrame();
 		frame.setTitle("Jutukas");
 		frame.setSize(800, 500);
@@ -94,7 +97,7 @@ public class MainWindow {
 
 		final JEditorPane dtrpnhelloWorld = new JEditorPane();
 		dtrpnhelloWorld.setContentType("text/html");
-		dtrpnhelloWorld.setText("<h1>Hello world</h1>");
+		dtrpnhelloWorld.setText("<h1>Hello world</h1><br><i>blablalbalb</i>");
 		dtrpnhelloWorld.setEditable(false);
 		splitPane.setRightComponent(dtrpnhelloWorld);
 		
