@@ -1,7 +1,6 @@
 package client;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -25,29 +24,14 @@ public class MainWindow {
 
 	private JFrame frame;
 	private JTextField textField;
-	private final JEditorPane editorPanel = new JEditorPane();
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainWindow window = new MainWindow();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private final JEditorPane editorPane = new JEditorPane();
 
 	/**
 	 * Create the application.
 	 */
 	public MainWindow() {
 		initialize();
+		frame.setVisible(true);
 	}
 
 	/**
@@ -81,15 +65,15 @@ public class MainWindow {
 		Box horizontalBox = Box.createHorizontalBox();
 		panel.add(horizontalBox);
 
-		editorPanel.setContentType("text/html");
-		editorPanel.setText("<h1>Hello world</h1><br><i>blablalbalb</i>");
-		editorPanel.setEditable(false);
+		editorPane.setContentType("text/html");
+		editorPane.setText("<h1>Hello world</h1><br><i>blablalbalb</i>");
+		editorPane.setEditable(false);
 		
-		frame.getContentPane().add(editorPanel);
+		frame.getContentPane().add(editorPane);
 
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
-				editorPanel.setText(textField.getText());
+				editorPane.setText(textField.getText());
 			}
 		});
 	}
