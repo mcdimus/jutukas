@@ -11,12 +11,14 @@ import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+import client.KnownHostsManager;
+
 public class Worker implements Runnable {
 
 	private Socket socket;
 	private StringTokenizer strtok;
-	private OutputStreamWriter osw;
-	private BufferedReader br;
+	private OutputStreamWriter out;
+	private BufferedReader in;
 	private String[] parametersValues;
 
 	public Worker(Socket s) {
@@ -27,15 +29,15 @@ public class Worker implements Runnable {
 	@Override
 	public void run() {
 		try {
-			osw = new OutputStreamWriter(socket.getOutputStream());
-			br = new BufferedReader(new InputStreamReader(
+			out = new OutputStreamWriter(socket.getOutputStream());
+			in = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
-			strtok = new StringTokenizer(br.readLine(), " ");
+			strtok = new StringTokenizer(in.readLine(), " ");
 			// GET
 			strtok.nextToken();
 			processPath(strtok.nextToken());
-			osw.close();
-			br.close();
+			out.close();
+			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -50,28 +52,28 @@ public class Worker implements Runnable {
 			String command = strtok.nextToken("?").substring(1);
 			// ?param1=value1&param2=value2
 			String parameters = strtok.nextToken(" ").substring(1);
-			getParametersValues(parameters);
+			// getParametersValues(parameters);
 			if (command.equals("findname")) {
 				System.out.println("I shall find the name");
-				findName();
+				// findName();
 			} else if (command.equals("sendname")) {
 				System.out.println("I shall accept the name");
 				acceptName();
 			} else if (command.equals("asknames")) {
 				System.out.println("I shall send the file");
-				sendFile();
+				out.write(Server.knownHosts.getJsonString());
 			} else if (command.equals("sendmessage")) {
 				System.out.println("I shall accept the message");
 				acceptMessage();
 			} else {
 				throw new Exception();
 			}
-			osw.write("HTTP/1.1 200 OK\r\n");
+			out.write("HTTP/1.1 200 OK\r\n");
 		} catch (Exception e) {
 			Server.print(new Date() + " --- " + socket.getInetAddress()
 					+ ": Wrong URL path: " + path);
 			try {
-				osw.write("HTTP/1.1 400 Bad Request\r\n");
+				out.write("HTTP/1.1 400 Bad Request\r\n");
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
@@ -79,36 +81,42 @@ public class Worker implements Runnable {
 	}
 
 	private void findName() {
-		String ip = parametersValues[1];
-		String addr = String.format("http://%s/chat/sendname?name=%s&ip=%s&"
-				+ "ttl=%s", ip, "name_here", "ip_here", "ttl_here");
-		try {
-			URL url = new URL(addr);
-			URLConnection urlcon = url.openConnection();
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					urlcon.getInputStream()));
-			System.out.println(br.readLine());
-			br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(0);
+		String name = parametersValues[0], ip = parametersValues[1], addr = null;
+		int TTL = Integer.parseInt(parametersValues[2]);
+		TTL--;
+		if (Server.knownHosts.getMapOfKnownHosts().containsKey(name)) {
+			addr = String.format("http://%s/chat/sendname?name=%s&ip=%s&"
+					+ "ttl=%s", ip, name, Server.knownHosts
+					.getMapOfKnownHosts().get(name), TTL);
+		} else {
+//			if (TTL != 0) {
+//				for (name )
+//			}
+		}
+		if (addr != null) {
+			try {
+				URL url = new URL(addr);
+				URLConnection urlcon = url.openConnection();
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						urlcon.getInputStream()));
+				System.out.println(br.readLine());
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(0);
+			}
 		}
 	}
-	
+
 	private void acceptName() {
 		// accept the name sent with /sendname? command
 	}
-	
-	private void sendFile() {
-		// synchronized with the other peer
-		// send JSON file
-	}
-	
+
 	private void acceptMessage() {
 		// should be connected with the GUI
 		// update chat window
 	}
-	
+
 	private void getParametersValues(String data) {
 		parametersValues = new String[4];
 		StringTokenizer strtok = new StringTokenizer(data, "&");

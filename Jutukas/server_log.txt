@@ -8,3 +8,65 @@ Wed Nov 30 00:14:57 EET 2011 --- Server is listening on port 6666
 Wed Nov 30 00:14:58 EET 2011 --- Connection accepted: /127.0.0.1
 Wed Nov 30 00:15:12 EET 2011 --- Server is listening on port 6666
 Wed Nov 30 00:15:13 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:26:35 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:27:10 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:27:13 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:27:13 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/?findname
+Wed Nov 30 09:27:27 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:27:27 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?
+Wed Nov 30 09:27:46 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:27:46 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name
+Wed Nov 30 09:27:53 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:27:53 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=name
+Wed Nov 30 09:28:26 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:28:30 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:28:30 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=name
+Wed Nov 30 09:29:20 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:29:20 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=name
+Wed Nov 30 09:29:30 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:29:30 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:30:05 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:30:10 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:30:10 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:30:30 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:30:31 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:30:31 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:32:05 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:32:06 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:32:06 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:34:03 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:34:04 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:34:04 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:34:26 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:34:27 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:34:27 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:34:46 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:34:47 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:34:47 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:34:51 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:34:51 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:36:13 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:36:14 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:36:14 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:36:39 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:36:40 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:36:40 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:37:22 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:37:23 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:37:23 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:37:48 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:37:49 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:37:49 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 09:38:21 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 09:38:22 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 09:38:22 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=nail
+Wed Nov 30 12:12:18 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 12:12:43 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 12:12:43 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=name
+Wed Nov 30 12:13:48 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 12:13:50 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 12:13:50 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=name
+Wed Nov 30 12:15:29 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 12:15:30 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 12:17:47 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 12:17:49 EET 2011 --- Connection accepted: /127.0.0.1
