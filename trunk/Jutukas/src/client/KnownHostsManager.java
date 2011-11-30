@@ -2,8 +2,9 @@ package client;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
+import java.util.Formatter;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
@@ -28,28 +29,31 @@ import com.google.gson.GsonBuilder;
 public class KnownHostsManager {
 
 	/**
-	 * The contents of the input file.
+	 * The name of the file with data.
 	 */
-	private String jsonStringFromInputFile;
+	private static final String FILE_NAME = "known_hosts.txt";
 	/**
 	 * The instance of the GSON object with pretty printing.
 	 */
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	/**
-	 * Constructor. Reads input file and builds the JSON-string.
+	 * Constructor. Does nothing.
 	 */
 	public KnownHostsManager() {
-		
-		jsonStringFromInputFile = getJsonStringFromFile();
-		
+
 	}
-	
+
+	/**
+	 * Reads data from file and generates JSON string.
+	 * 
+	 * @return JSON string.
+	 */
 	private String getJsonStringFromFile() {
 		Scanner scanner = null;
 		String jsonString = "";
 		try {
-			scanner = new Scanner(new File("known_hosts.txt"));
+			scanner = new Scanner(new File(FILE_NAME));
 		} catch (FileNotFoundException e) {
 			System.err.println("Input file not found!");
 		}
@@ -58,13 +62,17 @@ public class KnownHostsManager {
 			jsonString += scanner.nextLine().trim();
 		}
 		scanner.close();
-		//TODO: remove syso nax.
-		System.out.println("jsonString: "
-				+ jsonString);
-		
+		// TODO: remove syso nax.
+		System.out.println("jsonString: " + jsonString);
+
 		return jsonString;
 	}
-	
+
+	/**
+	 * Returns JSON string with all known hosts.
+	 * 
+	 * @return JSON string with all known hosts.
+	 */
 	public String getJsonString() {
 		return getJsonStringFromFile();
 	}
@@ -76,43 +84,27 @@ public class KnownHostsManager {
 	 *         <b>value</b> as an <i>ip-address</i>,
 	 */
 	public HashMap<String, String> getMapOfKnownHosts() {
+		String jsonString = getJsonStringFromFile();
 		HashMap<String, String> mapOfKnownHosts = new HashMap<String, String>();
-		String[][] knownHosts = gson.fromJson(jsonStringFromInputFile,
-				String[][].class);
+		String[][] knownHosts = gson.fromJson(jsonString, String[][].class);
 
 		for (String[] host : knownHosts) {
-			// System.out.println(host[0] + "\t" + host[1]);
 			mapOfKnownHosts.put(host[0], host[1]);
 		}
-		// System.out.println(gson.toJson(knownHosts));
 		return mapOfKnownHosts;
 	}
 
 	/**
-	 * Adds one host to the end of the known hosts.
+	 * Adds new hosts to the existing hosts . If host with given name already
+	 * exists, it`s ip-address will be replaced.
 	 * 
-	 * @param name
-	 *            - the name of the host`s owner.
-	 * @param ip
-	 *            - the ip-address of the host.
+	 * @param jsonString
+	 *            - JSON string with new hosts.
 	 */
-	public void addNewHost(String name, String ip) {
-
-		String[][] knownHosts = gson.fromJson(jsonStringFromInputFile,
-				String[][].class);
-		String[][] updatedKnownHosts = Arrays.copyOf(knownHosts,
-				knownHosts.length + 1);
-
-		updatedKnownHosts[updatedKnownHosts.length - 1] = new String[2];
-		updatedKnownHosts[updatedKnownHosts.length - 1][0] = name;
-		updatedKnownHosts[updatedKnownHosts.length - 1][1] = ip;
-
-	}
-
 	public void addNewHosts(String jsonString) {
-		// TODO: get hashmap of already known hosts.
+		// get hashmap of already known hosts.
 		HashMap<String, String> mapOfKnownHosts = getMapOfKnownHosts();
-		// TODO: add to hashmap new values and update values of the existed
+		// add to hashmap new values and update values of the existed
 		// keys.
 		String[][] newHosts = gson.fromJson(jsonString, String[][].class);
 
@@ -121,7 +113,35 @@ public class KnownHostsManager {
 			String value = host[1];
 			mapOfKnownHosts.put(key, value);
 		}
-		// TODO: parse hashmap back to the JSON.
-		// TODO: update file.
+		// parse hashmap back to the JSON.
+		String[][] updatedHosts = new String[mapOfKnownHosts.size()][2];
+		int index = 0;
+		for (Map.Entry<String, String> entry : mapOfKnownHosts.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+			updatedHosts[index][0] = key;
+			updatedHosts[index++][1] = value;
+		}
+		// update file.
+		writeJsonStringToFile(gson.toJson(updatedHosts));
+
+	}
+
+	/**
+	 * Saves JSON string to the file.
+	 * 
+	 * @param jsonString
+	 *            - JSON string for saving.
+	 */
+	private void writeJsonStringToFile(String jsonString) {
+		Formatter output = null;
+		try {
+			output = new Formatter(new File(FILE_NAME));
+		} catch (FileNotFoundException e) {
+			System.err.println("File cannot be created!");
+		}
+		output.format("%s", jsonString);
+		output.flush();
+		output.close();
 	}
 }
