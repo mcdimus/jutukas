@@ -7,6 +7,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
 
+import client.KnownHostsManager;
+
 public class Server implements Runnable {
 
 	/**
@@ -17,6 +19,8 @@ public class Server implements Runnable {
 	 * The file for the server log.
 	 */
 	private static BufferedWriter file;
+	
+	public static KnownHostsManager knownHosts;
 
 	/**
 	 * Run method.

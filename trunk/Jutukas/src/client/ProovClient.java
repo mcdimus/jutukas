@@ -12,7 +12,7 @@ public class ProovClient {
 	public static void main(String[] args) {
 		URL url = null;
 		try {
-			url = new URL("http://127.0.0.1:6666/chat/?findname");
+			url = new URL("http://127.0.0.1:6666/chat/findname?name=name");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			System.exit(0);
