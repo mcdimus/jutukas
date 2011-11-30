@@ -30,7 +30,7 @@ public class KnownHostsManager {
 	/**
 	 * The contents of the input file.
 	 */
-	private String jsonStringFromInputFile = "";
+	private String jsonStringFromInputFile;
 	/**
 	 * The instance of the GSON object with pretty printing.
 	 */
@@ -40,8 +40,14 @@ public class KnownHostsManager {
 	 * Constructor. Reads input file and builds the JSON-string.
 	 */
 	public KnownHostsManager() {
-
+		
+		jsonStringFromInputFile = getJsonStringFromFile();
+		
+	}
+	
+	private String getJsonStringFromFile() {
 		Scanner scanner = null;
+		String jsonString = "";
 		try {
 			scanner = new Scanner(new File("known_hosts.txt"));
 		} catch (FileNotFoundException e) {
@@ -49,9 +55,18 @@ public class KnownHostsManager {
 		}
 
 		while (scanner.hasNextLine()) {
-			jsonStringFromInputFile += scanner.nextLine().trim();
+			jsonString += scanner.nextLine().trim();
 		}
-		System.out.println("jsonStringFromInputFile: " + jsonStringFromInputFile);
+		scanner.close();
+		//TODO: remove syso nax.
+		System.out.println("jsonString: "
+				+ jsonString);
+		
+		return jsonString;
+	}
+	
+	public String getJsonString() {
+		return getJsonStringFromFile();
 	}
 
 	/**
@@ -66,10 +81,10 @@ public class KnownHostsManager {
 				String[][].class);
 
 		for (String[] host : knownHosts) {
-//			System.out.println(host[0] + "\t" + host[1]);
+			// System.out.println(host[0] + "\t" + host[1]);
 			mapOfKnownHosts.put(host[0], host[1]);
 		}
-//		System.out.println(gson.toJson(knownHosts));
+		// System.out.println(gson.toJson(knownHosts));
 		return mapOfKnownHosts;
 	}
 
@@ -92,5 +107,21 @@ public class KnownHostsManager {
 		updatedKnownHosts[updatedKnownHosts.length - 1][0] = name;
 		updatedKnownHosts[updatedKnownHosts.length - 1][1] = ip;
 
+	}
+
+	public void addNewHosts(String jsonString) {
+		// TODO: get hashmap of already known hosts.
+		HashMap<String, String> mapOfKnownHosts = getMapOfKnownHosts();
+		// TODO: add to hashmap new values and update values of the existed
+		// keys.
+		String[][] newHosts = gson.fromJson(jsonString, String[][].class);
+
+		for (String[] host : newHosts) {
+			String key = host[0];
+			String value = host[1];
+			mapOfKnownHosts.put(key, value);
+		}
+		// TODO: parse hashmap back to the JSON.
+		// TODO: update file.
 	}
 }
