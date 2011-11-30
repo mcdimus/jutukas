@@ -1,5 +1,6 @@
 package server;
 
+import java.awt.EventQueue;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,8 +9,11 @@ import java.net.Socket;
 import java.util.Date;
 
 import client.KnownHostsManager;
+import client.MainWindow;
 
 public class Server implements Runnable {
+	
+	static MainWindow window;
 
 	/**
 	 * Constant port number.
@@ -50,7 +54,15 @@ public class Server implements Runnable {
 	 *            - arguments passed to the application.
 	 */
 	public static void main(String[] args) {
-
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					window = new MainWindow();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		new Thread(new Server()).start();
 		try {
 			Thread.currentThread().join();
@@ -85,7 +97,6 @@ public class Server implements Runnable {
 	}
 
 	private synchronized void createWorkerThread(Socket s) {
-		@SuppressWarnings("unused")
-		Worker worker = new Worker(s);
+		new Worker(s);
 	}
 }

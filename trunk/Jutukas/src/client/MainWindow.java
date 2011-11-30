@@ -33,6 +33,12 @@ public class MainWindow {
 		initialize();
 		frame.setVisible(true);
 	}
+	
+	public synchronized void appendText(String text) {
+		String editorPaneText = editorPane.getText();
+		editorPane.setText(editorPaneText.split("</body>")[0] + "<br>" + text + "</body>");
+	
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -73,7 +79,7 @@ public class MainWindow {
 
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
-				editorPane.setText(textField.getText());
+				appendText(textField.getText());
 			}
 		});
 	}
