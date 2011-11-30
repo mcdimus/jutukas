@@ -49,7 +49,7 @@ public class KnownHostsManager {
 	 * 
 	 * @return JSON string.
 	 */
-	private String getJsonStringFromFile() {
+	private synchronized String getJsonStringFromFile() {
 		Scanner scanner = null;
 		String jsonString = "";
 		try {
@@ -73,7 +73,7 @@ public class KnownHostsManager {
 	 * 
 	 * @return JSON string with all known hosts.
 	 */
-	public String getJsonString() {
+	public synchronized String getJsonString() {
 		return getJsonStringFromFile();
 	}
 
@@ -83,7 +83,7 @@ public class KnownHostsManager {
 	 * @return HashMap, where the <b>key</b> is a <i>name</i> and the
 	 *         <b>value</b> as an <i>ip-address</i>,
 	 */
-	public HashMap<String, String> getMapOfKnownHosts() {
+	public synchronized HashMap<String, String> getMapOfKnownHosts() {
 		String jsonString = getJsonStringFromFile();
 		HashMap<String, String> mapOfKnownHosts = new HashMap<String, String>();
 		String[][] knownHosts = gson.fromJson(jsonString, String[][].class);
@@ -101,7 +101,7 @@ public class KnownHostsManager {
 	 * @param jsonString
 	 *            - JSON string with new hosts.
 	 */
-	public void addNewHosts(String jsonString) {
+	public synchronized void addNewHosts(String jsonString) {
 		// get hashmap of already known hosts.
 		HashMap<String, String> mapOfKnownHosts = getMapOfKnownHosts();
 		// add to hashmap new values and update values of the existed
@@ -133,7 +133,7 @@ public class KnownHostsManager {
 	 * @param jsonString
 	 *            - JSON string for saving.
 	 */
-	private void writeJsonStringToFile(String jsonString) {
+	private synchronized void writeJsonStringToFile(String jsonString) {
 		Formatter output = null;
 		try {
 			output = new Formatter(new File(FILE_NAME));
