@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
@@ -55,13 +52,12 @@ public class Worker implements Runnable {
 			System.out.println(parameters);
 			// getParametersValues(parameters);
 			if (command.equals("findname")) {
-				// findName();
+//				findName();
 			} else if (command.equals("sendname")) {
-				System.out.println("I shall accept the name");
-				acceptName();
+//				acceptAndSendName();
 			} else if (command.equals("asknames")) {
-				System.out.println("I shall send the file");
 				out.write(Server.knownHosts.getJsonString());
+				Server.print("ASKNAMES response(JSON sent)");
 			} else if (command.equals("sendmessage")) {
 				System.out.println("I shall accept the message");
 				acceptMessage();
@@ -70,8 +66,7 @@ public class Worker implements Runnable {
 			}
 			out.write("HTTP/1.1 200 OK\r\n");
 		} catch (Exception e) {
-			Server.print(new Date() + " --- " + socket.getInetAddress()
-					+ ": Wrong URL path: " + path);
+			Server.print("Wrong URL path: " + path + " from " + socket.getInetAddress());
 			try {
 				out.write("HTTP/1.1 400 Bad Request\r\n");
 			} catch (IOException ioe) {
@@ -81,37 +76,47 @@ public class Worker implements Runnable {
 	}
 
 	private void findName() {
-		String name = parametersValues[0], ip = parametersValues[1];
+		String askedName = parametersValues[0], destIP = parametersValues[1];
 		int TTL = Integer.parseInt(parametersValues[2]);
 		TTL--;
-		if (Server.knownHosts.getMapOfKnownHosts().containsKey(name)) {
+		if (Server.knownHosts.getMapOfKnownHosts().containsKey(askedName)) {
 			String addr = String
 					.format("http://%s/chat/sendname?name=%s&ip=%s&" + "ttl=%s",
-							ip, name, Server.knownHosts.getMapOfKnownHosts()
-									.get(name), TTL);
-			try {
-				URL url = new URL(addr);
-				URLConnection urlcon = url.openConnection();
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						urlcon.getInputStream()));
-				System.out.println(br.readLine());
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+							destIP, askedName, Server.knownHosts.getMapOfKnownHosts()
+									.get(askedName), TTL);
+			Server.print("FINDNAME response(name found): " + addr);
+			new Sender(addr, Sender.WORKER);
 		} else {
 			if (TTL != 0) {
+				Server.print("FINDNAME response(broadcast): ");
 				for (String value: Server.knownHosts.getMapOfKnownHosts().values()) {
 					String addr = String.format("http://%s/chat/findname?name=%s&ip=%s&"
-							+ "ttl=%s", value, name, ip, TTL);
-					new Sender(addr, 1);
+							+ "ttl=%s", value, askedName, destIP, TTL);
+					new Sender(addr, Sender.WORKER);
+					Server.print(addr);
 				}
 			}
 		}
 	}
-
-	private void acceptName() {
-		// accept the name sent with /sendname? command
+	
+	private void acceptAndSendName() {
+		String sentName = parametersValues[0], sentIP = parametersValues[1];
+		int TTL = Integer.parseInt(parametersValues[2]);
+		TTL--;
+		if (!Server.knownHosts.getMapOfKnownHosts().containsKey(sentName)) {
+			if (TTL != 0) {
+				Server.print("SENDNAME response(broadcast): ");
+				for (String value: Server.knownHosts.getMapOfKnownHosts().values()) {
+					if (!value.equals(Server.IP + ":" + Server.PORT)) {
+						String addr = String.format("http://%s/chat/sendname?name=%s&ip=%s&"
+								+ "ttl=%s", value, sentName, sentIP, TTL);
+						new Sender(addr, Sender.WORKER);
+						Server.print(addr);
+					}
+				}
+				// put new key(name) & value(ip) to the knownHosts Map.
+			}
+		}
 	}
 
 	private void acceptMessage() {
