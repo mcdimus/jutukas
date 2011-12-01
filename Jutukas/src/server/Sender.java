@@ -7,68 +7,98 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class Sender implements Runnable {
-	
-	private String theName;
+
+	final static int WORKER = 0, USENDMESSAGE = 1, UASKNAMES = 2;
 	private String address;
-	private String message;
-	private String ip;
-	// TODO: description here.
-	// 0 - worker's findname, 1 - worker's sendname, 2 - worker's asknames, 
-	// 3 - user's findname, 4 - user's message, 5 - user's asknames
-	// In worker's case do not send request to the user who made the request.
 	private int action;
-	private int TTL = 1;
-	
-	public Sender(String name) {
-		// user's findname request
-		theName = name;
-		action = 0;
+	private final int TTL = 1;
+
+	public Sender() {
+		// user's asknames request
+		action = UASKNAMES;
 		new Thread(this).start();
 	}
 
-	
+	public Sender(String name) {
+		// user's findname request to the neighbours
+		Server.print("FINDNAME request(broadcast): ");
+		for (String value : Server.knownHosts.getMapOfKnownHosts().values()) {
+			if (!value.equals(Server.IP + ":" + Server.PORT)) {
+				String addr = String.format("http://%s/chat/findname?name=%s"
+						+ "&ip=%s&ttl=%d", value, name, Server.IP + ":"
+						+ Server.PORT, TTL);
+				new Sender(addr, Sender.WORKER);
+				Server.print(addr);
+			}
+		}
+	}
+
 	public Sender(String addr, int act) {
-		// somebody's findname request
+		// user's findname & somebody's findname OR sendname request
 		address = addr;
 		action = act;
 		new Thread(this).start();
 	}
-	
-	public Sender(String name, String ipAddr) {
-		// somebody's sendname request
-		// addr & action
-		new Thread(this).start();
-	}
-	
-	public Sender(String name, String ipAddr, String messg) {
+
+	public Sender(String name, String ip, String message) {
 		// user's message request
-		theName = name;
-		message = messg;
-		ip = ipAddr;
-		action = 2;
+		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
+				+ "&message=%s&ttl=%d", ip, name,
+				Server.IP + ":" + Server.PORT, message, TTL);
+		action = USENDMESSAGE;
 		new Thread(this).start();
 	}
-	
+
 	@Override
 	public void run() {
-		if (action == 0) {
-			
-		} else if (action == 1) {
+		switch (action) {
+		case WORKER:
 			try {
 				URL url = new URL(address);
 				URLConnection urlcon = url.openConnection();
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						urlcon.getInputStream()));
-				System.out.println(br.readLine());
 				br.close();
 			} catch (IOException e) {
-				e.printStackTrace();
 				System.exit(0);
+			}
+			break;
+		case USENDMESSAGE:
+			Server.print("MESSAGE request: " + address);
+			try {
+				URL url = new URL(address);
+				URLConnection urlcon = url.openConnection();
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						urlcon.getInputStream()));
+				br.close();
+			} catch (IOException e) {
+				Server.print("MESSAGE request failed: " + address );
+				// send to GUI - "message was not delivered"
 			}	
-		} else if (action == 2) {
-			// send message
-		} else {
-			// ask names
+			break;
+		case UASKNAMES:
+			Server.print("ASKNAMES request(synchronized stream): ");
+			for (String value : Server.knownHosts.getMapOfKnownHosts().values()) {
+				if (!value.equals(Server.IP + ":" + Server.PORT)) {
+					try {
+						String addr = String.format("http://%s/chat/asknames?"
+								+"ttl=1", value);
+						URL url = new URL(addr);
+						URLConnection urlcon = url.openConnection();
+						BufferedReader br = new BufferedReader(new InputStreamReader(
+								urlcon.getInputStream()));
+						String jsonhosts = br.readLine();
+						Server.knownHosts.addNewHosts(jsonhosts);
+						br.close();
+						Server.print(value);
+					} catch (IOException e) {
+						Server.print("ASKNAMES request failed: " + address);
+						// send to GUI - "cannot get names from a host"
+						continue;
+					}
+				}
+			}
+			break;
 		}
 	}
 

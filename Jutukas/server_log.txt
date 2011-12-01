@@ -70,3 +70,26 @@ Wed Nov 30 12:15:29 EET 2011 --- Server is listening on port 6666
 Wed Nov 30 12:15:30 EET 2011 --- Connection accepted: /127.0.0.1
 Wed Nov 30 12:17:47 EET 2011 --- Server is listening on port 6666
 Wed Nov 30 12:17:49 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 18:25:40 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 18:25:53 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 18:26:08 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 18:26:08 EET 2011 --- /127.0.0.1: Wrong URL path: /chat/findname?name=name
+Wed Nov 30 18:26:25 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 18:26:29 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 18:27:41 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 18:27:41 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 18:27:41 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 18:27:41 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 18:27:41 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 19:10:19 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 19:11:09 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 19:11:11 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 19:11:24 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 19:16:08 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 19:16:12 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 19:17:44 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 19:17:53 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 19:18:09 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 19:18:15 EET 2011 --- Connection accepted: /127.0.0.1
+Wed Nov 30 19:27:56 EET 2011 --- Server is listening on port 6666
+Wed Nov 30 19:28:01 EET 2011 --- Connection accepted: /127.0.0.1

@@ -14,11 +14,11 @@ import client.MainWindow;
 public class Server implements Runnable {
 	
 	static MainWindow window;
-
+	public static String IP;
 	/**
 	 * Constant port number.
 	 */
-	private static final int PORT = 6666;
+	public static int PORT = 6666;
 	/**
 	 * The file for the server log.
 	 */
@@ -34,11 +34,11 @@ public class Server implements Runnable {
 	public void run() {
 		try {
 			acceptSocket = new ServerSocket(PORT);
-			Server.print(new Date() + " --- Server is listening on port "
+			Server.print("Server is listening on port "
 					+ PORT);
 			while (true) {
 				Socket s = acceptSocket.accept();
-				Server.print(new Date() + " --- Connection accepted: "
+				Server.print("Connection accepted: "
 						+ s.getInetAddress());
 				createWorkerThread(s);
 			}
@@ -77,14 +77,14 @@ public class Server implements Runnable {
 	 * @param s
 	 *            - string to be written.
 	 */
-	public static void print(String s) {
+	public static synchronized void print(String s) {
 		try {
 			file = new BufferedWriter(new FileWriter("server_log.txt", true));
 		} catch (IOException e) {
 			System.err.println("Unable to create file.");
 		}
 		try {
-			file.write(s + "\n");
+			file.write(new Date() + " --- " + s + "\n");
 		} catch (IOException e) {
 			System.err.println("Unable to write to the file.");
 		}
