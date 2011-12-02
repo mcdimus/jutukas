@@ -81,6 +81,8 @@ public class MainWindow {
 	public void setNicknameValue(String nickname) {
 		lblNameValue.setText(nickname);
 	}
+	
+	private Server server;
 
 	/**
 	 * Launch the application.
@@ -436,7 +438,7 @@ public class MainWindow {
 		btnConnect.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
 				appendNameToFile();
-				new Server(lblIpValue.getText(), getPortValue());
+				server = new Server(lblIpValue.getText(), getPortValue());
 				lblStatusValue.setForeground(Color.GREEN);
 				lblStatusValue.setText("running...");
 				btnConnect.setEnabled(false);
@@ -455,6 +457,7 @@ public class MainWindow {
 		btnClose.setEnabled(false);
 		btnClose.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
+				server.killServer();
 				lblStatusValue.setForeground(Color.RED);
 				lblStatusValue.setText("not running");
 				btnConnect.setEnabled(true);
@@ -565,7 +568,7 @@ public class MainWindow {
 
 			// System.out.println("interface " + cur.getName());
 
-			if (!(cur.getName().contains("eth") || cur.getName()
+			if (!(cur.getName().contains("eth") || cur.getName().contains("wlan") || cur.getName()
 					.contains("net"))) {
 				continue;
 			}
