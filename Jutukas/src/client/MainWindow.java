@@ -3,6 +3,7 @@ package client;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.Inet4Address;
@@ -25,6 +26,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
+
+import server.Server;
 
 public class MainWindow {
 
@@ -103,6 +106,8 @@ public class MainWindow {
 		frame = new JFrame("Jutukas");
 		frame.setSize(450, 300);
 		frame.setResizable(false);
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
+				"chat.png"));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		UIutils.centerFrameOnScreen(frame);
 
@@ -396,11 +401,35 @@ public class MainWindow {
 
 	private void createStartButton() {
 		btnConnect = new JButton("Start");
+		btnConnect.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent arg0) {
+				new Server(lblIpValue.getText(), getPortValue());
+				btnConnect.setEnabled(false);
+				btnSettings.setEnabled(false);
+				btnClose.setEnabled(true);
+				btnAskNames.setEnabled(true);
+				btnFindName.setEnabled(true);
+				btnSendName.setEnabled(true);
+				nameToFind.setEnabled(true);
+			}
+		});
 	}
+	
 
 	private void createStopButton() {
 		btnClose = new JButton("Stop");
 		btnClose.setEnabled(false);
+		btnClose.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent arg0) {
+				btnConnect.setEnabled(true);
+				btnSettings.setEnabled(true);
+				btnClose.setEnabled(false);
+				btnAskNames.setEnabled(false);
+				btnFindName.setEnabled(false);
+				btnSendName.setEnabled(false);
+				nameToFind.setEnabled(false);
+			}
+		});
 	}
 
 	private void createSettingsButton() {
@@ -421,6 +450,7 @@ public class MainWindow {
 
 		nameToFind = new JTextField();
 		nameToFind.setColumns(10);
+		nameToFind.setEnabled(false);
 
 		btnFindName = new JButton("Find name");
 		btnFindName.setEnabled(false);
@@ -508,14 +538,15 @@ public class MainWindow {
 					continue;
 				}
 				ipAddress = inetAddr.getHostAddress();
-				// System.out.println("  address: "
-				// + inet_addr.getHostAddress() + "/"
-				// + addr.getNetworkPrefixLength());
-				//
-				// System.out.println("  broadcast address: "
-				// + addr.getBroadcast().getHostAddress());
+//				 System.out.println("  address: "
+//				 + inet_addr.getHostAddress() + "/"
+//				 + addr.getNetworkPrefixLength());
+//				
+//				 System.out.println("  broadcast address: "
+//				 + addr.getBroadcast().getHostAddress());
 			}
 		}
+//		lblIpValue.setText(ipAddress);
 		return ipAddress;
 
 	}
