@@ -93,3 +93,19 @@ Wed Nov 30 19:18:09 EET 2011 --- Connection accepted: /127.0.0.1
 Wed Nov 30 19:18:15 EET 2011 --- Connection accepted: /127.0.0.1
 Wed Nov 30 19:27:56 EET 2011 --- Server is listening on port 6666
 Wed Nov 30 19:28:01 EET 2011 --- Connection accepted: /127.0.0.1
+Fri Dec 02 18:35:33 EET 2011 --- Server is listening on port 6666
+Fri Dec 02 18:35:56 EET 2011 --- Connection accepted: /127.0.0.1
+Fri Dec 02 18:35:56 EET 2011 --- Wrong URL path: /?helo=hello from 127.0.0.1
+Fri Dec 02 18:35:56 EET 2011 --- Connection accepted: /127.0.0.1
+Fri Dec 02 18:35:56 EET 2011 --- Wrong URL path: /favicon.ico from 127.0.0.1
+Fri Dec 02 18:41:53 EET 2011 --- Server is listening on port 6666
+Fri Dec 02 18:41:57 EET 2011 --- Server is listening on port 6666
+Fri Dec 02 18:41:57 EET 2011 --- Connection accepted: /127.0.0.1
+Fri Dec 02 18:41:57 EET 2011 --- Wrong URL path: /?helo=hello from 127.0.0.1
+Fri Dec 02 18:41:57 EET 2011 --- Connection accepted: /127.0.0.1
+Fri Dec 02 18:41:57 EET 2011 --- Wrong URL path: /favicon.ico from 127.0.0.1
+Fri Dec 02 18:42:15 EET 2011 --- Server is listening on port 6666
+Fri Dec 02 18:42:17 EET 2011 --- Connection accepted: 127.0.0.1
+Fri Dec 02 18:42:17 EET 2011 --- 127.0.0.1: wrong URL path: /?helo=hello
+Fri Dec 02 18:42:17 EET 2011 --- Connection accepted: 127.0.0.1
+Fri Dec 02 18:42:17 EET 2011 --- 127.0.0.1: wrong URL path: /favicon.ico
