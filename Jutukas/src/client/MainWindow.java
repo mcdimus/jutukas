@@ -16,10 +16,9 @@ import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Scanner;
-import java.util.StringTokenizer;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -68,8 +67,10 @@ public class MainWindow {
 	private JTextField nameToFind;
 
 	private GroupLayout groupLayout;
-	
+
 	private DefaultListModel model;
+
+	private static KnownHostsManager hostsManager = new KnownHostsManager();
 
 	private String getPortValue() {
 		return lblPortValue.getText();
@@ -86,7 +87,7 @@ public class MainWindow {
 	public void setNicknameValue(String nickname) {
 		lblNameValue.setText(nickname);
 	}
-	
+
 	private Server server;
 
 	/**
@@ -403,15 +404,19 @@ public class MainWindow {
 				null));
 		checkKnownUsers();
 	}
-	
+
 	private void checkKnownUsers() {
-		for(String user : getListOfKnownUsers()) {
-			if(!model.contains(user)) {
-				model.addElement(user);
+		for (Map.Entry<String, String> entry : hostsManager
+				.getMapOfKnownHosts().entrySet()) {
+			if (!model.contains(entry.getKey())) {
+				model.addElement(entry.getKey());
 			}
 		}
 	}
 
+	/**
+	 * Create buttons.
+	 */
 	private void createButtons() {
 		createStartButton();
 		createStopButton();
@@ -420,27 +425,32 @@ public class MainWindow {
 		createFindNameButtonWithTextField();
 		createSendNameButton();
 	}
-	
+
+	/**
+	 * Append your nickname and IP to the first line.
+	 */
 	private void appendNameToFile() {
 		Scanner inputReader = null;
 		PrintWriter pw = null;
 		String content = "";
 		try {
 			inputReader = new Scanner(new File("known_hosts.txt"));
+			inputReader.useDelimiter("],");
+			inputReader.next();
 			inputReader.useDelimiter("\\Z");
 			content = inputReader.next();
+			System.out.println(content);
 		} catch (FileNotFoundException e1) {
 			System.out.println("Error opening file!!!");
 		} finally {
 			inputReader.close();
 		}
-		
+
 		try {
 			pw = new PrintWriter(new File("known_hosts.txt"));
-			pw.write("[\n[\"" + lblNameValue.getText() + "\", \""
-					+ lblIpValue.getText() + ":"
-					+ lblPortValue.getText() + "\"],"
-					+ content.substring(1, content.length()));
+			pw.write("[\n  [\n    \"" + lblNameValue.getText() + "\",\n    \""
+					+ lblIpValue.getText() + ":" + lblPortValue.getText()
+					+ "\"\n  ],\n" + content.substring(3, content.length()));
 		} catch (IOException e) {
 			System.out.println("Error writing to file!!!");
 		} finally {
@@ -448,45 +458,70 @@ public class MainWindow {
 		}
 	}
 
+	/**
+	 * Create start button.
+	 */
 	private void createStartButton() {
-		btnConnect = new JButton("Start");
+		btnConnect = new JButton("Connect");
 		btnConnect.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
 				appendNameToFile();
+				checkKnownUsers();
 				server = new Server(lblIpValue.getText(), getPortValue());
+				statusLine.setText("Server is online.");
 				lblStatusValue.setForeground(Color.GREEN);
 				lblStatusValue.setText("running...");
-				btnConnect.setEnabled(false);
-				btnSettings.setEnabled(false);
-				btnClose.setEnabled(true);
-				btnAskNames.setEnabled(true);
-				btnFindName.setEnabled(true);
-				btnSendName.setEnabled(true);
-				nameToFind.setEnabled(true);
+				buttonsEnabler();
 			}
 		});
 	}
+	
+	/**
+	 * Enable buttons when clicked on Start button.
+	 */
+	private void buttonsEnabler() {
+		btnConnect.setEnabled(false);
+		btnSettings.setEnabled(false);
+		btnClose.setEnabled(true);
+		btnAskNames.setEnabled(true);
+		btnFindName.setEnabled(true);
+		btnSendName.setEnabled(true);
+		nameToFind.setEnabled(true);
+	}
+	
+	/**
+	 * Disable buttons when clicked on Stop button.
+	 */
+	private void buttonsDisabler() {
+		btnConnect.setEnabled(true);
+		btnSettings.setEnabled(true);
+		btnClose.setEnabled(false);
+		btnAskNames.setEnabled(false);
+		btnFindName.setEnabled(false);
+		btnSendName.setEnabled(false);
+		nameToFind.setEnabled(false);
+	}
 
+	/**
+	 * Create stop button.
+	 */
 	private void createStopButton() {
 		btnClose = new JButton("Stop");
 		btnClose.setEnabled(false);
 		btnClose.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
 				server.killServer();
-				checkKnownUsers();
+				statusLine.setText("Press connect to start the server.");
 				lblStatusValue.setForeground(Color.RED);
 				lblStatusValue.setText("not running");
-				btnConnect.setEnabled(true);
-				btnSettings.setEnabled(true);
-				btnClose.setEnabled(false);
-				btnAskNames.setEnabled(false);
-				btnFindName.setEnabled(false);
-				btnSendName.setEnabled(false);
-				nameToFind.setEnabled(false);
+				buttonsDisabler();
 			}
 		});
 	}
 
+	/**
+	 * Create settings button.
+	 */
 	private void createSettingsButton() {
 		btnSettings = new JButton("Settings");
 		btnSettings.addMouseListener(new MouseAdapter() {
@@ -545,31 +580,6 @@ public class MainWindow {
 		lblPortValue = new JLabel("6666");
 		lblNameValue = new JLabel("kasutaja");
 	}
-	
-	private ArrayList<String> getListOfKnownUsers() {
-		Scanner scanner = null;
-		ArrayList<String> users = new ArrayList<String>();
-		String line = null;
-		StringTokenizer strTok = null;
-		String user = null;
-			try {
-			scanner = new Scanner(new File("known_hosts.txt"));
-			scanner.nextLine();
-			while(scanner.hasNextLine()) {
-				line = scanner.nextLine();
-				if(line.length() == 1) {
-					break;
-				}
-				strTok = new StringTokenizer(line, "\"");
-				strTok.nextToken();
-				user = strTok.nextToken("\"");
-				users.add(user);
-			}
-		} catch (FileNotFoundException e) {
-			System.out.println("Error: file does not exist or is empty!");
-		}
-			return users;
-	}
 
 	/**
 	 * Creates panel with status line in the frame`s bottom.
@@ -609,7 +619,8 @@ public class MainWindow {
 
 			// System.out.println("interface " + cur.getName());
 
-			if (!(cur.getName().contains("eth") || cur.getName().contains("wlan") || cur.getName()
+			if (!(cur.getName().contains("eth")
+					|| cur.getName().contains("wlan") || cur.getName()
 					.contains("net"))) {
 				continue;
 			}
