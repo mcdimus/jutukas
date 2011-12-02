@@ -3,6 +3,12 @@ package client;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -46,7 +52,7 @@ public class MainWindow {
 	private JLabel statusLine;
 
 	private JTextField nameToFind;
-	
+
 	private GroupLayout groupLayout;
 
 	/**
@@ -91,7 +97,7 @@ public class MainWindow {
 		createKnownUsersList();
 
 		initializeLayout();
-		
+
 		frame.getContentPane().setLayout(groupLayout);
 	}
 
@@ -418,7 +424,14 @@ public class MainWindow {
 		lblPort = new JLabel("Port:");
 		lblName = new JLabel("Name:");
 		lblStatusValue = new JLabel("not running");
-		lblIpValue = new JLabel("127.0.0.1");
+
+		try {
+			lblIpValue= new JLabel(getIpAddress());
+		} catch (SocketException e) {
+			System.err
+					.println("Some shit happened with ip-address serching...");
+		}
+
 		lblPortValue = new JLabel("6666");
 		lblNameValue = new JLabel("kasutaja");
 	}
@@ -437,5 +450,50 @@ public class MainWindow {
 		statusLine = new JLabel("Press connect to start the server.");
 		statusLine.setVerticalAlignment(SwingConstants.TOP);
 		statusLinePanel.add(statusLine);
+	}
+
+	/**
+	 * Returns an ip-address in the current LAN. It can be eth* network or wlan*
+	 * network.
+	 * 
+	 * @return an ip-address in the current LAN.
+	 * @throws SocketException
+	 *             - just let it be.
+	 */
+	private String getIpAddress() throws SocketException {
+		String ipAddress = null;
+
+		for (final Enumeration<NetworkInterface> interfaces = NetworkInterface
+				.getNetworkInterfaces(); interfaces.hasMoreElements();) {
+
+			final NetworkInterface cur = interfaces.nextElement();
+
+			if (cur.isLoopback()) {
+				continue;
+			}
+
+//			System.out.println("interface " + cur.getName());
+
+			if (!(cur.getName().contains("eth") || cur.getName().contains(
+					"wlan"))) {
+				continue;
+			}
+			for (final InterfaceAddress addr : cur.getInterfaceAddresses()) {
+				final InetAddress inetAddr = addr.getAddress();
+
+				if (!(inetAddr instanceof Inet4Address)) {
+					continue;
+				}
+				ipAddress = inetAddr.getHostAddress();
+				// System.out.println("  address: "
+				// + inet_addr.getHostAddress() + "/"
+				// + addr.getNetworkPrefixLength());
+				//
+				// System.out.println("  broadcast address: "
+				// + addr.getBroadcast().getHostAddress());
+			}
+		}
+		return ipAddress;
+
 	}
 }
