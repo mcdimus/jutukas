@@ -26,6 +26,12 @@ public class Server implements Runnable {
 	public static KnownHostsManager knownHosts;
 	ServerSocket acceptSocket;
 	
+	public Server(String ip, String port) {
+		IP = ip;
+		PORT = Integer.parseInt(port);
+		new Thread(this).start();
+	}
+	
 	/**
 	 * Run method.
 	 * 
@@ -48,30 +54,6 @@ public class Server implements Runnable {
 	}
 
 	/**
-	 * Start point of the application.
-	 * 
-	 * @param args
-	 *            - arguments passed to the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					window = new MainWindow();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		new Thread(new Server()).start();
-		try {
-			Thread.currentThread().join();
-		} catch (InterruptedException e) {
-			System.out.println("Server: " + e.getMessage());
-		}
-	}
-
-	/**
 	 * Prints server messages to the server`s console and server`s log file.
 	 * 
 	 * @param s
@@ -85,6 +67,7 @@ public class Server implements Runnable {
 		}
 		try {
 			file.write(new Date() + " --- " + s + "\n");
+			// TODO: file.flush();
 		} catch (IOException e) {
 			System.err.println("Unable to write to the file.");
 		}
