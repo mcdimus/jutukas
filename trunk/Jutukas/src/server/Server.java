@@ -1,6 +1,5 @@
 package server;
 
-import java.awt.EventQueue;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,23 +8,39 @@ import java.net.Socket;
 import java.util.Date;
 
 import client.KnownHostsManager;
-import client.MainWindow;
 
+/**
+ * Main <code>Server Thread</code>.
+ * @author nail
+ */
 public class Server implements Runnable {
 	
-	static MainWindow window;
+	/**
+	 * Server IP address.
+	 */
 	public static String IP;
 	/**
-	 * Constant port number.
+	 * Server port number.
 	 */
 	public static int PORT = 6666;
+	/**
+	 * Socket which this <code>Server</code> is bound to.
+	 */
+	ServerSocket acceptSocket;
 	/**
 	 * The file for the server log.
 	 */
 	private static BufferedWriter file;
+	/**
+	 * 'Manager' of the hosts located in <i>the known_hosts.txt</i> file.
+	 */
 	public static KnownHostsManager knownHosts;
-	ServerSocket acceptSocket;
 	
+	/**
+	 * Create new <code>Server</code>.
+	 * @param ip - <code>Server</code>'s IP
+	 * @param port - <code>Server</code>'s port
+	 */
 	public Server(String ip, String port) {
 		IP = ip;
 		PORT = Integer.parseInt(port);
@@ -67,18 +82,22 @@ public class Server implements Runnable {
 		}
 		try {
 			file.write(new Date() + " --- " + s + "\n");
-			// TODO: file.flush();
+			file.flush();
 		} catch (IOException e) {
 			System.err.println("Unable to write to the file.");
 		}
-		try {
-			file.close();
-		} catch (IOException e) {
-			System.err.println("Unable to close file.");
-		}
+//		try {
+//			file.close();
+//		} catch (IOException e) {
+//			System.err.println("Unable to close file.");
+//		}
 		System.out.println(s);
 	}
 
+	/**
+	 * Creates new <code>Worker Thread</code> to process received request.
+	 * @param s - <code>Socket</code> to bind new <code>Worker</code> to
+	 */
 	private synchronized void createWorkerThread(Socket s) {
 		new Worker(s);
 	}
