@@ -11,20 +11,49 @@ import java.net.URLDecoder;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
+/**
+ * This class represents the thread what is created by <code>Server</code>.
+ * @author nail
+ */
 public class Worker implements Runnable {
 
+	/**
+	 * Connection is redirected by <code>Server</code> to this 
+	 * <code>Socket</code>.
+	 */
 	private Socket socket;
-	private StringTokenizer strtok;
+	/**
+	 * <code>Socket</code>'s output stream.
+	 */
 	private OutputStreamWriter out;
+	/**
+	 * <code>Socket</code>'s input stream.
+	 */
 	private BufferedReader in;
+	/**
+	 * Helps splitting the lines.
+	 */
+	private StringTokenizer strtok;
+	/**
+	 * Holds values of <code>GET</code> request parameters after they have
+	 * been obtained by <code>StringTokenizer</code>.
+	 */
 	private String[] parametersValues;
 
+	/**
+	 * Create new Worker thread bound to this <code>Socket</code>.
+	 * @param s - <code>Socket</code> to bound to
+	 */
 	public Worker(Socket s) {
 		socket = s;
 		new Thread(this).start();
 	}
 
-	@Override
+	/**
+	 * Run method.
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
 	public void run() {
 		try {
 			out = new OutputStreamWriter(socket.getOutputStream());
@@ -41,6 +70,10 @@ public class Worker implements Runnable {
 		}
 	}
 
+	/**
+	 * Method begins processing of the received parameters.
+	 * @param path - <code>String</code> to process
+	 */
 	private void processPath(String path) {
 		try {
 			strtok = new StringTokenizer(path, "/");
@@ -52,20 +85,22 @@ public class Worker implements Runnable {
 			String parameters = URLDecoder.decode(strtok.nextToken(" ")
 					.substring(1), "UTF-8");
 			System.out.println(parameters);
-			// getParametersValues(parameters);
+			getParametersValues(parameters);
 			if (command.equals("findname")) {
-				// findName();
+				findName();
 			} else if (command.equals("sendname")) {
-				// acceptAndSendName();
+				acceptAndSendName();
 			} else if (command.equals("asknames")) {
+				String log = "ASKNAMES response\n";
 				try {
-					String log = "ASKNAMES response\n";
 					out.write(Server.knownHosts.getJsonString());
 					Server.print(log
 							+ socket.getInetAddress().toString().substring(1)
 							+ ": OK");
 				} catch (IOException ioe2) {
-
+					Server.print(log
+							+ socket.getInetAddress().toString().substring(1)
+							+ ": host unreachable");
 				}
 			} else if (command.equals("sendmessage")) {
 				System.out.println("I shall accept the message");
@@ -76,7 +111,7 @@ public class Worker implements Runnable {
 			out.write("HTTP/1.1 200 OK\r\n");
 		} catch (Exception e) {
 			Server.print("Wrong URL path: " + path + " from "
-					+ socket.getInetAddress());
+					+ socket.getInetAddress().toString().substring(1));
 			try {
 				out.write("HTTP/1.1 400 Bad Request\r\n");
 			} catch (IOException ioe) {
@@ -85,16 +120,19 @@ public class Worker implements Runnable {
 		}
 	}
 
+	/**
+	 * Processes FINDNAME request, creates&sends appropriate response.
+	 */
 	private void findName() {
 		String askedName = parametersValues[0], destIP = parametersValues[1],
 				log = "";
-		int TTL = Integer.parseInt(parametersValues[2]);
-		TTL--;
+		int ttl = Integer.parseInt(parametersValues[2]);
+		ttl--;
 		if (Server.knownHosts.getMapOfKnownHosts().containsKey(askedName)) {
 			String addr = String.format(
 					"http://%s/chat/sendname?name=%s&ip=%s&" + "ttl=%s",
 					destIP, askedName, Server.knownHosts.getMapOfKnownHosts()
-							.get(askedName), TTL);
+							.get(askedName), ttl);
 			log += "FINDNAME(name found) response\n";
 			try {
 				URL url = new URL(addr);
@@ -108,13 +146,13 @@ public class Worker implements Runnable {
 				System.exit(0);
 			}
 		} else {
-			if (TTL != 0) {
+			if (ttl != 0) {
 				log += "FINDNAME(broadcast) response\n";
 				for (String value : Server.knownHosts.getMapOfKnownHosts()
 						.values()) {
 					String addr = String
 							.format("http://%s/chat/findname?name=%s&ip=%s&"
-									+ "ttl=%s", value, askedName, destIP, TTL);
+									+ "ttl=%s", value, askedName, destIP, ttl);
 					try {
 						URL url = new URL(addr);
 						URLConnection urlcon = url.openConnection();
@@ -131,14 +169,17 @@ public class Worker implements Runnable {
 		}
 		Server.print(log);
 	}
-
+	
+	/**
+	 * Processes SENDNAME request, creates&sends appropriate response.
+	 */
 	private void acceptAndSendName() {
 		String sentName = parametersValues[0], sentIP = parametersValues[1],
 				log = "";
-		int TTL = Integer.parseInt(parametersValues[2]);
-		TTL--;
+		int ttl = Integer.parseInt(parametersValues[2]);
+		ttl--;
 		if (!Server.knownHosts.getMapOfKnownHosts().containsKey(sentName)) {
-			if (TTL != 0) {
+			if (ttl != 0) {
 				log += "SENDNAME response\n";
 				for (String value : Server.knownHosts.getMapOfKnownHosts()
 						.values()) {
@@ -146,7 +187,7 @@ public class Worker implements Runnable {
 						String addr = String.format(
 								"http://%s/chat/sendname?name=%s&ip=%s&"
 										+ "ttl=%s", value, sentName, sentIP,
-								TTL);
+								ttl);
 						try {
 							URL url = new URL(addr);
 							URLConnection urlcon = url.openConnection();
@@ -161,17 +202,24 @@ public class Worker implements Runnable {
 						}
 					}
 				}
-				// put new key(name) & value(ip) to the knownHosts Map.
+				// TODO: put new key(name) & value(ip) to the knownHosts Map.
 			}
 		}
 		Server.print(log);
 	}
-
+	
+	/**
+	 * Processes MESSAGE request, sends received message to GUI.
+	 */
 	private void acceptMessage() {
+		// TODO: update chat window
 		// should be connected with the GUI
-		// update chat window
 	}
 
+	/**
+	 * Method completes processing of the received parameters.
+	 * @param data - <code>String</code> to process
+	 */
 	private void getParametersValues(String data) {
 		parametersValues = new String[4];
 		StringTokenizer strtok = new StringTokenizer(data, "&");
@@ -189,6 +237,11 @@ public class Worker implements Runnable {
 		}
 	}
 
+	/**
+	 * Returns the value of a given parameter.
+	 * @param in - <code>String</code> to process
+	 * @return <code>String</code> parameter's value
+	 */
 	private String getValue(String in) {
 		String[] words = in.split("=");
 		return words[1];

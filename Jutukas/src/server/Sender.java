@@ -6,30 +6,73 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
+/**
+ * This class represents the thread what should complete the task received from
+ * the GUI. The tasks are: find the user's IP by his name, ask from your
+ * 'friend' hosts their hosts file, send a message, send other hosts your new
+ * name.
+ * 
+ * @author nail
+ */
 public class Sender implements Runnable {
 
-	public final static int FINDNAME = 0, SENDMESSAGE = 1, SENDNAME = 2,
+	/**
+	 * Constant integer values representing actions.
+	 */
+	public static final int FINDNAME = 0, SENDMESSAGE = 1, SENDNAME = 2,
 			ASKNAMES = 3;
+	/**
+	 * Name to find / name to send.
+	 */
 	private String name;
+	/**
+	 * Used in SENDMESSAGE action as the URL to send message to.
+	 */
 	private String address;
+	/**
+	 * Thread's action (uses described constants).
+	 */
 	private int action;
-	private final int TTL = 1;
+	/**
+	 * Request's time to live.
+	 */
+	private static final int TTL = 1;
 
+	/**
+	 * Use this constructor to create new ASKNAMES request.
+	 */
 	public Sender() {
-		// user's asknames request
 		action = ASKNAMES;
 		new Thread(this).start();
 	}
 
-	public Sender(String nameToFind, int actionConstant) {
-		// user's findname & sendname request
-		name = nameToFind;
+	/**
+	 * Use this constructor to create new FINDNAME or SENDNAME request.
+	 * 
+	 * @param nameHere
+	 *            - name to find / to send
+	 * @param actionConstant
+	 *            - FINDNAME or SENDNAME request (use
+	 *            <code>Sender.FINDNAME</code> or <code>Sender.SENDNAME</code>)
+	 */
+	public Sender(String nameHere, int actionConstant) {
+		name = nameHere;
 		action = actionConstant;
 		new Thread(this).start();
 	}
 
+	/**
+	 * Use this constructor to create new MESSAGE request (or, more simply, to
+	 * send a message).
+	 * 
+	 * @param name
+	 *            - host name to send to
+	 * @param ip
+	 *            - host IP to send to
+	 * @param message
+	 *            - message to send
+	 */
 	public Sender(String name, String ip, String message) {
-		// user's message request
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
 				+ "&message=%s&ttl=%d", ip, name,
 				Server.IP + ":" + Server.PORT, message, TTL);
@@ -37,25 +80,31 @@ public class Sender implements Runnable {
 		new Thread(this).start();
 	}
 
-	@Override
+	/**
+	 * Run method.
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
 	public void run() {
+		String log = "";
 		switch (action) {
 		case FINDNAME:
-			Server.print("FINDNAME request: ");
-			for (String value : Server.knownHosts.getMapOfKnownHosts().values()) {
+			log += "FINDNAME request\n";
+			for (String value : Server.knownHosts.getMapOfKnownHosts()
+					.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-					String addr = String.format("http://%s/chat/findname?name=%s"
-							+ "&ip=%s&ttl=%d", value, name, Server.IP + ":"
-							+ Server.PORT, TTL);
+					String addr = String.format("http://%s/chat/findname?"
+							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
+							+ ":" + Server.PORT, TTL);
 					try {
 						URL url = new URL(addr);
 						URLConnection urlcon = url.openConnection();
-						BufferedReader br = new BufferedReader(new InputStreamReader(
-								urlcon.getInputStream()));
+						BufferedReader br = new BufferedReader(
+								new InputStreamReader(urlcon.getInputStream()));
 						br.close();
-						Server.print(addr + ": OK");
+						log += address + ": OK";
 					} catch (IOException e) {
-						Server.print(addr + ": host unreachable");
+						log += address + ": host unreachable";
 						continue;
 					}
 					Server.print(addr);
@@ -63,34 +112,36 @@ public class Sender implements Runnable {
 			}
 			break;
 		case SENDMESSAGE:
-			Server.print("MESSAGE request: " + address);
+			log += "MESSAGE request\n";
 			try {
 				URL url = new URL(address);
 				URLConnection urlcon = url.openConnection();
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						urlcon.getInputStream()));
 				br.close();
-				Server.print(address + ": OK");
+				log += address + ": OK";
 			} catch (IOException e) {
-				Server.print(address + ": host unreachable");
-				// send to GUI - "message was not delivered"
-			}	
+				log += address + ": host unreachable";
+				// TODO: send to GUI - "message was not delivered"
+			}
 			break;
 		case SENDNAME:
-			Server.print("SENDNAME request: ");
-			for (String value : Server.knownHosts.getMapOfKnownHosts().values()) {
+			log += "SENDNAME request:\n";
+			for (String value : Server.knownHosts.getMapOfKnownHosts()
+					.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-					String addr = String.format("http://%s/chat/sendname?name=%s"
-							+ "&ip=%s&ttl=%d", value, name, Server.IP + ":"
-							+ Server.PORT, TTL);
+					String addr = String.format("http://%s/chat/sendname?"
+							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
+							+ ":" + Server.PORT, TTL);
 					try {
 						URL url = new URL(addr);
 						URLConnection urlcon = url.openConnection();
-						BufferedReader br = new BufferedReader(new InputStreamReader(
-								urlcon.getInputStream()));
+						BufferedReader br = new BufferedReader(
+								new InputStreamReader(urlcon.getInputStream()));
 						br.close();
+						log += addr + ": OK";
 					} catch (IOException e) {
-						Server.print(addr + ": host unreachable");
+						log += addr + ": host unreachable";
 						continue;
 					}
 					Server.print(addr + ": OK");
@@ -98,29 +149,31 @@ public class Sender implements Runnable {
 			}
 			break;
 		case ASKNAMES:
-			Server.print("ASKNAMES request: ");
-			for (String value : Server.knownHosts.getMapOfKnownHosts().values()) {
+			log += "ASKNAMES request\n";
+			for (String value : Server.knownHosts.getMapOfKnownHosts()
+					.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/asknames?"
-							+"ttl=1", value);
+							+ "ttl=1", value);
 					try {
 						URL url = new URL(addr);
 						URLConnection urlcon = url.openConnection();
-						BufferedReader br = new BufferedReader(new InputStreamReader(
-								urlcon.getInputStream()));
+						BufferedReader br = new BufferedReader(
+								new InputStreamReader(urlcon.getInputStream()));
 						String jsonhosts = br.readLine();
 						Server.knownHosts.addNewHosts(jsonhosts);
 						br.close();
-						Server.print(addr + ": OK");
+						log += addr + ": OK";
 					} catch (IOException e) {
-						Server.print(addr + ": host unreachable");
-						// send to GUI - "cannot get names from a host"
+						log += addr + ": host unreachable";
+						// TODO: send to GUI - "cannot get names from a host"
 						continue;
 					}
 				}
 			}
 			break;
 		}
+		Server.print(log);
 	}
 
 }
