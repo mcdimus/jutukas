@@ -1,17 +1,23 @@
 package client;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.Scanner;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -106,8 +112,7 @@ public class MainWindow {
 		frame = new JFrame("Jutukas");
 		frame.setSize(450, 300);
 		frame.setResizable(false);
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
-				"chat.png"));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("chat.png"));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		UIutils.centerFrameOnScreen(frame);
 
@@ -403,7 +408,33 @@ public class MainWindow {
 		btnConnect = new JButton("Start");
 		btnConnect.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
+				Scanner inputReader = null;
+				PrintWriter pw = null;
+				String content = "";
+				try {
+					inputReader = new Scanner(new File("known_hosts.txt"));
+					inputReader.useDelimiter("\\Z");
+					content = inputReader.next();
+				} catch (FileNotFoundException e1) {
+					System.out.println("Error opening file!!!");
+				} finally {
+					inputReader.close();
+				}
+				
+				try {
+					pw = new PrintWriter(new File("known_hosts.txt"));
+					pw.write("[\n[\"" + lblNameValue.getText() + "\", \""
+							+ lblIpValue.getText() + ":"
+							+ lblPortValue.getText() + "\"],"
+							+ content.substring(1, content.length()));
+				} catch (IOException e) {
+					System.out.println("Error writing to file!!!");
+				} finally {
+					pw.close();
+				}
 				new Server(lblIpValue.getText(), getPortValue());
+				lblStatusValue.setForeground(Color.GREEN);
+				lblStatusValue.setText("running...");
 				btnConnect.setEnabled(false);
 				btnSettings.setEnabled(false);
 				btnClose.setEnabled(true);
@@ -414,13 +445,14 @@ public class MainWindow {
 			}
 		});
 	}
-	
 
 	private void createStopButton() {
 		btnClose = new JButton("Stop");
 		btnClose.setEnabled(false);
 		btnClose.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
+				lblStatusValue.setForeground(Color.RED);
+				lblStatusValue.setText("not running");
 				btnConnect.setEnabled(true);
 				btnSettings.setEnabled(true);
 				btnClose.setEnabled(false);
@@ -436,7 +468,8 @@ public class MainWindow {
 		btnSettings = new JButton("Settings");
 		btnSettings.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
-				new SettingsWindow(getPortValue(), getNicknameValue(), MainWindow.this);
+				new SettingsWindow(getPortValue(), getNicknameValue(),
+						MainWindow.this);
 			}
 		});
 	}
@@ -477,6 +510,7 @@ public class MainWindow {
 		lblPort = new JLabel("Port:");
 		lblName = new JLabel("Name:");
 		lblStatusValue = new JLabel("not running");
+		lblStatusValue.setForeground(Color.RED);
 
 		try {
 			lblIpValue = new JLabel(getIpAddress());
@@ -506,7 +540,7 @@ public class MainWindow {
 	}
 
 	/**
-	 * Returns an ip-address in the current LAN. It can be eth* network or wlan*
+	 * Returns an ip-address in the current LAN. It can be eth* network or net*
 	 * network.
 	 * 
 	 * @return an ip-address in the current LAN.
@@ -527,8 +561,8 @@ public class MainWindow {
 
 			// System.out.println("interface " + cur.getName());
 
-			if (!(cur.getName().contains("eth") || cur.getName().contains(
-					"wlan"))) {
+			if (!(cur.getName().contains("eth") || cur.getName()
+					.contains("net"))) {
 				continue;
 			}
 			for (final InterfaceAddress addr : cur.getInterfaceAddresses()) {
@@ -538,15 +572,14 @@ public class MainWindow {
 					continue;
 				}
 				ipAddress = inetAddr.getHostAddress();
-//				 System.out.println("  address: "
-//				 + inet_addr.getHostAddress() + "/"
-//				 + addr.getNetworkPrefixLength());
-//				
-//				 System.out.println("  broadcast address: "
-//				 + addr.getBroadcast().getHostAddress());
+				// System.out.println("  address: "
+				// + inet_addr.getHostAddress() + "/"
+				// + addr.getNetworkPrefixLength());
+				//
+				// System.out.println("  broadcast address: "
+				// + addr.getBroadcast().getHostAddress());
 			}
 		}
-//		lblIpValue.setText(ipAddress);
 		return ipAddress;
 
 	}
