@@ -3,6 +3,8 @@ package client;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
@@ -54,6 +56,22 @@ public class MainWindow {
 	private JTextField nameToFind;
 
 	private GroupLayout groupLayout;
+
+	private String getPortValue() {
+		return lblPortValue.getText();
+	}
+
+	private String getNicknameValue() {
+		return lblNameValue.getText();
+	}
+
+	public void setPortValue(String port) {
+		lblPortValue.setText(port);
+	}
+
+	public void setNicknameValue(String nickname) {
+		lblNameValue.setText(nickname);
+	}
 
 	/**
 	 * Launch the application.
@@ -387,6 +405,11 @@ public class MainWindow {
 
 	private void createSettingsButton() {
 		btnSettings = new JButton("Settings");
+		btnSettings.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent arg0) {
+				new SettingsWindow(getPortValue(), getNicknameValue(), MainWindow.this);
+			}
+		});
 	}
 
 	private void createAskNamesButton() {
@@ -426,7 +449,7 @@ public class MainWindow {
 		lblStatusValue = new JLabel("not running");
 
 		try {
-			lblIpValue= new JLabel(getIpAddress());
+			lblIpValue = new JLabel(getIpAddress());
 		} catch (SocketException e) {
 			System.err
 					.println("Some shit happened with ip-address serching...");
@@ -472,7 +495,7 @@ public class MainWindow {
 				continue;
 			}
 
-//			System.out.println("interface " + cur.getName());
+			// System.out.println("interface " + cur.getName());
 
 			if (!(cur.getName().contains("eth") || cur.getName().contains(
 					"wlan"))) {
