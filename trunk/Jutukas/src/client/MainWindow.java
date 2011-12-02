@@ -403,35 +403,39 @@ public class MainWindow {
 		createFindNameButtonWithTextField();
 		createSendNameButton();
 	}
+	
+	private void appendNameToFile() {
+		Scanner inputReader = null;
+		PrintWriter pw = null;
+		String content = "";
+		try {
+			inputReader = new Scanner(new File("known_hosts.txt"));
+			inputReader.useDelimiter("\\Z");
+			content = inputReader.next();
+		} catch (FileNotFoundException e1) {
+			System.out.println("Error opening file!!!");
+		} finally {
+			inputReader.close();
+		}
+		
+		try {
+			pw = new PrintWriter(new File("known_hosts.txt"));
+			pw.write("[\n[\"" + lblNameValue.getText() + "\", \""
+					+ lblIpValue.getText() + ":"
+					+ lblPortValue.getText() + "\"],"
+					+ content.substring(1, content.length()));
+		} catch (IOException e) {
+			System.out.println("Error writing to file!!!");
+		} finally {
+			pw.close();
+		}
+	}
 
 	private void createStartButton() {
 		btnConnect = new JButton("Start");
 		btnConnect.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
-				Scanner inputReader = null;
-				PrintWriter pw = null;
-				String content = "";
-				try {
-					inputReader = new Scanner(new File("known_hosts.txt"));
-					inputReader.useDelimiter("\\Z");
-					content = inputReader.next();
-				} catch (FileNotFoundException e1) {
-					System.out.println("Error opening file!!!");
-				} finally {
-					inputReader.close();
-				}
-				
-				try {
-					pw = new PrintWriter(new File("known_hosts.txt"));
-					pw.write("[\n[\"" + lblNameValue.getText() + "\", \""
-							+ lblIpValue.getText() + ":"
-							+ lblPortValue.getText() + "\"],"
-							+ content.substring(1, content.length()));
-				} catch (IOException e) {
-					System.out.println("Error writing to file!!!");
-				} finally {
-					pw.close();
-				}
+				appendNameToFile();
 				new Server(lblIpValue.getText(), getPortValue());
 				lblStatusValue.setForeground(Color.GREEN);
 				lblStatusValue.setText("running...");
