@@ -70,7 +70,7 @@ public class MainWindow {
 
 	private DefaultListModel model;
 
-	private static KnownHostsManager hostsManager = new KnownHostsManager();
+	public static KnownHostsManager hostsManager = new KnownHostsManager();
 
 	private String getPortValue() {
 		return lblPortValue.getText();

@@ -8,8 +8,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Date;
 
-import client.KnownHostsManager;
-
 /**
  * Main <code>Server Thread</code>.
  * 
@@ -34,20 +32,9 @@ public class Server implements Runnable {
 	 */
 	private static BufferedWriter file;
 	/**
-	 * 'Manager' of the hosts located in <i>the known_hosts.txt</i> file.
+	 * Boolean indicates whether the server works (alive) or not (!alive).
 	 */
-	public static KnownHostsManager knownHosts;
-
-	private boolean alive = true;
-
-	public void killServer() {
-		this.alive = false;
-		try {
-			acceptSocket.close();
-		} catch (IOException e) {
-			System.out.println("Problem with server closing!");
-		}
-	}
+	private boolean alive;
 
 	/**
 	 * Create new <code>Server</code>.
@@ -60,6 +47,7 @@ public class Server implements Runnable {
 	public Server(String ip, String port) {
 		IP = ip;
 		PORT = Integer.parseInt(port);
+		alive = true;
 		new Thread(this).start();
 	}
 
@@ -75,10 +63,11 @@ public class Server implements Runnable {
 			while (alive) {
 				try {
 					Socket s = acceptSocket.accept();
-					Server.print("Connection accepted: " + s.getInetAddress());
+					Server.print("Connection accepted: "
+							+ s.getInetAddress().toString().substring(1));
 					createWorkerThread(s);
 				} catch (SocketException e) {
-					System.out.println("Server is not online");
+					System.out.println("Server is offline");
 				}
 			}
 		} catch (IOException e) {
@@ -104,11 +93,6 @@ public class Server implements Runnable {
 		} catch (IOException e) {
 			System.err.println("Unable to write to the file.");
 		}
-		// try {
-		// file.close();
-		// } catch (IOException e) {
-		// System.err.println("Unable to close file.");
-		// }
 		System.out.println(s);
 	}
 
@@ -120,5 +104,22 @@ public class Server implements Runnable {
 	 */
 	private synchronized void createWorkerThread(Socket s) {
 		new Worker(s);
+	}
+
+	/**
+	 * Shuts the server down.
+	 */
+	public void killServer() {
+		this.alive = false;
+		try {
+			acceptSocket.close();
+			try {
+				file.close();
+			} catch (IOException e) {
+				System.err.println("Unable to close file.");
+			}
+		} catch (IOException e) {
+			System.out.println("Problem with server closing!");
+		}
 	}
 }

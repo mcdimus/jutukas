@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+
+import client.MainWindow;
 
 /**
  * This class represents the thread what should complete the task received from
@@ -21,6 +24,10 @@ public class Sender implements Runnable {
 	 */
 	public static final int FINDNAME = 0, SENDMESSAGE = 1, SENDNAME = 2,
 			ASKNAMES = 3;
+	/**
+	 * Map of known hosts (names&IPs) what are being held in the file.
+	 */
+	private HashMap<String, String> knownHosts;
 	/**
 	 * Name to find / name to send.
 	 */
@@ -86,12 +93,12 @@ public class Sender implements Runnable {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
+		knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
 		String log = "";
 		switch (action) {
 		case FINDNAME:
 			log += "FINDNAME request\n";
-			for (String value : Server.knownHosts.getMapOfKnownHosts()
-					.values()) {
+			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/findname?"
 							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
@@ -127,8 +134,7 @@ public class Sender implements Runnable {
 			break;
 		case SENDNAME:
 			log += "SENDNAME request:\n";
-			for (String value : Server.knownHosts.getMapOfKnownHosts()
-					.values()) {
+			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/sendname?"
 							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
@@ -150,8 +156,7 @@ public class Sender implements Runnable {
 			break;
 		case ASKNAMES:
 			log += "ASKNAMES request\n";
-			for (String value : Server.knownHosts.getMapOfKnownHosts()
-					.values()) {
+			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/asknames?"
 							+ "ttl=1", value);
@@ -161,7 +166,7 @@ public class Sender implements Runnable {
 						BufferedReader br = new BufferedReader(
 								new InputStreamReader(urlcon.getInputStream()));
 						String jsonhosts = br.readLine();
-						Server.knownHosts.addNewHosts(jsonhosts);
+						MainWindow.hostsManager.addNewHosts(jsonhosts);
 						br.close();
 						log += addr + ": OK";
 					} catch (IOException e) {
