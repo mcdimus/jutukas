@@ -46,6 +46,8 @@ public class MainWindow {
 	private JLabel statusLine;
 
 	private JTextField nameToFind;
+	
+	private GroupLayout groupLayout;
 
 	/**
 	 * Launch the application.
@@ -89,13 +91,15 @@ public class MainWindow {
 		createKnownUsersList();
 
 		initializeLayout();
+		
+		frame.getContentPane().setLayout(groupLayout);
 	}
 
 	/**
 	 * Initializes the group layout for the frame.
 	 */
 	private void initializeLayout() {
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		groupLayout = new GroupLayout(frame.getContentPane());
 
 		initializeHorizontalGroup(groupLayout);
 		initializeVerticalGroup(groupLayout);
