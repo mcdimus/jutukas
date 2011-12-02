@@ -16,9 +16,12 @@ import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -65,6 +68,8 @@ public class MainWindow {
 	private JTextField nameToFind;
 
 	private GroupLayout groupLayout;
+	
+	private DefaultListModel model;
 
 	private String getPortValue() {
 		return lblPortValue.getText();
@@ -392,9 +397,19 @@ public class MainWindow {
 	private void createKnownUsersList() {
 		lblKnownUsers = new JLabel("Known users:");
 
-		knownUsersList = new JList();
+		model = new DefaultListModel();
+		knownUsersList = new JList(model);
 		knownUsersList.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null,
 				null));
+		checkKnownUsers();
+	}
+	
+	private void checkKnownUsers() {
+		for(String user : getListOfKnownUsers()) {
+			if(!model.contains(user)) {
+				model.addElement(user);
+			}
+		}
 	}
 
 	private void createButtons() {
@@ -458,6 +473,7 @@ public class MainWindow {
 		btnClose.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
 				server.killServer();
+				checkKnownUsers();
 				lblStatusValue.setForeground(Color.RED);
 				lblStatusValue.setText("not running");
 				btnConnect.setEnabled(true);
@@ -528,6 +544,31 @@ public class MainWindow {
 
 		lblPortValue = new JLabel("6666");
 		lblNameValue = new JLabel("kasutaja");
+	}
+	
+	private ArrayList<String> getListOfKnownUsers() {
+		Scanner scanner = null;
+		ArrayList<String> users = new ArrayList<String>();
+		String line = null;
+		StringTokenizer strTok = null;
+		String user = null;
+			try {
+			scanner = new Scanner(new File("known_hosts.txt"));
+			scanner.nextLine();
+			while(scanner.hasNextLine()) {
+				line = scanner.nextLine();
+				if(line.length() == 1) {
+					break;
+				}
+				strTok = new StringTokenizer(line, "\"");
+				strTok.nextToken();
+				user = strTok.nextToken("\"");
+				users.add(user);
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("Error: file does not exist or is empty!");
+		}
+			return users;
 	}
 
 	/**
