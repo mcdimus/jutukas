@@ -124,7 +124,24 @@ public class KnownHostsManager {
 		}
 		// update file.
 		writeJsonStringToFile(gson.toJson(updatedHosts));
+	}
 
+	/**
+	 * Adds one new host.
+	 * 
+	 * @param name
+	 *            - the name of the new host`s owner.
+	 * @param ip
+	 *            - the ip-address of the new host.
+	 */
+	public synchronized void suzanna(String name, String ip) {
+		String[][] newHost = new String[1][1];
+		newHost[0][0] = name;
+		newHost[0][1] = ip;
+
+		String jsonStringWithOneNewHost = gson.toJson(newHost);
+
+		addNewHosts(jsonStringWithOneNewHost);
 	}
 
 	/**
@@ -144,17 +161,17 @@ public class KnownHostsManager {
 		output.flush();
 		output.close();
 	}
-	
+
 	public void replaceFirstEntryInFile(String name, String ip) {
 		String oldJsonString = getJsonStringFromFile();
 		String[][] oldArray = gson.fromJson(oldJsonString, String[][].class);
 		oldArray[0][0] = name;
 		oldArray[0][1] = ip;
-		
+
 		String newJsonString = gson.toJson(oldArray);
 		writeJsonStringToFile(newJsonString);
 	}
-	
+
 	public String getYourNameAndPort() {
 		String jsonString = getJsonStringFromFile();
 		String[][] nameArray = gson.fromJson(jsonString, String[][].class);
