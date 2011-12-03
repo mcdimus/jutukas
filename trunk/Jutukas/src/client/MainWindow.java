@@ -88,6 +88,9 @@ public class MainWindow {
 
 	public void setNicknameValue(String nickname) {
 		lblNameValue.setText(nickname);
+		appendNameToFile();
+		addKnownUsers();
+		knownUsersList.setListData(knownHosts);
 	}
 
 	/**
@@ -550,9 +553,6 @@ public class MainWindow {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				appendNameToFile();
-				addKnownUsers();
-				knownUsersList.setListData(knownHosts);
 				server = new Server(lblIpValue.getText(), getPortValue());
 				statusLine.setText("Server is online.");
 				lblStatusValue.setForeground(Color.GREEN);
