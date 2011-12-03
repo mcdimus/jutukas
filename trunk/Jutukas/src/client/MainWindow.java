@@ -5,8 +5,8 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
@@ -263,15 +263,17 @@ public class MainWindow {
 		lblKnownUsers = new JLabel("Known users:");
 
 		model = new DefaultListModel();
-		checkKnownUsers();
+		 checkKnownUsers();
 	}
 
 	private void checkKnownUsers() {
+		if(!model.isEmpty()) {
+			model.clear();
+		}
+		int index = 1;
 		for (Map.Entry<String, String> entry : hostsManager
 				.getMapOfKnownHosts().entrySet()) {
-			if (!model.contains(entry.getKey())) {
-				model.addElement(entry.getKey());
-			}
+			model.addElement(index++ + ". " + entry.getKey() + " - IP: " + entry.getValue().split(":")[0]);
 		}
 	}
 
@@ -291,33 +293,8 @@ public class MainWindow {
 	 * Append your nickname and IP to the first line.
 	 */
 	private void appendNameToFile() {
-//		Scanner inputReader = null;
-//		PrintWriter pw = null;
-//		String content = "";
-//		try {
-//			inputReader = new Scanner(new File("known_hosts.txt"));
-//			inputReader.useDelimiter("],");
-//			inputReader.next();
-//			inputReader.useDelimiter("\\Z");
-//			content = inputReader.next();
-//			System.out.println(content);
-//		} catch (FileNotFoundException e1) {
-//			System.out.println("Error opening file!!!");
-//		} finally {
-//			inputReader.close();
-//		}
-//
-//		try {
-//			pw = new PrintWriter(new File("known_hosts.txt"));
-//			pw.write("[\n  [\n    \"" + lblNameValue.getText() + "\",\n    \""
-//					+ lblIpValue.getText() + ":" + lblPortValue.getText()
-//					+ "\"\n  ],\n" + content.substring(3, content.length()));
-//		} catch (IOException e) {
-//			System.out.println("Error writing to file!!!");
-//		} finally {
-//			pw.close();
-//		}
-		hostsManager.replaceFirstEntryInFile(getNicknameValue(), lblIpValue.getText() + ":" + getPortValue());
+		hostsManager.replaceFirstEntryInFile(getNicknameValue(),
+				lblIpValue.getText() + ":" + getPortValue());
 	}
 
 	/**
@@ -325,8 +302,10 @@ public class MainWindow {
 	 */
 	private void createStartButton() {
 		btnConnect = new JButton("Connect");
-		btnConnect.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent arg0) {
+		btnConnect.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
 				appendNameToFile();
 				checkKnownUsers();
 				server = new Server(lblIpValue.getText(), getPortValue());
@@ -334,10 +313,11 @@ public class MainWindow {
 				lblStatusValue.setForeground(Color.GREEN);
 				lblStatusValue.setText("running...");
 				buttonsEnabler();
+				
 			}
 		});
 	}
-	
+
 	/**
 	 * Enable buttons when clicked on Start button.
 	 */
@@ -350,7 +330,7 @@ public class MainWindow {
 		btnSendName.setEnabled(true);
 		nameToFind.setEnabled(true);
 	}
-	
+
 	/**
 	 * Disable buttons when clicked on Stop button.
 	 */
@@ -370,14 +350,17 @@ public class MainWindow {
 	private void createStopButton() {
 		btnClose = new JButton("Stop");
 		btnClose.setEnabled(false);
-		btnClose.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent arg0) {
+		btnClose.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
 				server.killServer();
 				statusLine.setText("Press connect to start the server.");
 				lblStatusValue.setForeground(Color.RED);
 				lblStatusValue.setText("not running");
 				buttonsDisabler();
 			}
+			
 		});
 	}
 
@@ -386,8 +369,10 @@ public class MainWindow {
 	 */
 	private void createSettingsButton() {
 		btnSettings = new JButton("Settings");
-		btnSettings.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent arg0) {
+		btnSettings.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
 				new SettingsWindow(getPortValue(), getNicknameValue(),
 						MainWindow.this);
 			}
