@@ -144,4 +144,14 @@ public class KnownHostsManager {
 		output.flush();
 		output.close();
 	}
+	
+	public void replaceFirstEntryInFile(String name, String ip) {
+		String oldJsonString = getJsonStringFromFile();
+		String[][] oldArray = gson.fromJson(oldJsonString, String[][].class);
+		oldArray[0][0] = name;
+		oldArray[0][1] = ip;
+		
+		String newJsonString = gson.toJson(oldArray);
+		writeJsonStringToFile(newJsonString);
+	}
 }

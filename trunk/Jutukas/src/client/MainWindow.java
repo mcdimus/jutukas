@@ -430,32 +430,33 @@ public class MainWindow {
 	 * Append your nickname and IP to the first line.
 	 */
 	private void appendNameToFile() {
-		Scanner inputReader = null;
-		PrintWriter pw = null;
-		String content = "";
-		try {
-			inputReader = new Scanner(new File("known_hosts.txt"));
-			inputReader.useDelimiter("],");
-			inputReader.next();
-			inputReader.useDelimiter("\\Z");
-			content = inputReader.next();
-			System.out.println(content);
-		} catch (FileNotFoundException e1) {
-			System.out.println("Error opening file!!!");
-		} finally {
-			inputReader.close();
-		}
-
-		try {
-			pw = new PrintWriter(new File("known_hosts.txt"));
-			pw.write("[\n  [\n    \"" + lblNameValue.getText() + "\",\n    \""
-					+ lblIpValue.getText() + ":" + lblPortValue.getText()
-					+ "\"\n  ],\n" + content.substring(3, content.length()));
-		} catch (IOException e) {
-			System.out.println("Error writing to file!!!");
-		} finally {
-			pw.close();
-		}
+//		Scanner inputReader = null;
+//		PrintWriter pw = null;
+//		String content = "";
+//		try {
+//			inputReader = new Scanner(new File("known_hosts.txt"));
+//			inputReader.useDelimiter("],");
+//			inputReader.next();
+//			inputReader.useDelimiter("\\Z");
+//			content = inputReader.next();
+//			System.out.println(content);
+//		} catch (FileNotFoundException e1) {
+//			System.out.println("Error opening file!!!");
+//		} finally {
+//			inputReader.close();
+//		}
+//
+//		try {
+//			pw = new PrintWriter(new File("known_hosts.txt"));
+//			pw.write("[\n  [\n    \"" + lblNameValue.getText() + "\",\n    \""
+//					+ lblIpValue.getText() + ":" + lblPortValue.getText()
+//					+ "\"\n  ],\n" + content.substring(3, content.length()));
+//		} catch (IOException e) {
+//			System.out.println("Error writing to file!!!");
+//		} finally {
+//			pw.close();
+//		}
+		hostsManager.replaceFirstEntryInFile(getNicknameValue(), lblIpValue.getText() + ":" + getPortValue());
 	}
 
 	/**
