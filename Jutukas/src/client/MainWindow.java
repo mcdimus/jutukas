@@ -13,6 +13,7 @@ import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.DefaultListModel;
@@ -30,6 +31,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import server.Server;
 
@@ -55,7 +58,9 @@ public class MainWindow {
 	private JButton btnClose;
 
 	private JLabel lblKnownUsers;
+	private DefaultListModel model;
 	private JList knownUsersList;
+	private JScrollPane scrollPane;
 
 	private JPanel statusLinePanel;
 	private JLabel statusLine;
@@ -64,9 +69,10 @@ public class MainWindow {
 
 	private GroupLayout groupLayout;
 
-	private DefaultListModel model;
+	private Server server;
 
 	public static KnownHostsManager hostsManager = new KnownHostsManager();
+	public static HashMap<String, ChatWindow> chatWindowsMap = new HashMap<String, ChatWindow>();
 
 	private String getPortValue() {
 		return lblPortValue.getText();
@@ -84,9 +90,6 @@ public class MainWindow {
 		lblNameValue.setText(nickname);
 	}
 
-	private Server server;
-	private JScrollPane scrollPane;
-
 	/**
 	 * Launch the application.
 	 */
@@ -96,6 +99,7 @@ public class MainWindow {
 				try {
 					MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
+					new ChatWindow();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -139,7 +143,6 @@ public class MainWindow {
 	 */
 	private void initializeLayout() {
 
-		scrollPane = new JScrollPane();
 		groupLayout = new GroupLayout(frame.getContentPane());
 
 		initializeHorizontalGroup(groupLayout);
@@ -402,16 +405,39 @@ public class MainWindow {
 										.addComponent(statusLinePanel,
 												GroupLayout.PREFERRED_SIZE, 18,
 												GroupLayout.PREFERRED_SIZE)));
-		knownUsersList = new JList(model);
-		scrollPane.setViewportView(knownUsersList);
-		knownUsersList.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null,
-				null));
+
 	}
 
 	private void createKnownUsersList() {
 		lblKnownUsers = new JLabel("Known users:");
-
+		scrollPane = new JScrollPane();
 		model = new DefaultListModel();
+		knownUsersList = new JList(model);
+		scrollPane.setViewportView(knownUsersList);
+		knownUsersList.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null,
+				null));
+		knownUsersList.addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+					if (knownUsersList.getSelectedIndex() != -1) {
+
+						// get name from string
+						String selectedStringFromList = (String) knownUsersList
+								.getSelectedValue();
+						String[] temp = selectedStringFromList.split("\\.");
+						temp = temp[1].split(" - ");
+						String name = temp[0].trim();
+						nameToFind.setText(name);
+						}
+					} else {
+						// no selection
+						nameToFind.setText("");
+				}
+
+			}
+		});
 		checkKnownUsers();
 	}
 
@@ -573,8 +599,9 @@ public class MainWindow {
 			System.err
 					.println("Some shit happened with ip-address serching...");
 		}
-		
-		String[] nameAndPortFromFile = hostsManager.getYourNameAndPort().split(";");
+
+		String[] nameAndPortFromFile = hostsManager.getYourNameAndPort().split(
+				";");
 
 		lblPortValue = new JLabel(nameAndPortFromFile[1]);
 		lblNameValue = new JLabel(nameAndPortFromFile[0]);

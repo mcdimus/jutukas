@@ -45,7 +45,7 @@ public class SettingsWindow {
 		settingsFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(
 				"settings.png"));
 		settingsFrame.setTitle("Settings");
-		settingsFrame.setBounds(100, 100, 236, 226);
+		settingsFrame.setSize(236, 226);
 		settingsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		UIutils.centerFrameOnScreen(settingsFrame);
 
