@@ -1,9 +1,11 @@
 package client;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,9 +16,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Map;
 
-import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -58,7 +59,6 @@ public class MainWindow {
 	private JButton btnClose;
 
 	private JLabel lblKnownUsers;
-	private DefaultListModel model;
 	private JList knownUsersList;
 	private JScrollPane scrollPane;
 
@@ -408,11 +408,13 @@ public class MainWindow {
 
 	}
 
+	private String[][] knownHosts;
+
 	private void createKnownUsersList() {
 		lblKnownUsers = new JLabel("Known users:");
 		scrollPane = new JScrollPane();
-		model = new DefaultListModel();
-		knownUsersList = new JList(model);
+		addKnownUsers();
+		knownUsersList = new JList(knownHosts);
 		scrollPane.setViewportView(knownUsersList);
 		knownUsersList.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null,
 				null));
@@ -421,35 +423,90 @@ public class MainWindow {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
-					if (knownUsersList.getSelectedIndex() != -1) {
-
+					if (knownUsersList.getSelectedIndex() != -1 && !((String[])knownUsersList.getSelectedValue())[0].contains("ID")) {
 						// get name from string
-						String selectedStringFromList = (String) knownUsersList
+						String[] selectedStringFromList = (String[]) knownUsersList
 								.getSelectedValue();
-						String[] temp = selectedStringFromList.split("\\.");
-						temp = temp[1].split(" - ");
-						String name = temp[0].trim();
-						nameToFind.setText(name);
-						}
-					} else {
-						// no selection
-						nameToFind.setText("");
+						 String name = selectedStringFromList[1];
+						 nameToFind.setText(name);
+					}
+				} else {
+					// no selection
+					nameToFind.setText("");
 				}
 
 			}
 		});
-		checkKnownUsers();
+		knownUsersList.setCellRenderer(new MyCellRenderer());
 	}
 
-	private void checkKnownUsers() {
-		if (!model.isEmpty()) {
-			model.clear();
+	/**
+	 * @author Aleksei Kulitskov
+	 *
+	 */
+	@SuppressWarnings("serial")
+	private static class MyCellRenderer extends JPanel implements ListCellRenderer {
+		JLabel idLabel, nameLabel, ipLabel;
+
+		MyCellRenderer() {
+			setLayout(new GridLayout(1, 3));
+			idLabel = new JLabel();
+			nameLabel = new JLabel();
+			ipLabel = new JLabel();
+			add(idLabel);
+			add(nameLabel);
+			add(ipLabel);
 		}
+
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			String leftData = ((String[]) value)[0];
+			String middleData = ((String[]) value)[1];
+			String rightData = ((String[]) value)[2];
+			idLabel.setText(leftData);
+			nameLabel.setText(middleData);
+			ipLabel.setText(rightData);
+			if(idLabel.getText().equals("ID")) {
+				idLabel.setOpaque(false);
+				nameLabel.setOpaque(false);
+				ipLabel.setOpaque(false);
+			} else {
+				idLabel.setOpaque(true);
+				nameLabel.setOpaque(true);
+				ipLabel.setOpaque(true);
+			}
+
+			if (isSelected) {
+				idLabel.setBackground(list.getSelectionBackground());
+				idLabel.setForeground(list.getSelectionForeground());
+				nameLabel.setBackground(list.getSelectionBackground());
+				nameLabel.setForeground(list.getSelectionForeground());
+				ipLabel.setBackground(list.getSelectionBackground());
+				ipLabel.setForeground(list.getSelectionForeground());
+			} else {
+				idLabel.setBackground(list.getBackground());
+				idLabel.setForeground(list.getForeground());
+				nameLabel.setBackground(list.getBackground());
+				nameLabel.setForeground(list.getForeground());
+				ipLabel.setBackground(list.getBackground());
+				ipLabel.setForeground(list.getForeground());
+			}
+			setEnabled(list.isEnabled());
+			setFont(list.getFont());
+			return this;
+		}
+	}
+
+	private void addKnownUsers() {
+		knownHosts = new String[hostsManager.getArrayFromJson().length + 1][3];
 		int index = 1;
-		for (Map.Entry<String, String> entry : hostsManager
-				.getMapOfKnownHosts().entrySet()) {
-			model.addElement(index++ + ". " + entry.getKey() + " - IP: "
-					+ entry.getValue().split(":")[0]);
+		knownHosts[0][0] = "ID";
+		knownHosts[0][1] = "Name";
+		knownHosts[0][2] = "IP";
+		for (String[] host : hostsManager.getArrayFromJson()) {
+			knownHosts[index][0] = String.valueOf(index) + ".";
+			knownHosts[index][1] = host[0];
+			knownHosts[index++][2] = host[1].split(":")[0];
 		}
 	}
 
@@ -483,7 +540,8 @@ public class MainWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				appendNameToFile();
-				checkKnownUsers();
+				addKnownUsers();
+				knownUsersList.setListData(knownHosts);
 				server = new Server(lblIpValue.getText(), getPortValue());
 				statusLine.setText("Server is online.");
 				lblStatusValue.setForeground(Color.GREEN);

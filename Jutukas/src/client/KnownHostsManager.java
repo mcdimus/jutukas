@@ -175,7 +175,12 @@ public class KnownHostsManager {
 	public String getYourNameAndPort() {
 		String jsonString = getJsonStringFromFile();
 		String[][] nameArray = gson.fromJson(jsonString, String[][].class);
-		System.out.println(nameArray[0][0] + ";" + nameArray[0][1]);
 		return nameArray[0][0] + ";" + nameArray[0][1].split(":")[1];
+	}
+	
+	public String[][] getArrayFromJson() {
+		String jsonString = getJsonStringFromFile();
+		String[][] knownHosts = gson.fromJson(jsonString, String[][].class);
+		return knownHosts;
 	}
 }
