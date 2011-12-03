@@ -78,7 +78,7 @@ public class MainWindow {
 		return lblPortValue.getText();
 	}
 
-	private String getNicknameValue() {
+	public String getNicknameValue() {
 		return lblNameValue.getText();
 	}
 
@@ -423,12 +423,15 @@ public class MainWindow {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
-					if (knownUsersList.getSelectedIndex() != -1 && !((String[])knownUsersList.getSelectedValue())[0].contains("ID")) {
+					if (knownUsersList.getSelectedIndex() != -1
+							&& !((String[]) knownUsersList.getSelectedValue())[0]
+									.contains("ID") && !((String[]) knownUsersList.getSelectedValue())[1]
+											.equals(lblNameValue.getText())) {
 						// get name from string
 						String[] selectedStringFromList = (String[]) knownUsersList
 								.getSelectedValue();
-						 String name = selectedStringFromList[1];
-						 nameToFind.setText(name);
+						String name = selectedStringFromList[1];
+						nameToFind.setText(name);
 					}
 				} else {
 					// no selection
@@ -437,18 +440,22 @@ public class MainWindow {
 
 			}
 		});
-		knownUsersList.setCellRenderer(new MyCellRenderer());
+		knownUsersList.setCellRenderer(new MyCellRenderer(MainWindow.this));
 	}
 
 	/**
 	 * @author Aleksei Kulitskov
-	 *
+	 * 
 	 */
 	@SuppressWarnings("serial")
-	private static class MyCellRenderer extends JPanel implements ListCellRenderer {
+	private static class MyCellRenderer extends JPanel implements
+			ListCellRenderer {
 		JLabel idLabel, nameLabel, ipLabel;
+		
+		private MainWindow mainWindow;
 
-		MyCellRenderer() {
+		MyCellRenderer(MainWindow window) {
+			this.mainWindow = window;
 			setLayout(new GridLayout(1, 3));
 			idLabel = new JLabel();
 			nameLabel = new JLabel();
@@ -464,9 +471,13 @@ public class MainWindow {
 			String middleData = ((String[]) value)[1];
 			String rightData = ((String[]) value)[2];
 			idLabel.setText(leftData);
-			nameLabel.setText(middleData);
+			if(middleData.equals(mainWindow.getNicknameValue())) {
+				nameLabel.setText("<html><FONT COLOR=RED>you: </FONT>" + middleData + "</html>");
+			} else {
+				nameLabel.setText(middleData);
+			}
 			ipLabel.setText(rightData);
-			if(idLabel.getText().equals("ID")) {
+			if (idLabel.getText().equals("ID")) {
 				idLabel.setOpaque(false);
 				nameLabel.setOpaque(false);
 				ipLabel.setOpaque(false);
