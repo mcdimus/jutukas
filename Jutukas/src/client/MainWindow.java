@@ -88,10 +88,9 @@ public class MainWindow {
 
 	public void setNicknameValue(String nickname) {
 		lblNameValue.setText(nickname);
-		updateKnownUsersList();
 	}
 	
-	private void updateKnownUsersList() {
+	public void updateKnownUsersList() {
 		appendNameToFile();
 		addKnownUsers();
 		knownUsersList.setListData(knownHosts);

@@ -99,6 +99,7 @@ public class SettingsWindow {
 			public void mouseClicked(MouseEvent arg0) {
 				parentWindow.setNicknameValue(nicknameTextField.getText());
 				parentWindow.setPortValue(portTextField.getText());
+				parentWindow.updateKnownUsersList();
 				settingsFrame.dispose();
 			}
 		});
