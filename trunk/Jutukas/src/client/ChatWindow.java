@@ -46,6 +46,13 @@ public class ChatWindow {
 		frame.setVisible(true);
 	}
 
+	public synchronized void acceptMessage(String name, String ip,
+			String message) {
+		// TODO check name in the list: if exists just print out message; if not
+		// add to list and print message)
+		listModel.contains(name + " - " + ip);
+	}
+
 	public synchronized void appendText(String text) {
 		String editorPaneText = editorPane.getText();
 		editorPane.setText(editorPaneText.split("</body>")[0] + "<br>" + text
@@ -95,18 +102,19 @@ public class ChatWindow {
 		editorPane.setEditable(false);
 
 		frame.getContentPane().add(editorPane);
-		
+
 		JList list = new JList();
 		list.setBorder(new LineBorder(Color.BLACK));
+		listModel = new DefaultListModel();
 		list.setModel(listModel);
 		list.setMinimumSize(new Dimension(200, 200));
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.addListSelectionListener(new ListSelectionListener() {
-			
+
 			@Override
 			public void valueChanged(ListSelectionEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 		frame.getContentPane().add(list, BorderLayout.WEST);
