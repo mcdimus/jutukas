@@ -138,10 +138,10 @@ public class MainWindow {
 	 * Initializes the group layout for the frame.
 	 */
 	private void initializeLayout() {
-		
+
 		scrollPane = new JScrollPane();
 		groupLayout = new GroupLayout(frame.getContentPane());
-		
+
 		initializeHorizontalGroup(groupLayout);
 		initializeVerticalGroup(groupLayout);
 	}
@@ -154,49 +154,127 @@ public class MainWindow {
 	 *            - layout.
 	 */
 	private void initializeHorizontalGroup(GroupLayout groupLayout) {
-		groupLayout.setHorizontalGroup(
-				groupLayout.createParallelGroup(Alignment.LEADING)
-					.addComponent(statusLinePanel, GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
-					.addGroup(groupLayout.createSequentialGroup()
-						.addContainerGap()
-						.addComponent(btnClose, GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addComponent(btnSendName, GroupLayout.PREFERRED_SIZE, 342, GroupLayout.PREFERRED_SIZE)
-						.addContainerGap())
-					.addGroup(groupLayout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-							.addComponent(lblJutukas, Alignment.LEADING)
-							.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-									.addComponent(lblPort)
-									.addComponent(lblName))
-								.addGap(18)
-								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-									.addComponent(lblNameValue)
-									.addComponent(lblPortValue)))
-							.addGroup(Alignment.LEADING, groupLayout.createParallelGroup(Alignment.TRAILING, false)
-								.addComponent(btnSettings, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnConnect, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblStatus)
-										.addComponent(lblIp))
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblIpValue)
-										.addComponent(lblStatusValue)))))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-							.addComponent(btnAskNames, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-							.addComponent(lblKnownUsers)
-							.addGroup(groupLayout.createSequentialGroup()
-								.addComponent(btnFindName)
-								.addGap(4)
-								.addComponent(nameToFind, GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)))
-						.addContainerGap())
-			);
+		groupLayout
+				.setHorizontalGroup(groupLayout
+						.createParallelGroup(Alignment.LEADING)
+						.addComponent(statusLinePanel,
+								GroupLayout.DEFAULT_SIZE, 523, Short.MAX_VALUE)
+						.addGroup(
+								groupLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addComponent(btnClose,
+												GroupLayout.DEFAULT_SIZE, 145,
+												Short.MAX_VALUE)
+										.addPreferredGap(
+												ComponentPlacement.UNRELATED)
+										.addComponent(btnSendName,
+												GroupLayout.PREFERRED_SIZE,
+												342, GroupLayout.PREFERRED_SIZE)
+										.addContainerGap())
+						.addGroup(
+								groupLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												groupLayout
+														.createParallelGroup(
+																Alignment.TRAILING)
+														.addComponent(
+																lblJutukas,
+																Alignment.LEADING)
+														.addGroup(
+																Alignment.LEADING,
+																groupLayout
+																		.createSequentialGroup()
+																		.addGroup(
+																				groupLayout
+																						.createParallelGroup(
+																								Alignment.LEADING)
+																						.addComponent(
+																								lblPort)
+																						.addComponent(
+																								lblName))
+																		.addGap(18)
+																		.addGroup(
+																				groupLayout
+																						.createParallelGroup(
+																								Alignment.LEADING)
+																						.addComponent(
+																								lblNameValue)
+																						.addComponent(
+																								lblPortValue)))
+														.addGroup(
+																Alignment.LEADING,
+																groupLayout
+																		.createParallelGroup(
+																				Alignment.TRAILING,
+																				false)
+																		.addComponent(
+																				btnSettings,
+																				Alignment.LEADING,
+																				GroupLayout.DEFAULT_SIZE,
+																				GroupLayout.DEFAULT_SIZE,
+																				Short.MAX_VALUE)
+																		.addComponent(
+																				btnConnect,
+																				Alignment.LEADING,
+																				GroupLayout.DEFAULT_SIZE,
+																				GroupLayout.DEFAULT_SIZE,
+																				Short.MAX_VALUE)
+																		.addGroup(
+																				Alignment.LEADING,
+																				groupLayout
+																						.createSequentialGroup()
+																						.addGroup(
+																								groupLayout
+																										.createParallelGroup(
+																												Alignment.LEADING)
+																										.addComponent(
+																												lblStatus)
+																										.addComponent(
+																												lblIp))
+																						.addPreferredGap(
+																								ComponentPlacement.UNRELATED)
+																						.addGroup(
+																								groupLayout
+																										.createParallelGroup(
+																												Alignment.LEADING)
+																										.addComponent(
+																												lblIpValue)
+																										.addComponent(
+																												lblStatusValue)))))
+										.addPreferredGap(
+												ComponentPlacement.RELATED)
+										.addGroup(
+												groupLayout
+														.createParallelGroup(
+																Alignment.LEADING)
+														.addComponent(
+																btnAskNames,
+																Alignment.TRAILING,
+																GroupLayout.DEFAULT_SIZE,
+																340,
+																Short.MAX_VALUE)
+														.addComponent(
+																scrollPane,
+																GroupLayout.DEFAULT_SIZE,
+																308,
+																Short.MAX_VALUE)
+														.addComponent(
+																lblKnownUsers)
+														.addGroup(
+																groupLayout
+																		.createSequentialGroup()
+																		.addComponent(
+																				btnFindName)
+																		.addGap(4)
+																		.addComponent(
+																				nameToFind,
+																				GroupLayout.DEFAULT_SIZE,
+																				229,
+																				Short.MAX_VALUE)))
+										.addContainerGap()));
 	}
 
 	/**
@@ -207,73 +285,145 @@ public class MainWindow {
 	 *            - layout.
 	 */
 	private void initializeVerticalGroup(GroupLayout groupLayout) {
-		groupLayout.setVerticalGroup(
-				groupLayout.createParallelGroup(Alignment.TRAILING)
-					.addGroup(groupLayout.createSequentialGroup()
-						.addContainerGap()
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-							.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-								.addComponent(lblJutukas)
-								.addGap(5)
-								.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-									.addComponent(lblStatus)
-									.addComponent(lblStatusValue))
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-									.addComponent(lblIp)
-									.addComponent(lblIpValue))
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-									.addGroup(groupLayout.createSequentialGroup()
-										.addComponent(lblPort)
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(lblName))
-									.addGroup(groupLayout.createSequentialGroup()
-										.addComponent(lblPortValue)
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(lblNameValue)))
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-									.addComponent(btnConnect)
-									.addComponent(btnAskNames)))
-							.addGroup(groupLayout.createSequentialGroup()
-								.addComponent(lblKnownUsers)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-								.addGap(41)))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-							.addComponent(nameToFind)
-							.addComponent(btnSettings, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addComponent(btnFindName, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-							.addComponent(btnClose)
-							.addComponent(btnSendName))
-						.addPreferredGap(ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-						.addComponent(statusLinePanel, GroupLayout.PREFERRED_SIZE, 18, GroupLayout.PREFERRED_SIZE))
-			);
-			knownUsersList = new JList(model);
-			scrollPane.setViewportView(knownUsersList);
-			knownUsersList.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null,
-					null));
+		groupLayout
+				.setVerticalGroup(groupLayout
+						.createParallelGroup(Alignment.TRAILING)
+						.addGroup(
+								groupLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addGroup(
+												groupLayout
+														.createParallelGroup(
+																Alignment.LEADING)
+														.addGroup(
+																Alignment.TRAILING,
+																groupLayout
+																		.createSequentialGroup()
+																		.addComponent(
+																				lblJutukas)
+																		.addGap(5)
+																		.addGroup(
+																				groupLayout
+																						.createParallelGroup(
+																								Alignment.BASELINE)
+																						.addComponent(
+																								lblStatus)
+																						.addComponent(
+																								lblStatusValue))
+																		.addPreferredGap(
+																				ComponentPlacement.RELATED)
+																		.addGroup(
+																				groupLayout
+																						.createParallelGroup(
+																								Alignment.BASELINE)
+																						.addComponent(
+																								lblIp)
+																						.addComponent(
+																								lblIpValue))
+																		.addPreferredGap(
+																				ComponentPlacement.RELATED)
+																		.addGroup(
+																				groupLayout
+																						.createParallelGroup(
+																								Alignment.TRAILING)
+																						.addGroup(
+																								groupLayout
+																										.createSequentialGroup()
+																										.addComponent(
+																												lblPort)
+																										.addPreferredGap(
+																												ComponentPlacement.RELATED)
+																										.addComponent(
+																												lblName))
+																						.addGroup(
+																								groupLayout
+																										.createSequentialGroup()
+																										.addComponent(
+																												lblPortValue)
+																										.addPreferredGap(
+																												ComponentPlacement.RELATED)
+																										.addComponent(
+																												lblNameValue)))
+																		.addPreferredGap(
+																				ComponentPlacement.UNRELATED)
+																		.addGroup(
+																				groupLayout
+																						.createParallelGroup(
+																								Alignment.BASELINE)
+																						.addComponent(
+																								btnConnect)
+																						.addComponent(
+																								btnAskNames)))
+														.addGroup(
+																groupLayout
+																		.createSequentialGroup()
+																		.addComponent(
+																				lblKnownUsers)
+																		.addPreferredGap(
+																				ComponentPlacement.RELATED)
+																		.addComponent(
+																				scrollPane,
+																				GroupLayout.PREFERRED_SIZE,
+																				100,
+																				GroupLayout.PREFERRED_SIZE)
+																		.addGap(41)))
+										.addPreferredGap(
+												ComponentPlacement.RELATED)
+										.addGroup(
+												groupLayout
+														.createParallelGroup(
+																Alignment.LEADING,
+																false)
+														.addComponent(
+																nameToFind)
+														.addComponent(
+																btnSettings,
+																GroupLayout.DEFAULT_SIZE,
+																GroupLayout.DEFAULT_SIZE,
+																Short.MAX_VALUE)
+														.addComponent(
+																btnFindName,
+																GroupLayout.DEFAULT_SIZE,
+																GroupLayout.DEFAULT_SIZE,
+																Short.MAX_VALUE))
+										.addPreferredGap(
+												ComponentPlacement.RELATED)
+										.addGroup(
+												groupLayout
+														.createParallelGroup(
+																Alignment.LEADING)
+														.addComponent(btnClose)
+														.addComponent(
+																btnSendName))
+										.addPreferredGap(
+												ComponentPlacement.RELATED, 20,
+												Short.MAX_VALUE)
+										.addComponent(statusLinePanel,
+												GroupLayout.PREFERRED_SIZE, 18,
+												GroupLayout.PREFERRED_SIZE)));
+		knownUsersList = new JList(model);
+		scrollPane.setViewportView(knownUsersList);
+		knownUsersList.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null,
+				null));
 	}
 
 	private void createKnownUsersList() {
 		lblKnownUsers = new JLabel("Known users:");
 
 		model = new DefaultListModel();
-		 checkKnownUsers();
+		checkKnownUsers();
 	}
 
 	private void checkKnownUsers() {
-		if(!model.isEmpty()) {
+		if (!model.isEmpty()) {
 			model.clear();
 		}
 		int index = 1;
 		for (Map.Entry<String, String> entry : hostsManager
 				.getMapOfKnownHosts().entrySet()) {
-			model.addElement(index++ + ". " + entry.getKey() + " - IP: " + entry.getValue().split(":")[0]);
+			model.addElement(index++ + ". " + entry.getKey() + " - IP: "
+					+ entry.getValue().split(":")[0]);
 		}
 	}
 
@@ -303,7 +453,7 @@ public class MainWindow {
 	private void createStartButton() {
 		btnConnect = new JButton("Connect");
 		btnConnect.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				appendNameToFile();
@@ -313,7 +463,7 @@ public class MainWindow {
 				lblStatusValue.setForeground(Color.GREEN);
 				lblStatusValue.setText("running...");
 				buttonsEnabler();
-				
+
 			}
 		});
 	}
@@ -360,7 +510,7 @@ public class MainWindow {
 				lblStatusValue.setText("not running");
 				buttonsDisabler();
 			}
-			
+
 		});
 	}
 
@@ -370,7 +520,7 @@ public class MainWindow {
 	private void createSettingsButton() {
 		btnSettings = new JButton("Settings");
 		btnSettings.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new SettingsWindow(getPortValue(), getNicknameValue(),
@@ -423,9 +573,11 @@ public class MainWindow {
 			System.err
 					.println("Some shit happened with ip-address serching...");
 		}
+		
+		String[] nameAndPortFromFile = hostsManager.getYourNameAndPort().split(";");
 
-		lblPortValue = new JLabel("6666");
-		lblNameValue = new JLabel("kasutaja");
+		lblPortValue = new JLabel(nameAndPortFromFile[1]);
+		lblNameValue = new JLabel(nameAndPortFromFile[0]);
 	}
 
 	/**

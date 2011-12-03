@@ -154,4 +154,11 @@ public class KnownHostsManager {
 		String newJsonString = gson.toJson(oldArray);
 		writeJsonStringToFile(newJsonString);
 	}
+	
+	public String getYourNameAndPort() {
+		String jsonString = getJsonStringFromFile();
+		String[][] nameArray = gson.fromJson(jsonString, String[][].class);
+		System.out.println(nameArray[0][0] + ";" + nameArray[0][1]);
+		return nameArray[0][0] + ";" + nameArray[0][1].split(":")[1];
+	}
 }
