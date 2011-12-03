@@ -62,9 +62,9 @@ public class Sender implements Runnable {
 	 *            - FINDNAME or SENDNAME request (use
 	 *            <code>Sender.FINDNAME</code> or <code>Sender.SENDNAME</code>)
 	 */
-	public Sender(String nameHere, int actionConstant) {
+	public Sender(String nameHere) {
 		name = nameHere;
-		action = actionConstant;
+//		action = actionConstant;
 		new Thread(this).start();
 	}
 
