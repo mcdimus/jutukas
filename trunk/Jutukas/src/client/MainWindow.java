@@ -35,6 +35,7 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import server.Sender;
 import server.Server;
 
 public class MainWindow {
@@ -51,9 +52,9 @@ public class MainWindow {
 	private JLabel lblPortValue;
 	private JLabel lblNameValue;
 
-	private JButton btnAskNames;
+	// private JButton btnAskNames;
 	private JButton btnFindName;
-	private JButton btnSendName;
+	// private JButton btnSendName;
 	private JButton btnConnect;
 	private JButton btnSettings;
 	private JButton btnClose;
@@ -89,7 +90,7 @@ public class MainWindow {
 	public void setNicknameValue(String nickname) {
 		lblNameValue.setText(nickname);
 	}
-	
+
 	public void updateKnownUsersList() {
 		appendNameToFile();
 		addKnownUsers();
@@ -105,7 +106,7 @@ public class MainWindow {
 				try {
 					MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
-					new ChatWindow();
+					// new ChatWindow();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -177,9 +178,9 @@ public class MainWindow {
 												Short.MAX_VALUE)
 										.addPreferredGap(
 												ComponentPlacement.UNRELATED)
-										.addComponent(btnSendName,
-												GroupLayout.PREFERRED_SIZE,
-												342, GroupLayout.PREFERRED_SIZE)
+										// .addComponent(btnSendName,
+										// GroupLayout.PREFERRED_SIZE,
+										// 342, GroupLayout.PREFERRED_SIZE)
 										.addContainerGap())
 						.addGroup(
 								groupLayout
@@ -259,12 +260,12 @@ public class MainWindow {
 												groupLayout
 														.createParallelGroup(
 																Alignment.LEADING)
-														.addComponent(
-																btnAskNames,
-																Alignment.TRAILING,
-																GroupLayout.DEFAULT_SIZE,
-																340,
-																Short.MAX_VALUE)
+														// .addComponent(
+														// btnAskNames,
+														// Alignment.TRAILING,
+														// GroupLayout.DEFAULT_SIZE,
+														// 340,
+														// Short.MAX_VALUE)
 														.addComponent(
 																scrollPane,
 																GroupLayout.DEFAULT_SIZE,
@@ -362,8 +363,9 @@ public class MainWindow {
 																								Alignment.BASELINE)
 																						.addComponent(
 																								btnConnect)
-																						.addComponent(
-																								btnAskNames)))
+																		// .addComponent(
+																		// btnAskNames)
+																		))
 														.addGroup(
 																groupLayout
 																		.createSequentialGroup()
@@ -403,8 +405,9 @@ public class MainWindow {
 														.createParallelGroup(
 																Alignment.LEADING)
 														.addComponent(btnClose)
-														.addComponent(
-																btnSendName))
+										// .addComponent(
+										// btnSendName)
+										)
 										.addPreferredGap(
 												ComponentPlacement.RELATED, 20,
 												Short.MAX_VALUE)
@@ -431,8 +434,9 @@ public class MainWindow {
 				if (!e.getValueIsAdjusting()) {
 					if (knownUsersList.getSelectedIndex() != -1
 							&& !((String[]) knownUsersList.getSelectedValue())[0]
-									.contains("ID") && !((String[]) knownUsersList.getSelectedValue())[1]
-											.equals(lblNameValue.getText())) {
+									.contains("ID")
+							&& !((String[]) knownUsersList.getSelectedValue())[1]
+									.equals(lblNameValue.getText())) {
 						// get name from string
 						String[] selectedStringFromList = (String[]) knownUsersList
 								.getSelectedValue();
@@ -457,7 +461,7 @@ public class MainWindow {
 	private static class MyCellRenderer extends JPanel implements
 			ListCellRenderer {
 		JLabel idLabel, nameLabel, ipLabel;
-		
+
 		private MainWindow mainWindow;
 
 		MyCellRenderer(MainWindow window) {
@@ -477,8 +481,9 @@ public class MainWindow {
 			String middleData = ((String[]) value)[1];
 			String rightData = ((String[]) value)[2];
 			idLabel.setText(leftData);
-			if(middleData.equals(mainWindow.getNicknameValue())) {
-				nameLabel.setText("<html><FONT COLOR=RED>you: </FONT>" + middleData + "</html>");
+			if (middleData.equals(mainWindow.getNicknameValue())) {
+				nameLabel.setText("<html><FONT COLOR=RED>you: </FONT>"
+						+ middleData + "</html>");
 			} else {
 				nameLabel.setText(middleData);
 			}
@@ -515,15 +520,16 @@ public class MainWindow {
 	}
 
 	private void addKnownUsers() {
-		knownHosts = new String[hostsManager.getArrayFromJson().length + 1][3];
+		String[][] arrayFromJson = hostsManager.getArrayFromJson();
+		knownHosts = new String[arrayFromJson.length + 1][3];
 		int index = 1;
 		knownHosts[0][0] = "ID";
 		knownHosts[0][1] = "Name";
 		knownHosts[0][2] = "IP";
-		for (String[] host : hostsManager.getArrayFromJson()) {
+		for (String[] host : arrayFromJson) {
 			knownHosts[index][0] = String.valueOf(index) + ".";
 			knownHosts[index][1] = host[0];
-			knownHosts[index++][2] = host[1].split(":")[0];
+			knownHosts[index++][2] = host[1];
 		}
 	}
 
@@ -534,9 +540,9 @@ public class MainWindow {
 		createStartButton();
 		createStopButton();
 		createSettingsButton();
-		createAskNamesButton();
+		// createAskNamesButton();
 		createFindNameButtonWithTextField();
-		createSendNameButton();
+		// createSendNameButton();
 	}
 
 	/**
@@ -573,9 +579,9 @@ public class MainWindow {
 		btnConnect.setEnabled(false);
 		btnSettings.setEnabled(false);
 		btnClose.setEnabled(true);
-		btnAskNames.setEnabled(true);
+		// btnAskNames.setEnabled(true);
 		btnFindName.setEnabled(true);
-		btnSendName.setEnabled(true);
+		// btnSendName.setEnabled(true);
 		nameToFind.setEnabled(true);
 	}
 
@@ -586,9 +592,9 @@ public class MainWindow {
 		btnConnect.setEnabled(true);
 		btnSettings.setEnabled(true);
 		btnClose.setEnabled(false);
-		btnAskNames.setEnabled(false);
+		// btnAskNames.setEnabled(false);
 		btnFindName.setEnabled(false);
-		btnSendName.setEnabled(false);
+		// btnSendName.setEnabled(false);
 		nameToFind.setEnabled(false);
 	}
 
@@ -627,10 +633,10 @@ public class MainWindow {
 		});
 	}
 
-	private void createAskNamesButton() {
-		btnAskNames = new JButton("Ask names");
-		btnAskNames.setEnabled(false);
-	}
+	// private void createAskNamesButton() {
+	// btnAskNames = new JButton("Ask names");
+	// btnAskNames.setEnabled(false);
+	// }
 
 	private void createFindNameButtonWithTextField() {
 
@@ -640,12 +646,19 @@ public class MainWindow {
 
 		btnFindName = new JButton("Find name");
 		btnFindName.setEnabled(false);
+		btnFindName.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new Sender(nameToFind.getText());
+			}
+		});
 	}
 
-	private void createSendNameButton() {
-		btnSendName = new JButton("Send name");
-		btnSendName.setEnabled(false);
-	}
+	// private void createSendNameButton() {
+	// btnSendName = new JButton("Send name");
+	// btnSendName.setEnabled(false);
+	// }
 
 	/**
 	 * Creates information block with labels.

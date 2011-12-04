@@ -3,6 +3,7 @@ package server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.NoRouteToHostException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -94,89 +95,96 @@ public class Sender implements Runnable {
 	public void run() {
 		knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
 		String log = "";
-//		switch (action) {
-//		case FINDNAME:
-//			log += "FINDNAME request\n";
-//			for (String value : knownHosts.values()) {
-//				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-//					String addr = String.format("http://%s/chat/findname?"
-//							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
-//							+ ":" + Server.PORT, TTL);
-//					try {
-//						URL url = new URL(addr);
-//						URLConnection urlcon = url.openConnection();
-//						BufferedReader br = new BufferedReader(
-//								new InputStreamReader(urlcon.getInputStream()));
-//						br.close();
-//						log += address + ": OK";
-//					} catch (IOException e) {
-//						log += address + ": host unreachable";
-//						continue;
-//					}
-//					Server.print(addr);
-//				}
-//			}
-//			break;
-//		case SENDMESSAGE:
-//			log += "MESSAGE request\n";
-//			try {
-//				URL url = new URL(address);
-//				URLConnection urlcon = url.openConnection();
-//				BufferedReader br = new BufferedReader(new InputStreamReader(
-//						urlcon.getInputStream()));
-//				br.close();
-//				log += address + ": OK";
-//			} catch (IOException e) {
-//				log += address + ": host unreachable";
-//				// TODO: send to GUI - "message was not delivered"
-//			}
-//			break;
-//		case SENDNAME:
-//			log += "SENDNAME request:\n";
-//			for (String value : knownHosts.values()) {
-//				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-//					String addr = String.format("http://%s/chat/sendname?"
-//							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
-//							+ ":" + Server.PORT, TTL);
-//					try {
-//						URL url = new URL(addr);
-//						URLConnection urlcon = url.openConnection();
-//						BufferedReader br = new BufferedReader(
-//								new InputStreamReader(urlcon.getInputStream()));
-//						br.close();
-//						log += addr + ": OK";
-//					} catch (IOException e) {
-//						log += addr + ": host unreachable";
-//						continue;
-//					}
-//					Server.print(addr + ": OK");
-//				}
-//			}
-//			break;
-//		case ASKNAMES:
-			log += "ASKNAMES request\n";
-			for (String value : knownHosts.values()) {
-				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-					String addr = String.format("http://%s/chat/asknames?"
-							+ "ttl=1", value);
-					try {
-						URL url = new URL(addr);
-						URLConnection urlcon = url.openConnection();
-						BufferedReader br = new BufferedReader(
-								new InputStreamReader(urlcon.getInputStream()));
-						String jsonhosts = br.readLine();
-						MainWindow.hostsManager.addNewHosts(jsonhosts);
-						br.close();
-						log += addr + ": OK\n";
-					} catch (IOException e) {
-						log += addr + ": host unreachable\n";
-						// TODO: send to GUI - "cannot get names from a host"
-						continue;
-					}
+		// switch (action) {
+		// case FINDNAME:
+		// log += "FINDNAME request\n";
+		// for (String value : knownHosts.values()) {
+		// if (!value.equals(Server.IP + ":" + Server.PORT)) {
+		// String addr = String.format("http://%s/chat/findname?"
+		// + "name=%s&ip=%s&ttl=%d", value, name, Server.IP
+		// + ":" + Server.PORT, TTL);
+		// try {
+		// URL url = new URL(addr);
+		// URLConnection urlcon = url.openConnection();
+		// BufferedReader br = new BufferedReader(
+		// new InputStreamReader(urlcon.getInputStream()));
+		// br.close();
+		// log += address + ": OK";
+		// } catch (IOException e) {
+		// log += address + ": host unreachable";
+		// continue;
+		// }
+		// Server.print(addr);
+		// }
+		// }
+		// break;
+		// case SENDMESSAGE:
+		// log += "MESSAGE request\n";
+		// try {
+		// URL url = new URL(address);
+		// URLConnection urlcon = url.openConnection();
+		// BufferedReader br = new BufferedReader(new InputStreamReader(
+		// urlcon.getInputStream()));
+		// br.close();
+		// log += address + ": OK";
+		// } catch (IOException e) {
+		// log += address + ": host unreachable";
+		// // TODO: send to GUI - "message was not delivered"
+		// }
+		// break;
+		// case SENDNAME:
+		// log += "SENDNAME request:\n";
+		// for (String value : knownHosts.values()) {
+		// if (!value.equals(Server.IP + ":" + Server.PORT)) {
+		// String addr = String.format("http://%s/chat/sendname?"
+		// + "name=%s&ip=%s&ttl=%d", value, name, Server.IP
+		// + ":" + Server.PORT, TTL);
+		// try {
+		// URL url = new URL(addr);
+		// URLConnection urlcon = url.openConnection();
+		// BufferedReader br = new BufferedReader(
+		// new InputStreamReader(urlcon.getInputStream()));
+		// br.close();
+		// log += addr + ": OK";
+		// } catch (IOException e) {
+		// log += addr + ": host unreachable";
+		// continue;
+		// }
+		// Server.print(addr + ": OK");
+		// }
+		// }
+		// break;
+		// case ASKNAMES:
+		log += "ASKNAMES request\n";
+		for (String value : knownHosts.values()) {
+			if (!value.equals(Server.IP + ":" + Server.PORT)) {
+				String addr = String.format("http://%s/chat/asknames?"
+						+ "ttl=1", value);
+				try {
+					URL url = new URL(addr);
+					URLConnection urlcon = url.openConnection();
+					BufferedReader br = new BufferedReader(
+							new InputStreamReader(urlcon.getInputStream()));
+					String jsonhosts = br.readLine();
+					System.out.println(jsonhosts);
+					MainWindow.hostsManager.addNewHosts(jsonhosts);
+					br.close();
+					log += addr + ": OK\n";
+				} catch (NoRouteToHostException e) {
+//					log += addr + ": host unreachable\n";
+					log += addr + ": " + e.getMessage() + "\n";
+					continue;
+				} catch (IOException e) {
+					// System.out.println(e.getMessage());
+					log += addr + ": " + e.getMessage() + "\n";
+					// TODO: send to GUI - "cannot get names from a host"
+
 				}
 			}
-//			break;
-//		}
+		}
+		// break;
+		// }
+//		MainWindow.addKnownUsers();
 		Server.print(log);
 	}
 

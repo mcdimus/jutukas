@@ -1,6 +1,7 @@
 package client;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -15,21 +16,17 @@ import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.JList;
 import javax.swing.ListSelectionModel;
-import java.awt.Component;
-import javax.swing.AbstractListModel;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import java.awt.Color;
 
 public class ChatWindow {
 
@@ -50,7 +47,14 @@ public class ChatWindow {
 			String message) {
 		// TODO check name in the list: if exists just print out message; if not
 		// add to list and print message)
-		listModel.contains(name + " - " + ip);
+		if (!listModel.contains(name + " - " + ip)) {
+			listModel.addElement(name + " - " + ip);
+		}
+		appendText(message);
+	}
+	
+	public void sendMessage() {
+		
 	}
 
 	public synchronized void appendText(String text) {
