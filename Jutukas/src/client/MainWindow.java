@@ -15,6 +15,7 @@ import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.HashMap;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -71,7 +72,7 @@ public class MainWindow {
 
 	private Server server;
 	
-	private ChatWindow chatWindow;
+	public static HashMap<String, ChatWindow> chatWindows = new HashMap<String, ChatWindow>();
 
 	/**
 	 * Hosts Manager.
@@ -130,7 +131,6 @@ public class MainWindow {
 				try {
 					MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
-					window.chatWindow = new ChatWindow();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -384,7 +384,9 @@ public class MainWindow {
 	
 	public void userFound(String name, String ip) {
 		statusLine.setText("User " + name + " found! Chat started...");
+		ChatWindow chatWindow = new ChatWindow();
 		chatWindow.addUser(name + " - " + ip);
+		chatWindows.put(name, chatWindow);
 		if (!chatWindow.isVisible()) {
 			chatWindow.setVisible(true);
 		}
