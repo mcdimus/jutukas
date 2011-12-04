@@ -3,9 +3,10 @@ package server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Date;
+import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
@@ -37,6 +38,7 @@ public class Sender implements Runnable {
 	 * Name to find / name to send.
 	 */
 	private String name;
+	private String encodedName;
 	/**
 	 * Used in SENDMESSAGE action as the URL to send message to.
 	 */
@@ -73,6 +75,7 @@ public class Sender implements Runnable {
 	public Sender(String nameHere, int actionConstant) {
 		name = nameHere;
 		action = actionConstant;
+		encodedName = encodeString(nameHere);
 		new Thread(this).start();
 	}
 
@@ -89,8 +92,10 @@ public class Sender implements Runnable {
 	 */
 	public Sender(String hostName, String ip, String message) {
 		name = hostName;
+		encodedName = encodeString(Server.NAME);
+		message = encodeString(message);
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
-				+ "&message=%s&ttl=%d", ip, name,
+				+ "&message=%s&ttl=%d", ip, encodedName,
 				Server.IP + ":" + Server.PORT, message, ttl);
 		action = SENDMESSAGE;
 		new Thread(this).start();
@@ -137,8 +142,7 @@ public class Sender implements Runnable {
 				Server.print(address + ": OK");
 			} catch (IOException e) {
 				Server.print(address + ": " + e.getMessage());
-				MainWindow.chatWindows.get(name).appendText(new Date(),
-						"Error",
+				MainWindow.chatWindows.get(name).appendText("Error",
 						"Failed to deliver the message to " + name + ".", "red");
 			}
 			break;
@@ -208,5 +212,14 @@ public class Sender implements Runnable {
 			break;
 		}
 	}
-
+	
+	private String encodeString(String in) {
+		String answer = null;
+		try {
+			answer = URLEncoder.encode(in, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return answer;
+	}
 }

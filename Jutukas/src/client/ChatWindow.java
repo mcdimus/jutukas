@@ -48,13 +48,12 @@ public class ChatWindow {
 
 	public synchronized void acceptMessage(String name, String ip,
 			String message) {
-		appendText(new Date(), name, message, "blue");
+		appendText(name, message, "blue");
 	}
 
 	public void sendMessage() {
-		Date now = new Date();
 		String messageToSend = textField.getText();
-		appendText(now, Server.NAME, messageToSend, "green");
+		appendText(Server.NAME, messageToSend, "green");
 		textField.setText("");
 		new Sender(opponentName, opponetnIp, messageToSend);
 	}
@@ -62,7 +61,8 @@ public class ChatWindow {
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat(
 			"dd.MM.yyyy - HH:mm:ss");
 
-	public synchronized void appendText(Date now, String name, String message, String color) {
+	public synchronized void appendText(String name, String message, String color) {
+		Date now = new Date();
 		String editorPaneText = editorPane.getText();
 		String text = "<html><font size=2 color=grey><i>"
 				+ dateFormatter.format(now)
