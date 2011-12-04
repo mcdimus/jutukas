@@ -3,10 +3,13 @@ package server;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Date;
+
+import javax.swing.JOptionPane;
 
 /**
  * Main <code>Server Thread</code>.
@@ -44,9 +47,9 @@ public class Server implements Runnable {
 	 *            - <code>Server</code>'s IP
 	 * @param port
 	 *            - <code>Server</code>'s port
-	 * @param string 
+	 * @param string
 	 */
-	public Server(String name,String ip, String port) {
+	public Server(String name, String ip, String port) {
 		NAME = name;
 		IP = ip;
 		PORT = Integer.parseInt(port);
@@ -73,6 +76,10 @@ public class Server implements Runnable {
 					Server.print("Server is offline\n");
 				}
 			}
+		} catch (BindException e) {
+			System.out.println(e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			System.exit(0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
