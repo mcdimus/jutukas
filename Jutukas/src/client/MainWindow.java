@@ -623,11 +623,14 @@ public class MainWindow {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Sender(nameToFind.getText());
+				new Sender(nameToFind.getText(), MainWindow.this);
 			}
 		});
 	}
 
+	public void userNotFound() {
+		
+	}
 	// private void createSendNameButton() {
 	// btnSendName = new JButton("Send name");
 	// btnSendName.setEnabled(false);
