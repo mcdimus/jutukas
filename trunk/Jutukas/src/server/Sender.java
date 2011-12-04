@@ -87,10 +87,10 @@ public class Sender implements Runnable {
 	 * @param message
 	 *            - message to send
 	 */
-	public Sender(String hostName, String ip, String message) {
+	public Sender(String userName, String hostName, String ip, String message) {
 		name = hostName;
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
-				+ "&message=%s&ttl=%d", ip, name,
+				+ "&message=%s&ttl=%d", ip, userName,
 				Server.IP + ":" + Server.PORT, message, ttl);
 		action = SENDMESSAGE;
 		new Thread(this).start();
