@@ -20,6 +20,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -37,17 +38,15 @@ public class ChatWindow {
 	private final JEditorPane editorPane = new JEditorPane();
 	private DefaultListModel listModel;
 	private JList list;
-	
 
 	/**
 	 * Create the application.
-	 * @param mainWindow 
+	 * 
+	 * @param mainWindow
 	 */
 	public ChatWindow() {
 		initialize();
 	}
-
-
 
 	public synchronized void acceptMessage(String name, String ip,
 			String message) {
@@ -58,11 +57,24 @@ public class ChatWindow {
 		}
 		appendText(message);
 	}
-	
+
 	public void sendMessage() {
 		String selectedValue = (String) list.getSelectedValue();
-		System.out.println(selectedValue);
-//		new Sender(hostName, ip, message);
+		if (selectedValue != null) {
+			System.out.println("Getting Value:");
+			System.out.println(selectedValue);
+			String[] parts = selectedValue.split(" - ");
+			String hostName = parts[0];
+			String ip = parts[1];
+			String message = textField.getText();
+			System.out.println(String.format("%s\t%s\t%s\n", hostName, ip,
+					message));
+			new Sender(hostName, ip, message);
+		} else {
+			JOptionPane.showMessageDialog(frame,
+					"You should select your opponent!", "Attention",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 
 	public synchronized void appendText(String text) {
@@ -71,18 +83,20 @@ public class ChatWindow {
 				+ "</body>");
 
 	}
+
 	public void addUser(String string) {
 		listModel.addElement(string);
-		
+
 	}
 
 	public boolean isVisible() {
 		return frame.isVisible();
 	}
-	
-	public void setVisible (boolean visible) {
+
+	public void setVisible(boolean visible) {
 		frame.setVisible(visible);
 	}
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -112,6 +126,7 @@ public class ChatWindow {
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent arg0) {
 				appendText(textField.getText());
+				sendMessage();
 				textField.setText("");
 			}
 		});
@@ -231,5 +246,4 @@ public class ChatWindow {
 
 	}
 
-	
 }
