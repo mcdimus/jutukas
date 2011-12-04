@@ -39,6 +39,7 @@ public class Sender implements Runnable {
 	 * Name to find / name to send.
 	 */
 	private String name;
+	private String encodedName;
 	/**
 	 * Used in SENDMESSAGE action as the URL to send message to.
 	 */
@@ -55,7 +56,7 @@ public class Sender implements Runnable {
 	
 	private Sender(String n) {
 		try {
-			name = URLEncoder.encode(n, "UTF-8");
+			encodedName = URLEncoder.encode(n, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}	
@@ -65,7 +66,7 @@ public class Sender implements Runnable {
 	 * Use this constructor to create new ASKNAMES request.
 	 */
 	public Sender(String nameToFind, MainWindow parent) {
-		this(nameToFind);
+		name = nameToFind;
 		mainWindow = parent;
 		action = ASKNAMES;
 		new Thread(this).start();
@@ -82,6 +83,7 @@ public class Sender implements Runnable {
 	 */
 	public Sender(String nameHere, int actionConstant) {
 		this(nameHere);
+		name = nameHere;
 		action = actionConstant;
 		new Thread(this).start();
 	}
@@ -101,7 +103,7 @@ public class Sender implements Runnable {
 		this(Server.NAME);
 		name = hostName;
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
-				+ "&message=%s&ttl=%d", ip, name,
+				+ "&message=%s&ttl=%d", ip, encodedName,
 				Server.IP + ":" + Server.PORT, message, ttl);
 		action = SENDMESSAGE;
 		new Thread(this).start();
@@ -120,7 +122,7 @@ public class Sender implements Runnable {
 			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/findname?"
-							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
+							+ "name=%s&ip=%s&ttl=%d", value, encodedName, Server.IP
 							+ ":" + Server.PORT, ttl);
 					try {
 						URL url = new URL(addr);
@@ -160,7 +162,7 @@ public class Sender implements Runnable {
 			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/sendname?"
-							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
+							+ "name=%s&ip=%s&ttl=%d", value, encodedName, Server.IP
 							+ ":" + Server.PORT, ttl);
 					try {
 						URL url = new URL(addr);
