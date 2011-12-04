@@ -49,10 +49,12 @@ public class Sender implements Runnable {
 	 */
 	private static final int TTL = 1;
 
+	private MainWindow mainWindow;
 	/**
 	 * Use this constructor to create new ASKNAMES request.
 	 */
-	public Sender(String nameToFind) {
+	public Sender(String nameToFind, MainWindow parent) {
+		mainWindow = parent;
 		action = ASKNAMES;
 		new Thread(this).start();
 	}
