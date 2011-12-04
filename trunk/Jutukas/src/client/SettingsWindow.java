@@ -121,8 +121,9 @@ public class SettingsWindow {
 			}
 		});
 
-		saveButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "buttonClick");  
-        saveButton.getActionMap().put("buttonClick", buttonClick);  
+		saveButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke("ENTER"), "buttonClick");
+		saveButton.getActionMap().put("buttonClick", buttonClick);
 	}
 	
 
