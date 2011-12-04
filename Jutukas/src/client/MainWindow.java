@@ -75,7 +75,7 @@ public class MainWindow {
 	/**
 	 * Hosts Manager.
 	 */
-	public static KnownHostsManager hostsManager = new KnownHostsManager();
+	public static KnownHostsManager hostsManager;
 	
 	
 	public static HashMap<String, ChatWindow> chatWindowsMap = new HashMap<String, ChatWindow>();
@@ -138,6 +138,7 @@ public class MainWindow {
 	 * Create the application.
 	 */
 	public MainWindow() {
+		hostsManager = new KnownHostsManager(MainWindow.this);
 		initialize();
 	}
 
@@ -496,7 +497,7 @@ public class MainWindow {
 	/**
 	 * Append your nickname and IP to the first line.
 	 */
-	private void appendNameToFile() {
+	public void appendNameToFile() {
 		hostsManager.replaceFirstEntryInFile(getNicknameValue(),
 				lblIpValue.getText() + ":" + getPortValue());
 	}
@@ -506,7 +507,6 @@ public class MainWindow {
 	 * the changes visible.
 	 */
 	public void updateKnownUsersList() {
-		appendNameToFile();
 		addKnownUsers();
 		knownUsersList.setListData(knownHosts);
 	}
