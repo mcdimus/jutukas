@@ -1,5 +1,9 @@
 package client;
 
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -7,9 +11,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class SettingsWindow {
 
@@ -92,24 +93,30 @@ public class SettingsWindow {
 		createSaveButton();
 		createCancelButton();
 	}
-	
+
 	private void createSaveButton() {
 		saveButton = new JButton("Save");
-		saveButton.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent arg0) {
+		saveButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
 				parentWindow.setNicknameValue(nicknameTextField.getText());
 				parentWindow.setPortValue(portTextField.getText());
-				parentWindow.updateKnownUsersList();
+				parentWindow.appendNameToFile();
 				settingsFrame.dispose();
+
 			}
 		});
 	}
-	
+
 	private void createCancelButton() {
 		cancelButton = new JButton("Cancel");
-		cancelButton.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent arg0) {
+		cancelButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
 				settingsFrame.dispose();
+
 			}
 		});
 	}
