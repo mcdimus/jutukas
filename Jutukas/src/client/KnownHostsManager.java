@@ -3,7 +3,7 @@ package client;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Formatter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -28,6 +28,8 @@ import com.google.gson.GsonBuilder;
  */
 public class KnownHostsManager {
 
+	private MainWindow mainWindow;
+
 	/**
 	 * The name of the file with data.
 	 */
@@ -40,8 +42,8 @@ public class KnownHostsManager {
 	/**
 	 * Constructor. Does nothing.
 	 */
-	public KnownHostsManager() {
-
+	public KnownHostsManager(MainWindow parent) {
+		mainWindow = parent;
 	}
 
 	/**
@@ -83,8 +85,8 @@ public class KnownHostsManager {
 	 * @return HashMap, where the <b>key</b> is a <i>name</i> and the
 	 *         <b>value</b> as an <i>ip-address</i>,
 	 */
-	public synchronized HashMap<String, String> getMapOfKnownHosts() {
-		HashMap<String, String> mapOfKnownHosts = new HashMap<String, String>();
+	public synchronized LinkedHashMap<String, String> getMapOfKnownHosts() {
+		LinkedHashMap<String, String> mapOfKnownHosts = new LinkedHashMap<String, String>();
 		String[][] knownHosts = getArrayFromJson();
 
 		for (String[] host : knownHosts) {
@@ -102,7 +104,7 @@ public class KnownHostsManager {
 	 */
 	public synchronized void addNewHosts(String jsonString) {
 		// get hashmap of already known hosts.
-		HashMap<String, String> mapOfKnownHosts = getMapOfKnownHosts();
+		LinkedHashMap<String, String> mapOfKnownHosts = getMapOfKnownHosts();
 		// add to hashmap new values and update values of the existed
 		// keys.
 		String[][] newHosts = gson.fromJson(jsonString, String[][].class);
@@ -159,6 +161,8 @@ public class KnownHostsManager {
 		output.format("%s", jsonString);
 		output.flush();
 		output.close();
+
+		mainWindow.updateKnownUsersList();
 	}
 
 	public void replaceFirstEntryInFile(String name, String ip) {
@@ -174,7 +178,7 @@ public class KnownHostsManager {
 		String[][] nameArray = getArrayFromJson();
 		return nameArray[0][0] + ";" + nameArray[0][1].split(":")[1];
 	}
-	
+
 	public String[][] getArrayFromJson() {
 		String jsonString = getJsonStringFromFile();
 		String[][] knownHosts = gson.fromJson(jsonString, String[][].class);
