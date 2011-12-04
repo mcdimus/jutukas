@@ -171,6 +171,7 @@ public class Sender implements Runnable {
 			boolean found = false;
 			if (knownHosts.containsKey(name)) {
 				mainWindow.userFound(name, knownHosts.get(name));
+				found = true;
 			} else {
 				Server.print("ASKNAMES request\n");
 				while(ttl != 0) {
@@ -197,6 +198,7 @@ public class Sender implements Runnable {
 					knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
 					if (knownHosts.containsKey(name)) {
 						mainWindow.userFound(name, knownHosts.get(name));
+						found = true;
 						break;
 					}
 				}
