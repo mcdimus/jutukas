@@ -529,7 +529,7 @@ public class MainWindow {
 		for (String[] host : arrayFromJson) {
 			knownHosts[index][0] = String.valueOf(index) + ".";
 			knownHosts[index][1] = host[0];
-			knownHosts[index++][2] = host[1];
+			knownHosts[index++][2] = host[1].split(":")[0];
 		}
 	}
 
