@@ -8,10 +8,12 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.NoSuchElementException;
+import java.util.Map;
 import java.util.StringTokenizer;
 
+import client.ChatWindow;
 import client.MainWindow;
 
 /**
@@ -224,6 +226,12 @@ public class Worker implements Runnable {
 	private void acceptMessage() {
 		String sentName = parametersValues[0], sentIP = parametersValues[1],
 				message = parametersValues[2];
+		for(Map.Entry<String, ChatWindow> entry : MainWindow.chatWindows.entrySet()) {
+			if(entry.getKey().equals(sentName)) {
+				entry.getValue().appendText("<html><b>" + sentName + "</b>[" + new SimpleDateFormat(
+						"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").getCalendar().getTime() + "]: " + message + "</html>");
+			}
+		}
 		Server.print("MESSAGE response\n" + sentIP + ": OK\n");
 		// TODO: update chat window
 		if (!knownHosts.containsKey(sentName)) {
