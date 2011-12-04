@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.NoRouteToHostException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 import client.MainWindow;
@@ -47,7 +48,7 @@ public class Sender implements Runnable {
 	/**
 	 * Request's time to live.
 	 */
-	private static final int TTL = 1;
+	private int ttl = 1;
 
 	private MainWindow mainWindow;
 	/**
@@ -88,7 +89,7 @@ public class Sender implements Runnable {
 	public Sender(String name, String ip, String message) {
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
 				+ "&message=%s&ttl=%d", ip, name,
-				Server.IP + ":" + Server.PORT, message, TTL);
+				Server.IP + ":" + Server.PORT, message, ttl);
 		action = SENDMESSAGE;
 		new Thread(this).start();
 	}
@@ -107,7 +108,7 @@ public class Sender implements Runnable {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/findname?"
 							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
-							+ ":" + Server.PORT, TTL);
+							+ ":" + Server.PORT, ttl);
 					try {
 						URL url = new URL(addr);
 						URLConnection urlcon = url.openConnection();
@@ -150,7 +151,7 @@ public class Sender implements Runnable {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/sendname?"
 							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
-							+ ":" + Server.PORT, TTL);
+							+ ":" + Server.PORT, ttl);
 					try {
 						URL url = new URL(addr);
 						URLConnection urlcon = url.openConnection();
@@ -170,36 +171,45 @@ public class Sender implements Runnable {
 			break;
 		case ASKNAMES:
 			Server.print("ASKNAMES request\n");
+			HashSet<String> visitedHosts = new HashSet<String>();
+			visitedHosts.add(Server.IP + ":" + Server.PORT);
 			if (knownHosts.containsKey(name)) {
-				// TODO: Send to GUI found name
+				mainWindow.userFound(name, knownHosts.get(name));
 			} else {
-				for (String value : knownHosts.values()) {
-					if (!value.equals(Server.IP + ":" + Server.PORT)) {
-						String addr = String.format("http://%s/chat/asknames?"
-								+ "ttl=1", value);
-						try {
-							URL url = new URL(addr);
-							URLConnection urlcon = url.openConnection();
-							BufferedReader br = new BufferedReader(
-									new InputStreamReader(urlcon.getInputStream()));
-							String jsonhosts = br.readLine();
-							System.out.println(jsonhosts);
-							MainWindow.hostsManager.addNewHosts(jsonhosts);
-							br.close();
-							Server.print(addr + ": OK\n");
-						} catch (NoRouteToHostException e) {
-							Server.print(addr + ": host unreachable\n");
-							continue;
-						} catch (IOException e) {
-							Server.print(addr + ": " + e.getMessage());
-							continue;
+				while(ttl != 0) {
+					ttl--;
+					for (String value : knownHosts.values()) {
+						if (visitedHosts.add(value)) {
+							String addr = String.format("http://%s/chat/asknames?"
+									+ "ttl=1", value);
+							try {
+								URL url = new URL(addr);
+								URLConnection urlcon = url.openConnection();
+								BufferedReader br = new BufferedReader(
+										new InputStreamReader(urlcon.getInputStream()));
+								String jsonhosts = br.readLine();
+								System.out.println(jsonhosts);
+								MainWindow.hostsManager.addNewHosts(jsonhosts);
+								br.close();
+								Server.print(addr + ": OK\n");
+							} catch (NoRouteToHostException e) {
+								Server.print(addr + ": host unreachable\n");
+								continue;
+							} catch (IOException e) {
+								Server.print(addr + ": " + e.getMessage());
+								continue;
+							}
 						}
+					}
+					knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
+					if (knownHosts.containsKey(name)) {
+						mainWindow.userFound(name, knownHosts.get(name));
+						break;
 					}
 				}
 			}
 			break;
 		}
-		// MainWindow.addKnownUsers();
 	}
 
 }
