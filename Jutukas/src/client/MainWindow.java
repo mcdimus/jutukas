@@ -20,9 +20,11 @@ import java.util.HashMap;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -71,15 +73,14 @@ public class MainWindow {
 	private GroupLayout groupLayout;
 
 	private Server server;
+	
+	private ChatWindow chatWindow;
 
 	/**
 	 * Hosts Manager.
 	 */
 	public static KnownHostsManager hostsManager;
-	
-	
-	public static HashMap<String, ChatWindow> chatWindowsMap = new HashMap<String, ChatWindow>();
-	
+
 	/**
 	 * Array to hold the information for JList.
 	 */
@@ -87,6 +88,7 @@ public class MainWindow {
 
 	/**
 	 * Getter for port.
+	 * 
 	 * @return - current port value.
 	 */
 	private String getPortValue() {
@@ -95,6 +97,7 @@ public class MainWindow {
 
 	/**
 	 * Getter for name.
+	 * 
 	 * @return - current name value.
 	 */
 	public String getNicknameValue() {
@@ -103,7 +106,9 @@ public class MainWindow {
 
 	/**
 	 * Setter for port.
-	 * @param port - port.
+	 * 
+	 * @param port
+	 *            - port.
 	 */
 	public void setPortValue(String port) {
 		lblPortValue.setText(port);
@@ -111,7 +116,9 @@ public class MainWindow {
 
 	/**
 	 * Setter for name.
-	 * @param nickname - name.
+	 * 
+	 * @param nickname
+	 *            - name.
 	 */
 	public void setNicknameValue(String nickname) {
 		lblNameValue.setText(nickname);
@@ -126,7 +133,7 @@ public class MainWindow {
 				try {
 					MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
-					// new ChatWindow();
+					window.chatWindow = new ChatWindow();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -437,11 +444,9 @@ public class MainWindow {
 												GroupLayout.PREFERRED_SIZE)));
 
 	}
-	
 
 	/**
-	 * Create JList with information on
-	 * known users.
+	 * Create JList with information on known users.
 	 */
 	private void createKnownUsersList() {
 		lblKnownUsers = new JLabel("Known users:");
@@ -476,7 +481,7 @@ public class MainWindow {
 		});
 		knownUsersList.setCellRenderer(new MyCellRenderer(MainWindow.this));
 	}
-	
+
 	/**
 	 * Add known users from file.
 	 */
@@ -493,7 +498,7 @@ public class MainWindow {
 			knownHosts[index++][2] = host[1];
 		}
 	}
-	
+
 	/**
 	 * Append your nickname and IP to the first line.
 	 */
@@ -501,16 +506,15 @@ public class MainWindow {
 		hostsManager.replaceFirstEntryInFile(getNicknameValue(),
 				lblIpValue.getText() + ":" + getPortValue());
 	}
-	
+
 	/**
-	 * Updates the JList and makes
-	 * the changes visible.
+	 * Updates the JList and makes the changes visible.
 	 */
 	public void updateKnownUsersList() {
 		addKnownUsers();
 		knownUsersList.setListData(knownHosts);
 	}
-	
+
 	/**
 	 * Enable buttons when clicked on Start button.
 	 */
@@ -523,7 +527,7 @@ public class MainWindow {
 		// btnSendName.setEnabled(true);
 		nameToFind.setEnabled(true);
 	}
-	
+
 	/**
 	 * Disable buttons when clicked on Stop button.
 	 */
@@ -567,7 +571,7 @@ public class MainWindow {
 			}
 		});
 	}
-	
+
 	/**
 	 * Create settings button.
 	 */
@@ -628,9 +632,21 @@ public class MainWindow {
 		});
 	}
 
-	public void userNotFound() {
-		
+	public void userNotFound(String name) {
+		statusLine.setText("User " + name + " not found!");
+		JOptionPane.showMessageDialog(frame, "User " + name + " not found!",
+				"Not found!", JOptionPane.INFORMATION_MESSAGE);
+
 	}
+	
+	public void userFound(String name, String ip) {
+		statusLine.setText("User " + name + " found! Chat started...");
+		chatWindow.addUser(name + " - " + ip);
+		if (!chatWindow.isVisible()) {
+			chatWindow.setVisible(true);
+		}
+	}
+
 	// private void createSendNameButton() {
 	// btnSendName = new JButton("Send name");
 	// btnSendName.setEnabled(false);
@@ -729,7 +745,7 @@ public class MainWindow {
 		return ipAddress;
 
 	}
-	
+
 	/**
 	 * Class is needed in order to set three columns in JList and use all of
 	 * them as one row.
