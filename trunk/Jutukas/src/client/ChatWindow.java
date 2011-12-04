@@ -40,7 +40,6 @@ public class ChatWindow {
 	 */
 	public ChatWindow() {
 		initialize();
-		frame.setVisible(true);
 	}
 
 	public synchronized void acceptMessage(String name, String ip,
@@ -63,7 +62,18 @@ public class ChatWindow {
 				+ "</body>");
 
 	}
+	public void addUser(String string) {
+		listModel.addElement(string);
+		
+	}
 
+	public boolean isVisible() {
+		return frame.isVisible();
+	}
+	
+	public void setVisible (boolean visible) {
+		frame.setVisible(visible);
+	}
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -74,6 +84,7 @@ public class ChatWindow {
 		frame = new JFrame();
 		frame.setTitle("Jutukas");
 		frame.setSize(800, 500);
+		
 		UIutils.centerFrameOnScreen(frame);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -211,4 +222,6 @@ public class ChatWindow {
 		menuHelp.add(menuItemAbout);
 
 	}
+
+	
 }
