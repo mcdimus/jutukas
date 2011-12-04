@@ -226,15 +226,14 @@ public class Worker implements Runnable {
 	 */
 	private void acceptMessage() {
 		String sentName = parametersValues[0], sentIP = parametersValues[1], message = parametersValues[2];
-		Date now = new Date();
 		if (MainWindow.chatWindows.containsKey(sentName)) {
 			if(!MainWindow.chatWindows.get(sentName).isVisible()) {
 				MainWindow.chatWindows.get(sentName).setVisible(true);
 			}
-			MainWindow.chatWindows.get(sentName).appendText(now, sentName, message, "blue");
+			MainWindow.chatWindows.get(sentName).appendText(sentName, message, "blue");
 		} else {
 			ChatWindow chat = new ChatWindow(sentName, sentIP);
-			chat.appendText(now, sentName, message, "blue");
+			chat.appendText(sentName, message, "blue");
 			MainWindow.chatWindows.put(sentName, chat);
 			chat.setVisible(true);
 		}
