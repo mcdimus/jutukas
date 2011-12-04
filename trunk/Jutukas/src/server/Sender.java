@@ -64,7 +64,6 @@ public class Sender implements Runnable {
 	 */
 	public Sender(String nameHere) {
 		name = nameHere;
-//		action = actionConstant;
 		new Thread(this).start();
 	}
 
@@ -95,66 +94,66 @@ public class Sender implements Runnable {
 	public void run() {
 		knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
 		String log = "";
-		switch (action) {
-		case FINDNAME:
-			log += "FINDNAME request\n";
-			for (String value : knownHosts.values()) {
-				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-					String addr = String.format("http://%s/chat/findname?"
-							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
-							+ ":" + Server.PORT, TTL);
-					try {
-						URL url = new URL(addr);
-						URLConnection urlcon = url.openConnection();
-						BufferedReader br = new BufferedReader(
-								new InputStreamReader(urlcon.getInputStream()));
-						br.close();
-						log += address + ": OK";
-					} catch (IOException e) {
-						log += address + ": host unreachable";
-						continue;
-					}
-					Server.print(addr);
-				}
-			}
-			break;
-		case SENDMESSAGE:
-			log += "MESSAGE request\n";
-			try {
-				URL url = new URL(address);
-				URLConnection urlcon = url.openConnection();
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						urlcon.getInputStream()));
-				br.close();
-				log += address + ": OK";
-			} catch (IOException e) {
-				log += address + ": host unreachable";
-				// TODO: send to GUI - "message was not delivered"
-			}
-			break;
-		case SENDNAME:
-			log += "SENDNAME request:\n";
-			for (String value : knownHosts.values()) {
-				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-					String addr = String.format("http://%s/chat/sendname?"
-							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
-							+ ":" + Server.PORT, TTL);
-					try {
-						URL url = new URL(addr);
-						URLConnection urlcon = url.openConnection();
-						BufferedReader br = new BufferedReader(
-								new InputStreamReader(urlcon.getInputStream()));
-						br.close();
-						log += addr + ": OK";
-					} catch (IOException e) {
-						log += addr + ": host unreachable";
-						continue;
-					}
-					Server.print(addr + ": OK");
-				}
-			}
-			break;
-		case ASKNAMES:
+//		switch (action) {
+//		case FINDNAME:
+//			log += "FINDNAME request\n";
+//			for (String value : knownHosts.values()) {
+//				if (!value.equals(Server.IP + ":" + Server.PORT)) {
+//					String addr = String.format("http://%s/chat/findname?"
+//							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
+//							+ ":" + Server.PORT, TTL);
+//					try {
+//						URL url = new URL(addr);
+//						URLConnection urlcon = url.openConnection();
+//						BufferedReader br = new BufferedReader(
+//								new InputStreamReader(urlcon.getInputStream()));
+//						br.close();
+//						log += address + ": OK";
+//					} catch (IOException e) {
+//						log += address + ": host unreachable";
+//						continue;
+//					}
+//					Server.print(addr);
+//				}
+//			}
+//			break;
+//		case SENDMESSAGE:
+//			log += "MESSAGE request\n";
+//			try {
+//				URL url = new URL(address);
+//				URLConnection urlcon = url.openConnection();
+//				BufferedReader br = new BufferedReader(new InputStreamReader(
+//						urlcon.getInputStream()));
+//				br.close();
+//				log += address + ": OK";
+//			} catch (IOException e) {
+//				log += address + ": host unreachable";
+//				// TODO: send to GUI - "message was not delivered"
+//			}
+//			break;
+//		case SENDNAME:
+//			log += "SENDNAME request:\n";
+//			for (String value : knownHosts.values()) {
+//				if (!value.equals(Server.IP + ":" + Server.PORT)) {
+//					String addr = String.format("http://%s/chat/sendname?"
+//							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
+//							+ ":" + Server.PORT, TTL);
+//					try {
+//						URL url = new URL(addr);
+//						URLConnection urlcon = url.openConnection();
+//						BufferedReader br = new BufferedReader(
+//								new InputStreamReader(urlcon.getInputStream()));
+//						br.close();
+//						log += addr + ": OK";
+//					} catch (IOException e) {
+//						log += addr + ": host unreachable";
+//						continue;
+//					}
+//					Server.print(addr + ": OK");
+//				}
+//			}
+//			break;
+//		case ASKNAMES:
 			log += "ASKNAMES request\n";
 			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
@@ -168,16 +167,16 @@ public class Sender implements Runnable {
 						String jsonhosts = br.readLine();
 						MainWindow.hostsManager.addNewHosts(jsonhosts);
 						br.close();
-						log += addr + ": OK";
+						log += addr + ": OK\n";
 					} catch (IOException e) {
-						log += addr + ": host unreachable";
+						log += addr + ": host unreachable\n";
 						// TODO: send to GUI - "cannot get names from a host"
 						continue;
 					}
 				}
 			}
-			break;
-		}
+//			break;
+//		}
 		Server.print(log);
 	}
 
