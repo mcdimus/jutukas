@@ -238,12 +238,11 @@ public class Worker implements Runnable {
 							+ "</font>:</b> " + message + "<br></html>");
 		} else {
 			ChatWindow chat = new ChatWindow();
-			chat.appendText("<html><b>"
-					+ sentName
-					+ "</b>["
-					+ new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-							.getCalendar().getTime() + "]: " + message
-					+ "</html>");
+			chat.appendText(
+					"<html><font size=2 color=grey><i>"
+							+ dateFormatter.format(now)
+							+ "</i></font><br><b><font color=blue>" + sentName
+							+ "</font>:</b> " + message + "<br></html>");
 			MainWindow.chatWindows.put(sentName, chat);
 		}
 		Server.print("MESSAGE response\n" + sentIP + ": OK\n");
