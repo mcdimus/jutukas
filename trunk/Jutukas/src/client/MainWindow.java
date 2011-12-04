@@ -384,8 +384,7 @@ public class MainWindow {
 	
 	public void userFound(String name, String ip) {
 		statusLine.setText("User " + name + " found! Chat started...");
-		ChatWindow chatWindow = new ChatWindow();
-		chatWindow.addUser(name + " - " + ip);
+		ChatWindow chatWindow = new ChatWindow(name, ip);
 		chatWindows.put(name, chatWindow);
 		if (!chatWindow.isVisible()) {
 			chatWindow.setVisible(true);

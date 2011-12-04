@@ -1,47 +1,39 @@
 package client;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Box;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.LineBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import server.Sender;
+import server.Server;
 
 public class ChatWindow {
 
 	private JFrame frame;
 	private JTextField textField;
 	private final JEditorPane editorPane = new JEditorPane();
-//	private DefaultListModel listModel;
-//	private JList list;
-	
 	private String opponentName;
 	private String opponetnIp;
+	private JButton sendButton;
 
 	/**
 	 * Create the application.
@@ -56,45 +48,31 @@ public class ChatWindow {
 
 	public synchronized void acceptMessage(String name, String ip,
 			String message) {
-		// TODO check name in the list: if exists just print out message; if not
-		// add to list and print message)
-//		if (!listModel.contains(name + " - " + ip)) {
-//			listModel.addElement(name + " - " + ip);
-//		}
-		appendText(message);
+		appendText(new Date(), name, message, "blue");
 	}
 
 	public void sendMessage() {
-//		String selectedValue = (String) list.getSelectedValue();
-		if (selectedValue != null) {
-			System.out.println("Send to: ");
-			System.out.println(selectedValue);
-			String[] parts = selectedValue.split(" - ");
-			String hostName = parts[0];
-			String ip = parts[1];
-			String message = textField.getText();
-			System.out.println(String.format("%s\t%s\t%s\n", hostName, ip,
-					message));
-			new Sender(hostName, ip, message);
-		} else {
-			JOptionPane.showMessageDialog(frame,
-					"You should select your opponent!", "Attention",
-					JOptionPane.INFORMATION_MESSAGE);
-		}
+		Date now = new Date();
+		String messageToSend = textField.getText();
+		appendText(now, Server.NAME, messageToSend, "green");
+		textField.setText("");
+		new Sender(opponentName, opponetnIp, messageToSend);
 	}
+	
+	private SimpleDateFormat dateFormatter = new SimpleDateFormat(
+			"dd.MM.yyyy - HH:mm:ss");
 
-	public synchronized void appendText(String text) {
+	public synchronized void appendText(Date now, String name, String message, String color) {
 		String editorPaneText = editorPane.getText();
+		String text = "<html><font size=2 color=grey><i>"
+				+ dateFormatter.format(now)
+				+ "</i></font><br><b><font color=" + color + ">" + name
+				+ "</font>:</b> " + message + "<br></html>";
 		editorPane.setText(editorPaneText.split("</body>")[0] + "<br>" + text
 				+ "</body>");
 
 	}
-
-	public void addUser(String string) {
-		listModel.addElement(string);
-
-	}
-
+	
 	public boolean isVisible() {
 		return frame.isVisible();
 	}
@@ -111,7 +89,7 @@ public class ChatWindow {
 		// khm.getMapOfKnownHosts();
 		// khm.addNewHosts("[[\"Tanel Tammet\",\"22.33.44.55:6766\"],[\"Dmitri Laud\",\"22.33.44.11:6666\"]]");
 		frame = new JFrame();
-		frame.setTitle("Jutukas");
+		frame.setTitle("Chatting with " + opponentName);
 		frame.setSize(800, 500);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -127,18 +105,10 @@ public class ChatWindow {
 		textField = new JTextField();
 		panel.add(textField);
 		textField.setColumns(50);
-
-		JButton btnNewButton = new JButton("Send");
-		btnNewButton.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent arg0) {
-				appendText(textField.getText());
-				sendMessage();
-				textField.setText("");
-			}
-		});
-//		btnNewButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "buttonClick");  
-//		btnNewButton.getActionMap().put("buttonClick", buttonClick);  
-		panel.add(btnNewButton);
+		
+		createSendButton();
+		  
+		panel.add(sendButton);
 
 		Box horizontalBox = Box.createHorizontalBox();
 		panel.add(horizontalBox);
@@ -147,23 +117,30 @@ public class ChatWindow {
 		editorPane.setEditable(false);
 
 		frame.getContentPane().add(editorPane);
-
-//		list = new JList();
-//		list.setBorder(new LineBorder(Color.BLACK));
-//		listModel = new DefaultListModel();
-//		list.setModel(listModel);
-//		list.setMinimumSize(new Dimension(200, 200));
-//		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//		list.addListSelectionListener(new ListSelectionListener() {
-//
-//			@Override
-//			public void valueChanged(ListSelectionEvent arg0) {
-//				// TODO Auto-generated method stub
-//
-//			}
-//		});
-//		frame.getContentPane().add(list, BorderLayout.WEST);
-
+	}
+	
+	private void createSendButton() {
+		@SuppressWarnings("serial")
+		Action buttonClick = new AbstractAction("buttonClick") {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				sendButton.doClick();			
+			}
+		};
+		sendButton = new JButton("Send");
+		sendButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sendMessage();
+				
+			}
+		});
+		
+		sendButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke("ENTER"), "buttonClick");
+		sendButton.getActionMap().put("buttonClick", buttonClick);
 	}
 
 	private void createMenuBar() {
