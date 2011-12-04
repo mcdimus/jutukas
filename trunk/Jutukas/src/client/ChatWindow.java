@@ -20,8 +20,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import server.Sender;
 import server.Server;
@@ -57,22 +60,23 @@ public class ChatWindow {
 		textField.setText("");
 		new Sender(opponentName, opponetnIp, messageToSend);
 	}
-	
+
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat(
 			"dd.MM.yyyy - HH:mm:ss");
 
-	public synchronized void appendText(String name, String message, String color) {
+	public synchronized void appendText(String name, String message,
+			String color) {
 		Date now = new Date();
 		String editorPaneText = editorPane.getText();
 		String text = "<html><font size=2 color=grey><i>"
-				+ dateFormatter.format(now)
-				+ "</i></font><br><b><font color=" + color + ">" + name
-				+ "</font>:</b> " + message + "<br></html>";
+				+ dateFormatter.format(now) + "</i></font><br><b><font color="
+				+ color + ">" + name + "</font>:</b> " + message
+				+ "<br></html>";
 		editorPane.setText(editorPaneText.split("</body>")[0] + "<br>" + text
 				+ "</body>");
 
 	}
-	
+
 	public boolean isVisible() {
 		return frame.isVisible();
 	}
@@ -105,9 +109,9 @@ public class ChatWindow {
 		textField = new JTextField();
 		panel.add(textField);
 		textField.setColumns(50);
-		
+
 		createSendButton();
-		  
+
 		panel.add(sendButton);
 
 		Box horizontalBox = Box.createHorizontalBox();
@@ -116,28 +120,30 @@ public class ChatWindow {
 		editorPane.setContentType("text/html");
 		editorPane.setEditable(false);
 
-		frame.getContentPane().add(editorPane);
+		JScrollPane scrollPane = new JScrollPane(editorPane);
+		// to get bottom visible, use
+		frame.getContentPane().add(scrollPane);
 	}
-	
+
 	private void createSendButton() {
 		@SuppressWarnings("serial")
 		Action buttonClick = new AbstractAction("buttonClick") {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				sendButton.doClick();			
+				sendButton.doClick();
 			}
 		};
 		sendButton = new JButton("Send");
 		sendButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				sendMessage();
-				
+
 			}
 		});
-		
+
 		sendButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 				KeyStroke.getKeyStroke("ENTER"), "buttonClick");
 		sendButton.getActionMap().put("buttonClick", buttonClick);
