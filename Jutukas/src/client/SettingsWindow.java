@@ -4,12 +4,16 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Action;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class SettingsWindow {
@@ -93,6 +97,15 @@ public class SettingsWindow {
 		createSaveButton();
 		createCancelButton();
 	}
+	
+	  @SuppressWarnings("serial")
+	private Action buttonClick = new AbstractAction("buttonClick") {
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			saveButton.doClick();			
+		}
+	};
 
 	private void createSaveButton() {
 		saveButton = new JButton("Save");
@@ -107,7 +120,11 @@ public class SettingsWindow {
 
 			}
 		});
+
+		saveButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "buttonClick");  
+        saveButton.getActionMap().put("buttonClick", buttonClick);  
 	}
+	
 
 	private void createCancelButton() {
 		cancelButton = new JButton("Cancel");
