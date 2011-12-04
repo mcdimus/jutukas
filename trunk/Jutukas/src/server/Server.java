@@ -67,7 +67,7 @@ public class Server implements Runnable {
 							+ s.getInetAddress().toString().substring(1));
 					createWorkerThread(s);
 				} catch (SocketException e) {
-					System.out.println("Server is offline");
+					Server.print("Server is offline\n");
 				}
 			}
 		} catch (IOException e) {
@@ -116,10 +116,10 @@ public class Server implements Runnable {
 			try {
 				file.close();
 			} catch (IOException e) {
-				System.err.println("Unable to close file.");
+				System.err.println("Unable to close server log file.");
 			}
 		} catch (IOException e) {
-			System.out.println("Problem with server closing!");
+			System.err.println("Problem with server closing.");
 		}
 	}
 }

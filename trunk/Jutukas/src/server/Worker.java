@@ -96,37 +96,38 @@ public class Worker implements Runnable {
 			// ?param1=value1&param2=value2
 			String parameters = URLDecoder.decode(strtok.nextToken(" ")
 					.substring(1), "UTF-8");
-			System.out.println(parameters);
-			getParametersValues(parameters);
 			if (command.equals("findname")) {
+				getParametersValues(parameters, 3);
 				findName();
 			} else if (command.equals("sendname")) {
+				getParametersValues(parameters, 3);
 				acceptAndSendName();
 			} else if (command.equals("asknames")) {
-				String log = "ASKNAMES response\n";
+				getParametersValues(parameters, 1);
+				Server.print("ASKNAMES response");
 				try {
-					out.write(MainWindow.hostsManager.getJsonString());
-					Server.print(log
-							+ socket.getInetAddress().toString().substring(1)
-							+ ": OK");
+					out.write(MainWindow.hostsManager.getJsonString() + "\r\n");
+					out.flush();
+					Server.print(socket.getInetAddress().toString()
+							.substring(1) + ": OK");
 				} catch (IOException ioe2) {
-					Server.print(log
-							+ socket.getInetAddress().toString().substring(1)
-							+ ": host unreachable");
+					Server.print(socket.getInetAddress().toString()
+							.substring(1) + ": host unreachable");
 				}
 			} else if (command.equals("sendmessage")) {
-				System.out.println("I shall accept the message");
+				getParametersValues(parameters, 4);
 				acceptMessage();
 			} else {
 				throw new Exception();
 			}
-			out.write("HTTP/1.1 200 OK\r\n");
 		} catch (Exception e) {
 			Server.print(socket.getInetAddress().toString().substring(1)
 					+ ": wrong URL path: " + path);
 			try {
 				out.write("HTTP/1.1 400 Bad Request\r\n");
 			} catch (IOException ioe) {
+				Server.print(socket.getInetAddress().toString().substring(1)
+					+ ": host unreachable");
 				ioe.printStackTrace();
 			}
 		}
@@ -136,28 +137,28 @@ public class Worker implements Runnable {
 	 * Processes FINDNAME request, creates&sends appropriate response.
 	 */
 	private void findName() {
-		String askedName = parametersValues[0], destIP = parametersValues[1], log = "";
+		String askedName = parametersValues[0], destIP = parametersValues[1];
 		int ttl = Integer.parseInt(parametersValues[2]);
 		ttl--;
 		if (knownHosts.containsKey(askedName)) {
 			String addr = String.format(
 					"http://%s/chat/sendname?name=%s&ip=%s&" + "ttl=%s",
 					destIP, askedName, knownHosts.get(askedName), ttl);
-			log += "FINDNAME(name found) response\n";
+			Server.print("FINDNAME(name found) response\n");
 			try {
 				URL url = new URL(addr);
 				URLConnection urlcon = url.openConnection();
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						urlcon.getInputStream()));
 				br.close();
-				log += addr + ": OK";
+				Server.print(addr + ": OK");
 			} catch (IOException e) {
-				log += addr + ": host unreachable";
+				Server.print(addr + ": host unreachable");
 				System.exit(0);
 			}
 		} else {
 			if (ttl != 0) {
-				log += "FINDNAME(broadcast) response\n";
+				Server.print("FINDNAME(broadcast) response\n");
 				for (String value : knownHosts.values()) {
 					String addr = String
 							.format("http://%s/chat/findname?name=%s&ip=%s&"
@@ -168,59 +169,66 @@ public class Worker implements Runnable {
 						BufferedReader br = new BufferedReader(
 								new InputStreamReader(urlcon.getInputStream()));
 						br.close();
-						log += addr + ": OK";
+						Server.print(addr + ": OK");
 					} catch (IOException e) {
-						log += addr + ": host unreachable";
+						Server.print(addr + ": host unreachable");
 						continue;
 					}
 				}
 			}
 		}
-		Server.print(log);
 	}
 
 	/**
 	 * Processes SENDNAME request, creates&sends appropriate response.
 	 */
 	private void acceptAndSendName() {
-		String sentName = parametersValues[0], sentIP = parametersValues[1], log = "";
+		String sentName = parametersValues[0], sentIP = parametersValues[1];
 		int ttl = Integer.parseInt(parametersValues[2]);
 		ttl--;
 		if (!knownHosts.containsKey(sentName)) {
-			if (ttl != 0) {
-				log += "SENDNAME response\n";
-				for (String value : knownHosts.values()) {
-					if (!value.equals(Server.IP + ":" + Server.PORT)) {
-						String addr = String.format(
-								"http://%s/chat/sendname?name=%s&ip=%s&"
-										+ "ttl=%s", value, sentName, sentIP,
-								ttl);
-						try {
-							URL url = new URL(addr);
-							URLConnection urlcon = url.openConnection();
-							BufferedReader br = new BufferedReader(
-									new InputStreamReader(
-											urlcon.getInputStream()));
-							br.close();
-							log += addr + ": OK";
-						} catch (IOException e) {
-							log += addr + ": host unreachable";
-							continue;
-						}
+			// TODO: give new name & ip to the KnowHostsManager
+		} else {
+			// TODO: update ip value on given name
+			// drop the name from map.. if the part below is valid.
+		}
+		// TODO: vot see part ???
+		if (ttl != 0) {
+			Server.print("SENDNAME response\n");
+			for (String value : knownHosts.values()) {
+				if (!value.equals(Server.IP + ":" + Server.PORT)) {
+					String addr = String.format(
+							"http://%s/chat/sendname?name=%s&ip=%s&"
+									+ "ttl=%s", value, sentName, sentIP,
+							ttl);
+					try {
+						URL url = new URL(addr);
+						URLConnection urlcon = url.openConnection();
+						BufferedReader br = new BufferedReader(
+								new InputStreamReader(
+										urlcon.getInputStream()));
+						br.close();
+						Server.print(addr + ": OK");
+					} catch (IOException e) {
+						Server.print(addr + ": host unreachable");
+						continue;
 					}
 				}
-				// TODO: put new key(name) & value(ip) to the knownHosts Map.
 			}
 		}
-		Server.print(log);
 	}
 
 	/**
 	 * Processes MESSAGE request, sends received message to GUI.
 	 */
 	private void acceptMessage() {
+		String sentName = parametersValues[0], sentIP = parametersValues[1],
+				message = parametersValues[2];
+		Server.print("MESSAGE response\n" + sentIP + ": OK\n");
 		// TODO: update chat window
-		// should be connected with the GUI
+		if (!knownHosts.containsKey(sentName)) {
+			// TODO: put new key(name) & value(ip) to the knownHosts Map.
+		}
 	}
 
 	/**
@@ -229,32 +237,12 @@ public class Worker implements Runnable {
 	 * @param data
 	 *            - <code>String</code> to process
 	 */
-	private void getParametersValues(String data) {
-		parametersValues = new String[4];
+	private void getParametersValues(String data, int times) {
+		parametersValues = new String[times];
 		StringTokenizer strtok = new StringTokenizer(data, "&");
-		// name
-		parametersValues[0] = getValue(strtok.nextToken());
-		// ip
-		parametersValues[1] = getValue(strtok.nextToken());
-		// message OR TTL
-		parametersValues[2] = getValue(strtok.nextToken());
-		// TTL OR null
-		try {
-			parametersValues[3] = getValue(strtok.nextToken());
-		} catch (NoSuchElementException e) {
-			parametersValues[3] = null;
+		for (int i = 0; i < times; i++) {
+			String[] words = strtok.nextToken().split("=");
+			parametersValues[i] = words[1];
 		}
-	}
-
-	/**
-	 * Returns the value of a given parameter.
-	 * 
-	 * @param in
-	 *            - <code>String</code> to process
-	 * @return <code>String</code> parameter's value
-	 */
-	private String getValue(String in) {
-		String[] words = in.split("=");
-		return words[1];
 	}
 }
