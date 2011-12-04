@@ -13,6 +13,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -61,7 +62,7 @@ public class ChatWindow {
 	public void sendMessage() {
 		String selectedValue = (String) list.getSelectedValue();
 		if (selectedValue != null) {
-			System.out.println("Getting Value:");
+			System.out.println("Send to: ");
 			System.out.println(selectedValue);
 			String[] parts = selectedValue.split(" - ");
 			String hostName = parts[0];
@@ -130,13 +131,14 @@ public class ChatWindow {
 				textField.setText("");
 			}
 		});
+//		btnNewButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "buttonClick");  
+//		btnNewButton.getActionMap().put("buttonClick", buttonClick);  
 		panel.add(btnNewButton);
 
 		Box horizontalBox = Box.createHorizontalBox();
 		panel.add(horizontalBox);
 
 		editorPane.setContentType("text/html");
-		editorPane.setText("<h1>Hello world</h1><br><i>blablalbalb</i>");
 		editorPane.setEditable(false);
 
 		frame.getContentPane().add(editorPane);
