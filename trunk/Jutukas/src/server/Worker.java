@@ -9,8 +9,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import client.ChatWindow;
@@ -49,6 +49,7 @@ public class Worker implements Runnable {
 	 * Map of known hosts (names&IPs) what are being held in the file.
 	 */
 	private HashMap<String, String> knownHosts;
+
 	/**
 	 * Create new Worker thread bound to this <code>Socket</code>.
 	 * 
@@ -111,10 +112,12 @@ public class Worker implements Runnable {
 					out.write(MainWindow.hostsManager.getJsonString() + "\r\n");
 					out.flush();
 					Server.print(socket.getInetAddress().toString()
-							.substring(1) + ": OK");
+							.substring(1)
+							+ ": OK");
 				} catch (IOException ioe2) {
 					Server.print(socket.getInetAddress().toString()
-							.substring(1) + ": host unreachable");
+							.substring(1)
+							+ ": host unreachable");
 				}
 			} else if (command.equals("sendmessage")) {
 				getParametersValues(parameters, 4);
@@ -129,7 +132,7 @@ public class Worker implements Runnable {
 				out.write("HTTP/1.1 400 Bad Request\r\n");
 			} catch (IOException ioe) {
 				Server.print(socket.getInetAddress().toString().substring(1)
-					+ ": host unreachable");
+						+ ": host unreachable");
 				ioe.printStackTrace();
 			}
 		}
@@ -199,16 +202,14 @@ public class Worker implements Runnable {
 			Server.print("SENDNAME response\n");
 			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-					String addr = String.format(
-							"http://%s/chat/sendname?name=%s&ip=%s&"
-									+ "ttl=%s", value, sentName, sentIP,
-							ttl);
+					String addr = String
+							.format("http://%s/chat/sendname?name=%s&ip=%s&"
+									+ "ttl=%s", value, sentName, sentIP, ttl);
 					try {
 						URL url = new URL(addr);
 						URLConnection urlcon = url.openConnection();
 						BufferedReader br = new BufferedReader(
-								new InputStreamReader(
-										urlcon.getInputStream()));
+								new InputStreamReader(urlcon.getInputStream()));
 						br.close();
 						Server.print(addr + ": OK");
 					} catch (IOException e) {
@@ -220,21 +221,29 @@ public class Worker implements Runnable {
 		}
 	}
 
+	private SimpleDateFormat dateFormatter = new SimpleDateFormat(
+			"dd.MM.yyyy - HH:mm:ss");
+
 	/**
 	 * Processes MESSAGE request, sends received message to GUI.
 	 */
 	private void acceptMessage() {
-		String sentName = parametersValues[0], sentIP = parametersValues[1],
-				message = parametersValues[2];
+		String sentName = parametersValues[0], sentIP = parametersValues[1], message = parametersValues[2];
+		Date now = new Date();
 		if (MainWindow.chatWindows.containsKey(sentName)) {
-			MainWindow.chatWindows.get(sentName).appendText("<html><b>" + sentName + "</b>["
-				+ new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-				.getCalendar().getTime() + "]: " + message + "</html>");
+			MainWindow.chatWindows.get(sentName).appendText(
+					"<html><font size=2 color=grey><i>"
+							+ dateFormatter.format(now)
+							+ "</i></font><br><b><font color=blue>" + sentName
+							+ "</font>:</b> " + message + "<br></html>");
 		} else {
 			ChatWindow chat = new ChatWindow();
-			chat.appendText("<html><b>" + sentName + "</b>["
-				+ new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-				.getCalendar().getTime() + "]: " + message + "</html>");
+			chat.appendText("<html><b>"
+					+ sentName
+					+ "</b>["
+					+ new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+							.getCalendar().getTime() + "]: " + message
+					+ "</html>");
 			MainWindow.chatWindows.put(sentName, chat);
 		}
 		Server.print("MESSAGE response\n" + sentIP + ": OK\n");
