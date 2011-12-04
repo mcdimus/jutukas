@@ -226,16 +226,20 @@ public class Worker implements Runnable {
 	private void acceptMessage() {
 		String sentName = parametersValues[0], sentIP = parametersValues[1],
 				message = parametersValues[2];
-		for(Map.Entry<String, ChatWindow> entry : MainWindow.chatWindows.entrySet()) {
-			if(entry.getKey().equals(sentName)) {
-				entry.getValue().appendText("<html><b>" + sentName + "</b>[" + new SimpleDateFormat(
-						"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").getCalendar().getTime() + "]: " + message + "</html>");
-			}
+		if (MainWindow.chatWindows.containsKey(sentName)) {
+			MainWindow.chatWindows.get(sentName).appendText("<html><b>" + sentName + "</b>["
+				+ new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+				.getCalendar().getTime() + "]: " + message + "</html>");
+		} else {
+			ChatWindow chat = new ChatWindow();
+			chat.appendText("<html><b>" + sentName + "</b>["
+				+ new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+				.getCalendar().getTime() + "]: " + message + "</html>");
+			MainWindow.chatWindows.put(sentName, chat);
 		}
 		Server.print("MESSAGE response\n" + sentIP + ": OK\n");
-		// TODO: update chat window
 		if (!knownHosts.containsKey(sentName)) {
-			// TODO: put new key(name) & value(ip) to the knownHosts Map.
+			MainWindow.hostsManager.suzanna(sentName, sentIP);
 		}
 	}
 

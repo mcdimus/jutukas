@@ -3,9 +3,9 @@ package server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.NoRouteToHostException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
@@ -49,8 +49,8 @@ public class Sender implements Runnable {
 	 * Request's time to live.
 	 */
 	private int ttl = 1;
-
 	private MainWindow mainWindow;
+	
 	/**
 	 * Use this constructor to create new ASKNAMES request.
 	 */
@@ -87,7 +87,8 @@ public class Sender implements Runnable {
 	 * @param message
 	 *            - message to send
 	 */
-	public Sender(String name, String ip, String message) {
+	public Sender(String hostName, String ip, String message) {
+		name = hostName;
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
 				+ "&message=%s&ttl=%d", ip, name,
 				Server.IP + ":" + Server.PORT, message, ttl);
@@ -116,12 +117,9 @@ public class Sender implements Runnable {
 						BufferedReader br = new BufferedReader(
 								new InputStreamReader(urlcon.getInputStream()));
 						br.close();
-						Server.print(address + ": OK");
-					} catch (NoRouteToHostException e) {
-						Server.print(addr + ": host unreachable\n");
-						continue;
+						Server.print(value + ": OK");
 					} catch (IOException e) {
-						Server.print(addr + ": " + e.getMessage());
+						Server.print(value + ": " + e.getMessage());
 						continue;
 					}
 					Server.print(addr);
@@ -137,13 +135,13 @@ public class Sender implements Runnable {
 						urlcon.getInputStream()));
 				br.close();
 				Server.print(address + ": OK");
-			} catch (NoRouteToHostException e) {
-				Server.print(address + ": host unreachable\n");
-				// TODO: send to GUI - message was not delivered - user is offline
 			} catch (IOException e) {
 				Server.print(address + ": " + e.getMessage());
-				// TODO: send to GUI - message was not delivered - end host refuses it
-
+				MainWindow.chatWindows.get(name).appendText("<html><b>" 
+						+ name + "</b>[" + new SimpleDateFormat
+						("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").getCalendar()
+						.getTime() + "]: Failed to deliver the message"
+						+ "</html>");
 			}
 			break;
 		case SENDNAME:
@@ -159,45 +157,39 @@ public class Sender implements Runnable {
 						BufferedReader br = new BufferedReader(
 								new InputStreamReader(urlcon.getInputStream()));
 						br.close();
-						Server.print(addr + ": OK");
-					} catch (NoRouteToHostException e) {
-						Server.print(addr + ": host unreachable\n");
-						continue;
+						Server.print(value + ": OK");
 					} catch (IOException e) {
-						Server.print(addr + ": " + e.getMessage());
+						Server.print(value + ": " + e.getMessage());
 						continue;
 					}
 				}
 			}
 			break;
 		case ASKNAMES:
-			Server.print("ASKNAMES request\n");
 			HashSet<String> visitedHosts = new HashSet<String>();
 			visitedHosts.add(Server.IP + ":" + Server.PORT);
+			boolean found = false;
 			if (knownHosts.containsKey(name)) {
 				mainWindow.userFound(name, knownHosts.get(name));
 			} else {
+				Server.print("ASKNAMES request\n");
 				while(ttl != 0) {
 					ttl--;
 					for (String value : knownHosts.values()) {
 						if (visitedHosts.add(value)) {
-							String addr = String.format("http://%s/chat/asknames?"
-									+ "ttl=1", value);
+							String addr = String.format("http://%s/chat/"
+									+ "asknames?ttl=1", value);
 							try {
 								URL url = new URL(addr);
 								URLConnection urlcon = url.openConnection();
 								BufferedReader br = new BufferedReader(
 										new InputStreamReader(urlcon.getInputStream()));
 								String jsonhosts = br.readLine();
-								System.out.println(jsonhosts);
 								MainWindow.hostsManager.addNewHosts(jsonhosts);
 								br.close();
-								Server.print(addr + ": OK\n");
-							} catch (NoRouteToHostException e) {
-								Server.print(addr + ": host unreachable\n");
-								continue;
+								Server.print(value + ": OK");
 							} catch (IOException e) {
-								Server.print(addr + ": " + e.getMessage());
+								Server.print(value + ": " + e.getMessage());
 								continue;
 							}
 						}
@@ -208,6 +200,9 @@ public class Sender implements Runnable {
 						break;
 					}
 				}
+			}
+			if (!found) {
+				mainWindow.userNotFound(name);
 			}
 			break;
 		}

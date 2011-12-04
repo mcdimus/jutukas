@@ -64,8 +64,6 @@ public class KnownHostsManager {
 			jsonString += scanner.nextLine().trim();
 		}
 		scanner.close();
-		// TODO: remove syso nax.
-		System.out.println("jsonString: " + jsonString);
 
 		return jsonString;
 	}
