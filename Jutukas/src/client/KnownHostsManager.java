@@ -133,8 +133,8 @@ public class KnownHostsManager {
 	 * @param ip
 	 *            - the ip-address of the new host.
 	 */
-	public synchronized void suzanna(String name, String ip) {
-		String[][] newHost = new String[1][1];
+	public synchronized void addNewHost(String name, String ip) {
+		String[][] newHost = new String[1][2];
 		newHost[0][0] = name;
 		newHost[0][1] = ip;
 

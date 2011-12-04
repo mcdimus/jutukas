@@ -38,6 +38,9 @@ public class Sender implements Runnable {
 	 * Name to find / name to send.
 	 */
 	private String name;
+	/**
+	 * Name to find / name to send after URL encoding.
+	 */
 	private String encodedName;
 	/**
 	 * Used in SENDMESSAGE action as the URL to send message to.
@@ -51,10 +54,15 @@ public class Sender implements Runnable {
 	 * Request's time to live.
 	 */
 	private int ttl = 1;
+	/**
+	 * Link to the GUI.
+	 */
 	private MainWindow mainWindow;
 
 	/**
 	 * Use this constructor to create new ASKNAMES request.
+	 * @param nameToFind - name which should be found
+	 * @param parent - link to the GUI to display search results
 	 */
 	public Sender(String nameToFind, MainWindow parent) {
 		mainWindow = parent;
@@ -83,7 +91,7 @@ public class Sender implements Runnable {
 	 * Use this constructor to create new MESSAGE request (or, more simply, to
 	 * send a message).
 	 * 
-	 * @param name
+	 * @param hostName
 	 *            - host name to send to
 	 * @param ip
 	 *            - host IP to send to
@@ -110,7 +118,7 @@ public class Sender implements Runnable {
 		knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
 		switch (action) {
 		case FINDNAME:
-			Server.print("FINDNAME request\n");
+			Server.print("FINDNAME request");
 			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/findname?"
@@ -132,7 +140,7 @@ public class Sender implements Runnable {
 			}
 			break;
 		case SENDMESSAGE:
-			Server.print("MESSAGE request\n");
+			Server.print("MESSAGE request");
 			try {
 				URL url = new URL(address);
 				URLConnection urlcon = url.openConnection();
@@ -141,13 +149,14 @@ public class Sender implements Runnable {
 				br.close();
 				Server.print(address + ": OK");
 			} catch (IOException e) {
-				Server.print(address + ": " + e.getMessage());
+				Server.print(e.getMessage());
 				MainWindow.chatWindows.get(name).appendText("Error",
-						"Failed to deliver the message to " + name + ".", "red");
+						"Failed to deliver the message to " + name + ".",
+						"red");
 			}
 			break;
 		case SENDNAME:
-			Server.print("SENDNAME request:\n");
+			Server.print("SENDNAME request:");
 			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/sendname?"
@@ -175,7 +184,7 @@ public class Sender implements Runnable {
 				mainWindow.userFound(name, knownHosts.get(name));
 				found = true;
 			} else {
-				Server.print("ASKNAMES request\n");
+				Server.print("ASKNAMES request");
 				while (ttl != 0) {
 					ttl--;
 					for (String value : knownHosts.values()) {
@@ -213,6 +222,12 @@ public class Sender implements Runnable {
 		}
 	}
 	
+	/**
+	 * Encodes the <code>String</code> into the URL format (for example,
+	 * whitespace = '+' OR '%20").
+	 * @param in - <code>String</code> to encode.
+	 * @return encoded <code>String</code>
+	 */
 	private String encodeString(String in) {
 		String answer = null;
 		try {

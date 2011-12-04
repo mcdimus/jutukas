@@ -18,6 +18,9 @@ import javax.swing.JOptionPane;
  */
 public class Server implements Runnable {
 
+	/**
+	 * Server (this host's) name.
+	 */
 	public static String NAME;
 	/**
 	 * Server IP address.
@@ -42,15 +45,14 @@ public class Server implements Runnable {
 
 	/**
 	 * Create new <code>Server</code>.
-	 * 
+	 * @param name - <code>Server</code>'s name
 	 * @param ip
 	 *            - <code>Server</code>'s IP
 	 * @param port
 	 *            - <code>Server</code>'s port
-	 * @param string
 	 */
-	public Server(String name, String ip, String port) {
-		NAME = name;
+	public Server(String hostsName, String ip, String port) {
+		NAME = hostsName;
 		IP = ip;
 		PORT = Integer.parseInt(port);
 		alive = true;
