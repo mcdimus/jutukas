@@ -84,9 +84,8 @@ public class KnownHostsManager {
 	 *         <b>value</b> as an <i>ip-address</i>,
 	 */
 	public synchronized HashMap<String, String> getMapOfKnownHosts() {
-		String jsonString = getJsonStringFromFile();
 		HashMap<String, String> mapOfKnownHosts = new HashMap<String, String>();
-		String[][] knownHosts = gson.fromJson(jsonString, String[][].class);
+		String[][] knownHosts = getArrayFromJson();
 
 		for (String[] host : knownHosts) {
 			mapOfKnownHosts.put(host[0], host[1]);
@@ -163,8 +162,7 @@ public class KnownHostsManager {
 	}
 
 	public void replaceFirstEntryInFile(String name, String ip) {
-		String oldJsonString = getJsonStringFromFile();
-		String[][] oldArray = gson.fromJson(oldJsonString, String[][].class);
+		String[][] oldArray = getArrayFromJson();
 		oldArray[0][0] = name;
 		oldArray[0][1] = ip;
 
@@ -173,8 +171,7 @@ public class KnownHostsManager {
 	}
 
 	public String getYourNameAndPort() {
-		String jsonString = getJsonStringFromFile();
-		String[][] nameArray = gson.fromJson(jsonString, String[][].class);
+		String[][] nameArray = getArrayFromJson();
 		return nameArray[0][0] + ";" + nameArray[0][1].split(":")[1];
 	}
 	
