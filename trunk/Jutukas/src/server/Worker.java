@@ -8,7 +8,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -149,7 +148,7 @@ public class Worker implements Runnable {
 			String addr = String.format(
 					"http://%s/chat/sendname?name=%s&ip=%s&" + "ttl=%s",
 					destIP, askedName, knownHosts.get(askedName), ttl);
-			Server.print("FINDNAME(name found) response\n");
+			Server.print("FINDNAME(name found) response");
 			try {
 				URL url = new URL(addr);
 				URLConnection urlcon = url.openConnection();
@@ -163,7 +162,7 @@ public class Worker implements Runnable {
 			}
 		} else {
 			if (ttl != 0) {
-				Server.print("FINDNAME(broadcast) response\n");
+				Server.print("FINDNAME(broadcast) response");
 				for (String value : knownHosts.values()) {
 					String addr = String
 							.format("http://%s/chat/findname?name=%s&ip=%s&"
@@ -191,15 +190,15 @@ public class Worker implements Runnable {
 		String sentName = parametersValues[0], sentIP = parametersValues[1];
 		int ttl = Integer.parseInt(parametersValues[2]);
 		ttl--;
+		Server.print("SENDNAME response");
 		if (!knownHosts.containsKey(sentName)) {
-			// TODO: give new name & ip to the KnowHostsManager
+			MainWindow.hostsManager.addNewHost(sentName, sentIP);
 		} else {
 			// TODO: update ip value on given name
 			// drop the name from map.. if the part below is valid.
 		}
 		// TODO: vot see part ???
 		if (ttl != 0) {
-			Server.print("SENDNAME response\n");
 			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String
@@ -225,12 +224,15 @@ public class Worker implements Runnable {
 	 * Processes MESSAGE request, sends received message to GUI.
 	 */
 	private void acceptMessage() {
-		String sentName = parametersValues[0], sentIP = parametersValues[1], message = parametersValues[2];
+		try {
+		String sentName = parametersValues[0], sentIP = parametersValues[1],
+				message = parametersValues[2];
 		if (MainWindow.chatWindows.containsKey(sentName)) {
-			if(!MainWindow.chatWindows.get(sentName).isVisible()) {
+			if (!MainWindow.chatWindows.get(sentName).isVisible()) {
 				MainWindow.chatWindows.get(sentName).setVisible(true);
 			}
-			MainWindow.chatWindows.get(sentName).appendText(sentName, message, "blue");
+			MainWindow.chatWindows.get(sentName).appendText(sentName, message,
+					"blue");
 		} else {
 			ChatWindow chat = new ChatWindow(sentName, sentIP);
 			chat.appendText(sentName, message, "blue");
@@ -239,7 +241,10 @@ public class Worker implements Runnable {
 		}
 		Server.print("MESSAGE response\n" + sentIP + ": OK\n");
 		if (!knownHosts.containsKey(sentName)) {
-			MainWindow.hostsManager.suzanna(sentName, sentIP);
+			MainWindow.hostsManager.addNewHost(sentName, sentIP);
+		}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -248,6 +253,7 @@ public class Worker implements Runnable {
 	 * 
 	 * @param data
 	 *            - <code>String</code> to process
+	 * @param times - amount of parameters to extract
 	 */
 	private void getParametersValues(String data, int times) {
 		parametersValues = new String[times];
