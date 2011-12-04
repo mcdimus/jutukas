@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.NoRouteToHostException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import client.MainWindow;
 
@@ -31,7 +31,7 @@ public class Sender implements Runnable {
 	/**
 	 * Map of known hosts (names&IPs) what are being held in the file.
 	 */
-	private HashMap<String, String> knownHosts;
+	private LinkedHashMap<String, String> knownHosts;
 	/**
 	 * Name to find / name to send.
 	 */
