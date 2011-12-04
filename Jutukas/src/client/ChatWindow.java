@@ -84,8 +84,7 @@ public class ChatWindow {
 		frame = new JFrame();
 		frame.setTitle("Jutukas");
 		frame.setSize(800, 500);
-		
-		UIutils.centerFrameOnScreen(frame);
+		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		createMenuBar();

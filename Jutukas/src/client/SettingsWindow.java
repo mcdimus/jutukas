@@ -52,7 +52,7 @@ public class SettingsWindow {
 		settingsFrame.setTitle("Settings");
 		settingsFrame.setSize(236, 226);
 		settingsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		UIutils.centerFrameOnScreen(settingsFrame);
+		settingsFrame.setLocationRelativeTo(null);
 
 		createLabels();
 		createButtons();
