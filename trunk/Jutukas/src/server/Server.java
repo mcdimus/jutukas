@@ -15,6 +15,7 @@ import java.util.Date;
  */
 public class Server implements Runnable {
 
+	public static String NAME;
 	/**
 	 * Server IP address.
 	 */
@@ -43,8 +44,10 @@ public class Server implements Runnable {
 	 *            - <code>Server</code>'s IP
 	 * @param port
 	 *            - <code>Server</code>'s port
+	 * @param string 
 	 */
-	public Server(String ip, String port) {
+	public Server(String name,String ip, String port) {
+		NAME = name;
 		IP = ip;
 		PORT = Integer.parseInt(port);
 		alive = true;

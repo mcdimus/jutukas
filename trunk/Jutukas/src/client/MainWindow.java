@@ -298,7 +298,7 @@ public class MainWindow {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				server = new Server(lblIpValue.getText(), getPortValue());
+				server = new Server(getNicknameValue(),lblIpValue.getText(), getPortValue());
 				statusLine.setText("Server is online.");
 				lblStatusValue.setForeground(Color.GREEN);
 				lblStatusValue.setText("running...");
