@@ -85,7 +85,7 @@ public class ChatWindow {
 		frame.setTitle("Jutukas");
 		frame.setSize(800, 500);
 		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		createMenuBar();
 
