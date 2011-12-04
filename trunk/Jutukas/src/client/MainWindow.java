@@ -34,7 +34,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import server.Sender;
 import server.Server;
 
@@ -364,7 +363,14 @@ public class MainWindow {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Sender(nameToFind.getText(), MainWindow.this);
+				if(!nameToFind.getText().isEmpty()) {
+					new Sender(nameToFind.getText(), MainWindow.this);
+				} else {
+					JOptionPane.showMessageDialog(frame, 
+							"You can't leave the field empty! Try again!",
+							"Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 	}
