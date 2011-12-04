@@ -125,6 +125,7 @@ public class Worker implements Runnable {
 			} else {
 				throw new Exception();
 			}
+			out.write("HTTP/1.1 200 OK\r\n");
 		} catch (Exception e) {
 			Server.print(socket.getInetAddress().toString().substring(1)
 					+ ": wrong URL path: " + path);

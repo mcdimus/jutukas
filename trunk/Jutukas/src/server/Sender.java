@@ -3,8 +3,11 @@ package server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -102,6 +105,11 @@ public class Sender implements Runnable {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
+		try {
+			name = URLEncoder.encode(name, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
 		knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
 		switch (action) {
 		case FINDNAME:
@@ -137,6 +145,11 @@ public class Sender implements Runnable {
 				Server.print(address + ": OK");
 			} catch (IOException e) {
 				Server.print(address + ": " + e.getMessage());
+				try {
+					name = URLDecoder.decode(name, "UTF-8");
+				} catch (UnsupportedEncodingException e1) {
+					e1.printStackTrace();
+				}
 				MainWindow.chatWindows.get(name).appendText("<html><b>" 
 						+ name + "</b>[" + new SimpleDateFormat
 						("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").getCalendar()
