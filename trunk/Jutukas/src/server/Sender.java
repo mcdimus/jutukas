@@ -57,6 +57,7 @@ public class Sender implements Runnable {
 	public Sender(String nameToFind, MainWindow parent) {
 		mainWindow = parent;
 		action = ASKNAMES;
+		name = nameToFind;
 		new Thread(this).start();
 	}
 
