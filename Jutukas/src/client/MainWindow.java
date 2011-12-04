@@ -72,25 +72,55 @@ public class MainWindow {
 
 	private Server server;
 
+	/**
+	 * Hosts Manager.
+	 */
 	public static KnownHostsManager hostsManager = new KnownHostsManager();
+	
+	
 	public static HashMap<String, ChatWindow> chatWindowsMap = new HashMap<String, ChatWindow>();
+	
+	/**
+	 * Array to hold the information for JList.
+	 */
+	private String[][] knownHosts;
 
+	/**
+	 * Getter for port.
+	 * @return - current port value.
+	 */
 	private String getPortValue() {
 		return lblPortValue.getText();
 	}
 
+	/**
+	 * Getter for name.
+	 * @return - current name value.
+	 */
 	public String getNicknameValue() {
 		return lblNameValue.getText();
 	}
 
+	/**
+	 * Setter for port.
+	 * @param port - port.
+	 */
 	public void setPortValue(String port) {
 		lblPortValue.setText(port);
 	}
 
+	/**
+	 * Setter for name.
+	 * @param nickname - name.
+	 */
 	public void setNicknameValue(String nickname) {
 		lblNameValue.setText(nickname);
 	}
 
+	/**
+	 * Updates the JList and makes
+	 * the changes visible.
+	 */
 	public void updateKnownUsersList() {
 		appendNameToFile();
 		addKnownUsers();
@@ -416,9 +446,12 @@ public class MainWindow {
 												GroupLayout.PREFERRED_SIZE)));
 
 	}
+	
 
-	private String[][] knownHosts;
-
+	/**
+	 * Create JList with information on
+	 * known users.
+	 */
 	private void createKnownUsersList() {
 		lblKnownUsers = new JLabel("Known users:");
 		scrollPane = new JScrollPane();
@@ -454,16 +487,32 @@ public class MainWindow {
 	}
 
 	/**
+	 * Class is needed in order to set three columns in JList and use all of
+	 * them as one row.
+	 * 
 	 * @author Aleksei Kulitskov
 	 * 
 	 */
 	@SuppressWarnings("serial")
 	private static class MyCellRenderer extends JPanel implements
 			ListCellRenderer {
+
+		/**
+		 * Labels, which hold the specified information.
+		 */
 		JLabel idLabel, nameLabel, ipLabel;
 
+		/**
+		 * MainWindow variable.
+		 */
 		private MainWindow mainWindow;
 
+		/**
+		 * Constructor.
+		 * 
+		 * @param window
+		 *            - mainWindow.
+		 */
 		MyCellRenderer(MainWindow window) {
 			this.mainWindow = window;
 			setLayout(new GridLayout(1, 3));
@@ -475,12 +524,20 @@ public class MainWindow {
 			add(ipLabel);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing
+		 * .JList, java.lang.Object, int, boolean, boolean)
+		 */
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 			String leftData = ((String[]) value)[0];
 			String middleData = ((String[]) value)[1];
 			String rightData = ((String[]) value)[2];
 			idLabel.setText(leftData);
+			// exclude my name selection
 			if (middleData.equals(mainWindow.getNicknameValue())) {
 				nameLabel.setText("<html><FONT COLOR=RED>you: </FONT>"
 						+ middleData + "</html>");
@@ -488,6 +545,8 @@ public class MainWindow {
 				nameLabel.setText(middleData);
 			}
 			ipLabel.setText(rightData);
+
+			// exclude selecting the line with columns' names
 			if (idLabel.getText().equals("ID")) {
 				idLabel.setOpaque(false);
 				nameLabel.setOpaque(false);
@@ -498,6 +557,8 @@ public class MainWindow {
 				ipLabel.setOpaque(true);
 			}
 
+			// change the background and foreground of the
+			// selected line/row
 			if (isSelected) {
 				idLabel.setBackground(list.getSelectionBackground());
 				idLabel.setForeground(list.getSelectionForeground());
@@ -519,6 +580,9 @@ public class MainWindow {
 		}
 	}
 
+	/**
+	 * Add known users from file.
+	 */
 	private void addKnownUsers() {
 		String[][] arrayFromJson = hostsManager.getArrayFromJson();
 		knownHosts = new String[arrayFromJson.length + 1][3];
@@ -638,6 +702,9 @@ public class MainWindow {
 	// btnAskNames.setEnabled(false);
 	// }
 
+	/**
+	 * Create find name button and its TextField.
+	 */
 	private void createFindNameButtonWithTextField() {
 
 		nameToFind = new JTextField();
@@ -666,8 +733,8 @@ public class MainWindow {
 	 * <pre>
 	 * Status: [running, not running]
 	 * IP:     [x.x.x.x]
-	 * Port:   [xxxx]
-	 * Name:   [kasutaja]
+	 * Port:   [from file]
+	 * Name:   [from file]
 	 * </pre>
 	 */
 	private void createInformationBlock() {
@@ -709,8 +776,8 @@ public class MainWindow {
 	}
 
 	/**
-	 * Returns an ip-address in the current LAN. It can be eth* network or net*
-	 * network.
+	 * Returns an ip-address in the current LAN. It can be eth* network or
+	 * net*(wlan*) network.
 	 * 
 	 * @return an ip-address in the current LAN.
 	 * @throws SocketException
