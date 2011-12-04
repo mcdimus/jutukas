@@ -28,19 +28,26 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import server.Sender;
+
 public class ChatWindow {
 
 	private JFrame frame;
 	private JTextField textField;
 	private final JEditorPane editorPane = new JEditorPane();
 	private DefaultListModel listModel;
+	private JList list;
+	
 
 	/**
 	 * Create the application.
+	 * @param mainWindow 
 	 */
 	public ChatWindow() {
 		initialize();
 	}
+
+
 
 	public synchronized void acceptMessage(String name, String ip,
 			String message) {
@@ -53,7 +60,9 @@ public class ChatWindow {
 	}
 	
 	public void sendMessage() {
-		
+		String selectedValue = (String) list.getSelectedValue();
+		System.out.println(selectedValue);
+//		new Sender(hostName, ip, message);
 	}
 
 	public synchronized void appendText(String text) {
@@ -117,7 +126,7 @@ public class ChatWindow {
 
 		frame.getContentPane().add(editorPane);
 
-		JList list = new JList();
+		list = new JList();
 		list.setBorder(new LineBorder(Color.BLACK));
 		listModel = new DefaultListModel();
 		list.setModel(listModel);
