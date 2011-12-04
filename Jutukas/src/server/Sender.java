@@ -3,11 +3,9 @@ package server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
@@ -39,7 +37,6 @@ public class Sender implements Runnable {
 	 * Name to find / name to send.
 	 */
 	private String name;
-	private String encodedName;
 	/**
 	 * Used in SENDMESSAGE action as the URL to send message to.
 	 */
@@ -53,14 +50,14 @@ public class Sender implements Runnable {
 	 */
 	private int ttl = 1;
 	private MainWindow mainWindow;
-	
+
 	/**
 	 * Use this constructor to create new ASKNAMES request.
 	 */
 	public Sender(String nameToFind, MainWindow parent) {
-		name = nameToFind;
 		mainWindow = parent;
 		action = ASKNAMES;
+		name = nameToFind;
 		new Thread(this).start();
 	}
 
@@ -75,7 +72,6 @@ public class Sender implements Runnable {
 	 */
 	public Sender(String nameHere, int actionConstant) {
 		name = nameHere;
-		encodedName = encode(nameHere);
 		action = actionConstant;
 		new Thread(this).start();
 	}
@@ -93,10 +89,8 @@ public class Sender implements Runnable {
 	 */
 	public Sender(String hostName, String ip, String message) {
 		name = hostName;
-		encodedName = encode(Server.NAME);
-		message = encode(message);
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
-				+ "&message=%s&ttl=%d", ip, encodedName,
+				+ "&message=%s&ttl=%d", ip, name,
 				Server.IP + ":" + Server.PORT, message, ttl);
 		action = SENDMESSAGE;
 		new Thread(this).start();
@@ -115,7 +109,7 @@ public class Sender implements Runnable {
 			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/findname?"
-							+ "name=%s&ip=%s&ttl=%d", value, encodedName, Server.IP
+							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
 							+ ":" + Server.PORT, ttl);
 					try {
 						URL url = new URL(addr);
@@ -143,11 +137,9 @@ public class Sender implements Runnable {
 				Server.print(address + ": OK");
 			} catch (IOException e) {
 				Server.print(address + ": " + e.getMessage());
-				MainWindow.chatWindows.get(name).appendText("<html><b>" 
-						+ name + "</b>[" + new SimpleDateFormat
-						("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").getCalendar()
-						.getTime() + "]: Failed to deliver the message"
-						+ "</html>");
+				MainWindow.chatWindows.get(name).appendText(new Date(),
+						"Error",
+						"Failed to deliver the message to " + name + ".", "red");
 			}
 			break;
 		case SENDNAME:
@@ -155,7 +147,7 @@ public class Sender implements Runnable {
 			for (String value : knownHosts.values()) {
 				if (!value.equals(Server.IP + ":" + Server.PORT)) {
 					String addr = String.format("http://%s/chat/sendname?"
-							+ "name=%s&ip=%s&ttl=%d", value, encodedName, Server.IP
+							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
 							+ ":" + Server.PORT, ttl);
 					try {
 						URL url = new URL(addr);
@@ -180,7 +172,7 @@ public class Sender implements Runnable {
 				found = true;
 			} else {
 				Server.print("ASKNAMES request\n");
-				while(ttl != 0) {
+				while (ttl != 0) {
 					ttl--;
 					for (String value : knownHosts.values()) {
 						if (visitedHosts.add(value)) {
@@ -190,7 +182,8 @@ public class Sender implements Runnable {
 								URL url = new URL(addr);
 								URLConnection urlcon = url.openConnection();
 								BufferedReader br = new BufferedReader(
-										new InputStreamReader(urlcon.getInputStream()));
+										new InputStreamReader(
+												urlcon.getInputStream()));
 								String jsonhosts = br.readLine();
 								MainWindow.hostsManager.addNewHosts(jsonhosts);
 								br.close();
@@ -215,14 +208,5 @@ public class Sender implements Runnable {
 			break;
 		}
 	}
-	
-	private String encode(String in) {
-		String answer = null;
-		try {
-			answer = URLEncoder.encode(in, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}	
-		return answer;
-	}
+
 }

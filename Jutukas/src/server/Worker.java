@@ -8,7 +8,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -222,9 +221,6 @@ public class Worker implements Runnable {
 		}
 	}
 
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat(
-			"dd.MM.yyyy - HH:mm:ss");
-
 	/**
 	 * Processes MESSAGE request, sends received message to GUI.
 	 */
@@ -232,18 +228,13 @@ public class Worker implements Runnable {
 		String sentName = parametersValues[0], sentIP = parametersValues[1], message = parametersValues[2];
 		Date now = new Date();
 		if (MainWindow.chatWindows.containsKey(sentName)) {
-			MainWindow.chatWindows.get(sentName).appendText(
-					"<html><font size=2 color=grey><i>"
-							+ dateFormatter.format(now)
-							+ "</i></font><br><b><font color=blue>" + sentName
-							+ "</font>:</b> " + message + "<br></html>");
+			if(!MainWindow.chatWindows.get(sentName).isVisible()) {
+				MainWindow.chatWindows.get(sentName).setVisible(true);
+			}
+			MainWindow.chatWindows.get(sentName).appendText(now, sentName, message, "blue");
 		} else {
-			ChatWindow chat = new ChatWindow();
-			chat.appendText(
-					"<html><font size=2 color=grey><i>"
-							+ dateFormatter.format(now)
-							+ "</i></font><br><b><font color=blue>" + sentName
-							+ "</font>:</b> " + message + "<br></html>");
+			ChatWindow chat = new ChatWindow(sentName, sentIP);
+			chat.appendText(now, sentName, message, "blue");
 			MainWindow.chatWindows.put(sentName, chat);
 			chat.setVisible(true);
 		}
