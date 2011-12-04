@@ -37,15 +37,20 @@ public class ChatWindow {
 	private JFrame frame;
 	private JTextField textField;
 	private final JEditorPane editorPane = new JEditorPane();
-	private DefaultListModel listModel;
-	private JList list;
+//	private DefaultListModel listModel;
+//	private JList list;
+	
+	private String opponentName;
+	private String opponetnIp;
 
 	/**
 	 * Create the application.
 	 * 
 	 * @param mainWindow
 	 */
-	public ChatWindow() {
+	public ChatWindow(String opponentName, String opponentIp) {
+		this.opponentName = opponentName;
+		this.opponetnIp = opponentIp;
 		initialize();
 	}
 
@@ -53,14 +58,14 @@ public class ChatWindow {
 			String message) {
 		// TODO check name in the list: if exists just print out message; if not
 		// add to list and print message)
-		if (!listModel.contains(name + " - " + ip)) {
-			listModel.addElement(name + " - " + ip);
-		}
+//		if (!listModel.contains(name + " - " + ip)) {
+//			listModel.addElement(name + " - " + ip);
+//		}
 		appendText(message);
 	}
 
 	public void sendMessage() {
-		String selectedValue = (String) list.getSelectedValue();
+//		String selectedValue = (String) list.getSelectedValue();
 		if (selectedValue != null) {
 			System.out.println("Send to: ");
 			System.out.println(selectedValue);
@@ -109,7 +114,7 @@ public class ChatWindow {
 		frame.setTitle("Jutukas");
 		frame.setSize(800, 500);
 		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 		createMenuBar();
 
@@ -143,21 +148,21 @@ public class ChatWindow {
 
 		frame.getContentPane().add(editorPane);
 
-		list = new JList();
-		list.setBorder(new LineBorder(Color.BLACK));
-		listModel = new DefaultListModel();
-		list.setModel(listModel);
-		list.setMinimumSize(new Dimension(200, 200));
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.addListSelectionListener(new ListSelectionListener() {
-
-			@Override
-			public void valueChanged(ListSelectionEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		frame.getContentPane().add(list, BorderLayout.WEST);
+//		list = new JList();
+//		list.setBorder(new LineBorder(Color.BLACK));
+//		listModel = new DefaultListModel();
+//		list.setModel(listModel);
+//		list.setMinimumSize(new Dimension(200, 200));
+//		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//		list.addListSelectionListener(new ListSelectionListener() {
+//
+//			@Override
+//			public void valueChanged(ListSelectionEvent arg0) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//		});
+//		frame.getContentPane().add(list, BorderLayout.WEST);
 
 	}
 
