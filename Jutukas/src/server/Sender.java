@@ -54,14 +54,6 @@ public class Sender implements Runnable {
 	private int ttl = 1;
 	private MainWindow mainWindow;
 	
-	private Sender(String n) {
-		try {
-			encodedName = URLEncoder.encode(n, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}	
-	}
-	
 	/**
 	 * Use this constructor to create new ASKNAMES request.
 	 */
@@ -82,8 +74,8 @@ public class Sender implements Runnable {
 	 *            <code>Sender.FINDNAME</code> or <code>Sender.SENDNAME</code>)
 	 */
 	public Sender(String nameHere, int actionConstant) {
-		this(nameHere);
 		name = nameHere;
+		encodedName = encode(nameHere);
 		action = actionConstant;
 		new Thread(this).start();
 	}
@@ -100,8 +92,9 @@ public class Sender implements Runnable {
 	 *            - message to send
 	 */
 	public Sender(String hostName, String ip, String message) {
-		this(Server.NAME);
 		name = hostName;
+		encodedName = encode(Server.NAME);
+		message = encode(message);
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
 				+ "&message=%s&ttl=%d", ip, encodedName,
 				Server.IP + ":" + Server.PORT, message, ttl);
@@ -222,5 +215,14 @@ public class Sender implements Runnable {
 			break;
 		}
 	}
-
+	
+	private String encode(String in) {
+		String answer = null;
+		try {
+			answer = URLEncoder.encode(in, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}	
+		return answer;
+	}
 }

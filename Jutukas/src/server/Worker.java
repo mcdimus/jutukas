@@ -245,6 +245,7 @@ public class Worker implements Runnable {
 							+ "</i></font><br><b><font color=blue>" + sentName
 							+ "</font>:</b> " + message + "<br></html>");
 			MainWindow.chatWindows.put(sentName, chat);
+			chat.setVisible(true);
 		}
 		Server.print("MESSAGE response\n" + sentIP + ": OK\n");
 		if (!knownHosts.containsKey(sentName)) {
