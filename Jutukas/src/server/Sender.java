@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
@@ -54,13 +53,21 @@ public class Sender implements Runnable {
 	private int ttl = 1;
 	private MainWindow mainWindow;
 	
+	private Sender(String n) {
+		try {
+			name = URLEncoder.encode(n, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}	
+	}
+	
 	/**
 	 * Use this constructor to create new ASKNAMES request.
 	 */
 	public Sender(String nameToFind, MainWindow parent) {
+		this(nameToFind);
 		mainWindow = parent;
 		action = ASKNAMES;
-		name = nameToFind;
 		new Thread(this).start();
 	}
 
@@ -74,7 +81,7 @@ public class Sender implements Runnable {
 	 *            <code>Sender.FINDNAME</code> or <code>Sender.SENDNAME</code>)
 	 */
 	public Sender(String nameHere, int actionConstant) {
-		name = nameHere;
+		this(nameHere);
 		action = actionConstant;
 		new Thread(this).start();
 	}
@@ -91,9 +98,10 @@ public class Sender implements Runnable {
 	 *            - message to send
 	 */
 	public Sender(String hostName, String ip, String message) {
+		this(Server.NAME);
 		name = hostName;
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
-				+ "&message=%s&ttl=%d", ip, Server.NAME,
+				+ "&message=%s&ttl=%d", ip, name,
 				Server.IP + ":" + Server.PORT, message, ttl);
 		action = SENDMESSAGE;
 		new Thread(this).start();
@@ -105,11 +113,6 @@ public class Sender implements Runnable {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		try {
-			name = URLEncoder.encode(name, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
 		knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
 		switch (action) {
 		case FINDNAME:
@@ -145,11 +148,6 @@ public class Sender implements Runnable {
 				Server.print(address + ": OK");
 			} catch (IOException e) {
 				Server.print(address + ": " + e.getMessage());
-				try {
-					name = URLDecoder.decode(name, "UTF-8");
-				} catch (UnsupportedEncodingException e1) {
-					e1.printStackTrace();
-				}
 				MainWindow.chatWindows.get(name).appendText("<html><b>" 
 						+ name + "</b>[" + new SimpleDateFormat
 						("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").getCalendar()
