@@ -118,16 +118,6 @@ public class MainWindow {
 	}
 
 	/**
-	 * Updates the JList and makes
-	 * the changes visible.
-	 */
-	public void updateKnownUsersList() {
-		appendNameToFile();
-		addKnownUsers();
-		knownUsersList.setListData(knownHosts);
-	}
-
-	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
@@ -485,101 +475,7 @@ public class MainWindow {
 		});
 		knownUsersList.setCellRenderer(new MyCellRenderer(MainWindow.this));
 	}
-
-	/**
-	 * Class is needed in order to set three columns in JList and use all of
-	 * them as one row.
-	 * 
-	 * @author Aleksei Kulitskov
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	private static class MyCellRenderer extends JPanel implements
-			ListCellRenderer {
-
-		/**
-		 * Labels, which hold the specified information.
-		 */
-		JLabel idLabel, nameLabel, ipLabel;
-
-		/**
-		 * MainWindow variable.
-		 */
-		private MainWindow mainWindow;
-
-		/**
-		 * Constructor.
-		 * 
-		 * @param window
-		 *            - mainWindow.
-		 */
-		MyCellRenderer(MainWindow window) {
-			this.mainWindow = window;
-			setLayout(new GridLayout(1, 3));
-			idLabel = new JLabel();
-			nameLabel = new JLabel();
-			ipLabel = new JLabel();
-			add(idLabel);
-			add(nameLabel);
-			add(ipLabel);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing
-		 * .JList, java.lang.Object, int, boolean, boolean)
-		 */
-		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
-			String leftData = ((String[]) value)[0];
-			String middleData = ((String[]) value)[1];
-			String rightData = ((String[]) value)[2];
-			idLabel.setText(leftData);
-			// exclude my name selection
-			if (middleData.equals(mainWindow.getNicknameValue())) {
-				nameLabel.setText("<html><FONT COLOR=RED>you: </FONT>"
-						+ middleData + "</html>");
-			} else {
-				nameLabel.setText(middleData);
-			}
-			ipLabel.setText(rightData);
-
-			// exclude selecting the line with columns' names
-			if (idLabel.getText().equals("ID")) {
-				idLabel.setOpaque(false);
-				nameLabel.setOpaque(false);
-				ipLabel.setOpaque(false);
-			} else {
-				idLabel.setOpaque(true);
-				nameLabel.setOpaque(true);
-				ipLabel.setOpaque(true);
-			}
-
-			// change the background and foreground of the
-			// selected line/row
-			if (isSelected) {
-				idLabel.setBackground(list.getSelectionBackground());
-				idLabel.setForeground(list.getSelectionForeground());
-				nameLabel.setBackground(list.getSelectionBackground());
-				nameLabel.setForeground(list.getSelectionForeground());
-				ipLabel.setBackground(list.getSelectionBackground());
-				ipLabel.setForeground(list.getSelectionForeground());
-			} else {
-				idLabel.setBackground(list.getBackground());
-				idLabel.setForeground(list.getForeground());
-				nameLabel.setBackground(list.getBackground());
-				nameLabel.setForeground(list.getForeground());
-				ipLabel.setBackground(list.getBackground());
-				ipLabel.setForeground(list.getForeground());
-			}
-			setEnabled(list.isEnabled());
-			setFont(list.getFont());
-			return this;
-		}
-	}
-
+	
 	/**
 	 * Add known users from file.
 	 */
@@ -593,8 +489,52 @@ public class MainWindow {
 		for (String[] host : arrayFromJson) {
 			knownHosts[index][0] = String.valueOf(index) + ".";
 			knownHosts[index][1] = host[0];
-			knownHosts[index++][2] = host[1].split(":")[0];
+			knownHosts[index++][2] = host[1];
 		}
+	}
+	
+	/**
+	 * Append your nickname and IP to the first line.
+	 */
+	private void appendNameToFile() {
+		hostsManager.replaceFirstEntryInFile(getNicknameValue(),
+				lblIpValue.getText() + ":" + getPortValue());
+	}
+	
+	/**
+	 * Updates the JList and makes
+	 * the changes visible.
+	 */
+	public void updateKnownUsersList() {
+		appendNameToFile();
+		addKnownUsers();
+		knownUsersList.setListData(knownHosts);
+	}
+	
+	/**
+	 * Enable buttons when clicked on Start button.
+	 */
+	private void buttonsEnabler() {
+		btnConnect.setEnabled(false);
+		btnSettings.setEnabled(false);
+		btnClose.setEnabled(true);
+		// btnAskNames.setEnabled(true);
+		btnFindName.setEnabled(true);
+		// btnSendName.setEnabled(true);
+		nameToFind.setEnabled(true);
+	}
+	
+	/**
+	 * Disable buttons when clicked on Stop button.
+	 */
+	private void buttonsDisabler() {
+		btnConnect.setEnabled(true);
+		btnSettings.setEnabled(true);
+		btnClose.setEnabled(false);
+		// btnAskNames.setEnabled(false);
+		btnFindName.setEnabled(false);
+		// btnSendName.setEnabled(false);
+		nameToFind.setEnabled(false);
 	}
 
 	/**
@@ -607,14 +547,6 @@ public class MainWindow {
 		// createAskNamesButton();
 		createFindNameButtonWithTextField();
 		// createSendNameButton();
-	}
-
-	/**
-	 * Append your nickname and IP to the first line.
-	 */
-	private void appendNameToFile() {
-		hostsManager.replaceFirstEntryInFile(getNicknameValue(),
-				lblIpValue.getText() + ":" + getPortValue());
 	}
 
 	/**
@@ -635,31 +567,20 @@ public class MainWindow {
 			}
 		});
 	}
-
+	
 	/**
-	 * Enable buttons when clicked on Start button.
+	 * Create settings button.
 	 */
-	private void buttonsEnabler() {
-		btnConnect.setEnabled(false);
-		btnSettings.setEnabled(false);
-		btnClose.setEnabled(true);
-		// btnAskNames.setEnabled(true);
-		btnFindName.setEnabled(true);
-		// btnSendName.setEnabled(true);
-		nameToFind.setEnabled(true);
-	}
+	private void createSettingsButton() {
+		btnSettings = new JButton("Settings");
+		btnSettings.addActionListener(new ActionListener() {
 
-	/**
-	 * Disable buttons when clicked on Stop button.
-	 */
-	private void buttonsDisabler() {
-		btnConnect.setEnabled(true);
-		btnSettings.setEnabled(true);
-		btnClose.setEnabled(false);
-		// btnAskNames.setEnabled(false);
-		btnFindName.setEnabled(false);
-		// btnSendName.setEnabled(false);
-		nameToFind.setEnabled(false);
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new SettingsWindow(getPortValue(), getNicknameValue(),
+						MainWindow.this);
+			}
+		});
 	}
 
 	/**
@@ -679,21 +600,6 @@ public class MainWindow {
 				buttonsDisabler();
 			}
 
-		});
-	}
-
-	/**
-	 * Create settings button.
-	 */
-	private void createSettingsButton() {
-		btnSettings = new JButton("Settings");
-		btnSettings.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new SettingsWindow(getPortValue(), getNicknameValue(),
-						MainWindow.this);
-			}
 		});
 	}
 
@@ -819,5 +725,99 @@ public class MainWindow {
 		}
 		return ipAddress;
 
+	}
+	
+	/**
+	 * Class is needed in order to set three columns in JList and use all of
+	 * them as one row.
+	 * 
+	 * @author Aleksei Kulitskov
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	private static class MyCellRenderer extends JPanel implements
+			ListCellRenderer {
+
+		/**
+		 * Labels, which hold the specified information.
+		 */
+		JLabel idLabel, nameLabel, ipLabel;
+
+		/**
+		 * MainWindow variable.
+		 */
+		private MainWindow mainWindow;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param window
+		 *            - mainWindow.
+		 */
+		MyCellRenderer(MainWindow window) {
+			this.mainWindow = window;
+			setLayout(new GridLayout(1, 3));
+			idLabel = new JLabel();
+			nameLabel = new JLabel();
+			ipLabel = new JLabel();
+			add(idLabel);
+			add(nameLabel);
+			add(ipLabel);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing
+		 * .JList, java.lang.Object, int, boolean, boolean)
+		 */
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			String leftData = ((String[]) value)[0];
+			String middleData = ((String[]) value)[1];
+			String rightData = ((String[]) value)[2];
+			idLabel.setText(leftData);
+			// exclude my name selection
+			if (middleData.equals(mainWindow.getNicknameValue())) {
+				nameLabel.setText("<html><FONT COLOR=RED>you: </FONT>"
+						+ middleData + "</html>");
+			} else {
+				nameLabel.setText(middleData);
+			}
+			ipLabel.setText(rightData);
+
+			// exclude selecting the line with columns' names
+			if (idLabel.getText().equals("ID")) {
+				idLabel.setOpaque(false);
+				nameLabel.setOpaque(false);
+				ipLabel.setOpaque(false);
+			} else {
+				idLabel.setOpaque(true);
+				nameLabel.setOpaque(true);
+				ipLabel.setOpaque(true);
+			}
+
+			// change the background and foreground of the
+			// selected line/row
+			if (isSelected) {
+				idLabel.setBackground(list.getSelectionBackground());
+				idLabel.setForeground(list.getSelectionForeground());
+				nameLabel.setBackground(list.getSelectionBackground());
+				nameLabel.setForeground(list.getSelectionForeground());
+				ipLabel.setBackground(list.getSelectionBackground());
+				ipLabel.setForeground(list.getSelectionForeground());
+			} else {
+				idLabel.setBackground(list.getBackground());
+				idLabel.setForeground(list.getForeground());
+				nameLabel.setBackground(list.getBackground());
+				nameLabel.setForeground(list.getForeground());
+				ipLabel.setBackground(list.getBackground());
+				ipLabel.setForeground(list.getForeground());
+			}
+			setEnabled(list.isEnabled());
+			setFont(list.getFont());
+			return this;
+		}
 	}
 }
