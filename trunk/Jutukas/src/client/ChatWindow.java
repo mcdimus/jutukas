@@ -38,6 +38,7 @@ public class ChatWindow {
 	private String opponentName;
 	private String opponetnIp;
 	private JButton sendButton;
+	private JButton smileysBtn;
 	private static HashMap<String, String> smileysToImages = new HashMap<String, String>();
 	private static String[] smileys = { "biggrin.gif", "smile.gif", "sad.gif",
 			"bye.gif", "wink.gif", "tongue.gif", "shy.gif", "dry.gif",
@@ -89,7 +90,7 @@ public class ChatWindow {
 						entry.getValue());
 			}
 		}
-		if(replacedMessage.isEmpty()) {
+		if (replacedMessage.isEmpty()) {
 			replacedMessage = message;
 		}
 		return replacedMessage;
@@ -137,9 +138,6 @@ public class ChatWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		// KnownHostsManager khm = new KnownHostsManager();
-		// khm.getMapOfKnownHosts();
-		// khm.addNewHosts("[[\"Tanel Tammet\",\"22.33.44.55:6766\"],[\"Dmitri Laud\",\"22.33.44.11:6666\"]]");
 		frame = new JFrame();
 		frame.setTitle("Chatting with " + opponentName);
 		frame.setSize(800, 500);
@@ -148,9 +146,22 @@ public class ChatWindow {
 
 		createMenuBar();
 
-		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.SOUTH);
+		createEditorPane();
+		
+		createBottomPanel();
+	}
 
+	private void createEditorPane() {
+		editorPane.setContentType("text/html");
+		editorPane.setEditable(false);
+
+		JScrollPane scrollPane = new JScrollPane(editorPane);
+		scrollPane.setAutoscrolls(true);
+		frame.getContentPane().add(scrollPane);
+	}
+	
+	private void createBottomPanel() {
+		JPanel panel = new JPanel();
 		JLabel lblNewLabel = new JLabel("Message:");
 		panel.add(lblNewLabel);
 
@@ -158,25 +169,21 @@ public class ChatWindow {
 		panel.add(textField);
 		textField.setColumns(50);
 
+		createSmilesButton();
+		panel.add(smileysBtn);
 		createSendButton();
-		
-		JButton button = new JButton("");
-		button.setToolTipText("Smileys");
-		button.setIcon(new ImageIcon(ChatWindow.class.getResource("/smileys/smile.gif")));
-		panel.add(button);
-
 		panel.add(sendButton);
 
 		Box horizontalBox = Box.createHorizontalBox();
 		panel.add(horizontalBox);
+		frame.getContentPane().add(panel, BorderLayout.SOUTH);
+	}
 
-		editorPane.setContentType("text/html");
-		editorPane.setEditable(false);
-
-		JScrollPane scrollPane = new JScrollPane(editorPane);
-		scrollPane.setAutoscrolls(true);
-		// to get bottom visible, use
-		frame.getContentPane().add(scrollPane);
+	private void createSmilesButton() {
+		smileysBtn = new JButton("");
+		smileysBtn.setToolTipText("Smileys");
+		smileysBtn.setIcon(new ImageIcon(ChatWindow.class
+				.getResource("/smileys/smile.gif")));
 	}
 
 	private void createSendButton() {
