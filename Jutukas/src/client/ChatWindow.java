@@ -54,9 +54,11 @@ public class ChatWindow {
 
 	public void sendMessage() {
 		String messageToSend = textField.getText();
-		appendText(Server.NAME, messageToSend, "green");
-		textField.setText("");
-		new Sender(opponentName, opponetnIp, messageToSend);
+		if (!messageToSend.isEmpty()) {
+			appendText(Server.NAME, messageToSend, "green");
+			textField.setText("");
+			new Sender(opponentName, opponetnIp, messageToSend);
+		}
 	}
 
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat(

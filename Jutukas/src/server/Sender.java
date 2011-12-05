@@ -53,7 +53,7 @@ public class Sender implements Runnable {
 	/**
 	 * Request's time to live.
 	 */
-	private int ttl = 1;
+	private int ttl = 3;
 	/**
 	 * Link to the GUI.
 	 */
