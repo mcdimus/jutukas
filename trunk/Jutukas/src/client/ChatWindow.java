@@ -40,9 +40,9 @@ public class ChatWindow {
 	private static HashMap<String, String> smileysToImages = new HashMap<String, String>();
 	private static String[] smileys = { "biggrin.gif", "smile.gif", "sad.gif",
 			"bye.gif", "wink.gif", "tongue.gif", "shy.gif", "dry.gif",
-			"cool.gif", "mad.gif", "excited.gif", "rolleyes.gif" };
+			"cool.gif", "mad.gif", "rolleyes.gif" };
 	private static String[] smileysText = { ":D", ":)", ":(", ":B", ";)", ":P",
-			":H", ":S", ":C", "x-(", ":XD", ":O" };
+			":H", ":S", ":C", "x-(", ":O" };
 
 	/**
 	 * Create the application.
@@ -87,6 +87,9 @@ public class ChatWindow {
 				replacedMessage = message.replace(entry.getKey(),
 						entry.getValue());
 			}
+		}
+		if(replacedMessage.isEmpty()) {
+			replacedMessage = message;
 		}
 		return replacedMessage;
 	}
