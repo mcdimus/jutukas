@@ -68,7 +68,6 @@ public class ChatWindow {
 			value = smileys[i];
 			imgsrc = ClassLoader.getSystemResource("smileys/" + value)
 					.toString();
-			System.out.println(imgsrc);
 			smileysToImages.put(key, "<html><img src='" + imgsrc
 					+ "' width=20 height=20></img>");
 		}
