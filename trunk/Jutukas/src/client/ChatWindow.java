@@ -28,6 +28,7 @@ import javax.swing.KeyStroke;
 
 import server.Sender;
 import server.Server;
+import javax.swing.ImageIcon;
 
 public class ChatWindow {
 
@@ -158,6 +159,11 @@ public class ChatWindow {
 		textField.setColumns(50);
 
 		createSendButton();
+		
+		JButton button = new JButton("");
+		button.setToolTipText("Smileys");
+		button.setIcon(new ImageIcon(ChatWindow.class.getResource("/smileys/smile.gif")));
+		panel.add(button);
 
 		panel.add(sendButton);
 
