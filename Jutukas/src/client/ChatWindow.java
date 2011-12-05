@@ -7,6 +7,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -35,6 +37,12 @@ public class ChatWindow {
 	private String opponentName;
 	private String opponetnIp;
 	private JButton sendButton;
+	private static HashMap<String, String> smileysToImages = new HashMap<String, String>();
+	private static String[] smileys = { "biggrin.gif", "smile.gif", "sad.gif",
+			"bye.gif", "wink.gif", "tongue.gif", "shy.gif", "dry.gif",
+			"cool.gif", "mad.gif", "excited.gif", "rolleyes.gif" };
+	private static String[] smileysText = { ":D", ":)", ":(", ":B", ";)", ":P",
+			":H", ":S", ":C", "x-(", ":XD", ":O" };
 
 	/**
 	 * Create the application.
@@ -44,7 +52,44 @@ public class ChatWindow {
 	public ChatWindow(String opponentName, String opponentIp) {
 		this.opponentName = opponentName;
 		this.opponetnIp = opponentIp;
+		smileysToHTML();
 		initialize();
+	}
+
+	/**
+	 * Turn smileys' text into HTML tags.
+	 */
+	public void smileysToHTML() {
+		String imgsrc;
+		String value;
+		String key;
+		for (int i = 0; i < smileys.length; i++) {
+			key = smileysText[i];
+			value = smileys[i];
+			imgsrc = ClassLoader.getSystemResource("smileys/" + value)
+					.toString();
+			System.out.println(imgsrc);
+			smileysToImages.put(key, "<html><img src='" + imgsrc
+					+ "' width=20 height=20></img>");
+		}
+	}
+
+	/**
+	 * Replaces all the smiley's text into HTML in the specified message.
+	 * 
+	 * @param message
+	 *            - message to replace.
+	 * @return - replaced message with HTML tags.
+	 */
+	public String replaceTextSmileysToIcons(String message) {
+		String replacedMessage = "";
+		for (Map.Entry<String, String> entry : smileysToImages.entrySet()) {
+			if (message.contains(entry.getKey())) {
+				replacedMessage = message.replace(entry.getKey(),
+						entry.getValue());
+			}
+		}
+		return replacedMessage;
 	}
 
 	public synchronized void acceptMessage(String name, String ip,
@@ -70,8 +115,8 @@ public class ChatWindow {
 		String editorPaneText = editorPane.getText();
 		String text = "<html><font size=2 color=grey><i>"
 				+ dateFormatter.format(now) + "</i></font><br><b><font color="
-				+ color + ">" + name + "</font>:</b> " + message
-				+ "<br></html>";
+				+ color + ">" + name + "</font>:</b> "
+				+ replaceTextSmileysToIcons(message) + "<br></html>";
 		editorPane.setText(editorPaneText.split("</body>")[0] + "<br>" + text
 				+ "</body>");
 
