@@ -119,6 +119,7 @@ public class ChatWindow {
 		editorPane.setEditable(false);
 
 		JScrollPane scrollPane = new JScrollPane(editorPane);
+		scrollPane.setAutoscrolls(true);
 		// to get bottom visible, use
 		frame.getContentPane().add(scrollPane);
 	}
