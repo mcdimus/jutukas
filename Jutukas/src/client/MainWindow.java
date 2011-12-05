@@ -187,8 +187,9 @@ public class MainWindow {
 	private void createKnownUsersList() {
 		lblKnownUsers = new JLabel("Known users:");
 		scrollPane = new JScrollPane();
-		addKnownUsers();
 		knownUsersList = new JList(knownHosts);
+		appendNameToFile();
+		addKnownUsers();
 		scrollPane.setViewportView(knownUsersList);
 		knownUsersList.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null,
 				null));
