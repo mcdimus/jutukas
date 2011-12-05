@@ -83,15 +83,12 @@ public class ChatWindow {
 	 * @return - replaced message with HTML tags.
 	 */
 	public String replaceTextSmileysToIcons(String message) {
-		String replacedMessage = "";
+		String replacedMessage = message;
 		for (Map.Entry<String, String> entry : smileysToImages.entrySet()) {
 			if (message.contains(entry.getKey())) {
 				replacedMessage = message.replace(entry.getKey(),
 						entry.getValue());
 			}
-		}
-		if (replacedMessage.isEmpty()) {
-			replacedMessage = message;
 		}
 		return replacedMessage;
 	}
