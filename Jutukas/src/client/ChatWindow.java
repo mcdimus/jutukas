@@ -1,10 +1,14 @@
 package client;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +17,7 @@ import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -22,13 +27,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import server.Sender;
 import server.Server;
-import javax.swing.ImageIcon;
 
 public class ChatWindow {
 
@@ -38,13 +43,14 @@ public class ChatWindow {
 	private String opponentName;
 	private String opponetnIp;
 	private JButton sendButton;
-	private JButton smileysBtn;
+	private final JButton smileysBtn = new JButton("");
+	private final JPopupMenu smileysMenu = new JPopupMenu();
 	private static HashMap<String, String> smileysToImages = new HashMap<String, String>();
 	private static String[] smileys = { "biggrin.gif", "smile.gif", "sad.gif",
 			"bye.gif", "wink.gif", "tongue.gif", "shy.gif", "dry.gif",
-			"cool.gif", "mad.gif", "rolleyes.gif" };
+			"cool.gif", "mad.gif", "rolleyes.gif", "blink.gif" };
 	private static String[] smileysText = { ":D", ":)", ":(", ":B", ";)", ":P",
-			":H", ":S", ":C", "x-(", ":O" };
+			":H", ":S", ":C", "x-(", ":O", "o_O" };
 
 	/**
 	 * Create the application.
@@ -54,24 +60,20 @@ public class ChatWindow {
 	public ChatWindow(String opponentName, String opponentIp) {
 		this.opponentName = opponentName;
 		this.opponetnIp = opponentIp;
-		smileysToHTML();
+		smileysToMap();
 		initialize();
 	}
 
 	/**
-	 * Turn smileys' text into HTML tags.
+	 * Turn smileys' text into Map.
 	 */
-	public void smileysToHTML() {
-		String imgsrc;
+	private void smileysToMap() {
 		String value;
 		String key;
 		for (int i = 0; i < smileys.length; i++) {
 			key = smileysText[i];
 			value = smileys[i];
-			imgsrc = ClassLoader.getSystemResource("smileys/" + value)
-					.toString();
-			smileysToImages.put(key, "<html><img src='" + imgsrc
-					+ "' width=20 height=20></img>");
+			smileysToImages.put(key, value);
 		}
 	}
 
@@ -82,12 +84,18 @@ public class ChatWindow {
 	 *            - message to replace.
 	 * @return - replaced message with HTML tags.
 	 */
-	public String replaceTextSmileysToIcons(String message) {
+	private String replaceTextSmileysToIcons(String message) {
 		String replacedMessage = message;
+		String imgsrc;
+		String replacableString;
 		for (Map.Entry<String, String> entry : smileysToImages.entrySet()) {
-			if (message.contains(entry.getKey())) {
-				replacedMessage = message.replace(entry.getKey(),
-						entry.getValue());
+			if (replacedMessage.contains(entry.getKey())) {
+				imgsrc = ClassLoader.getSystemResource(
+						"smileys/" + entry.getValue()).toString();
+				replacableString = "<img src='" + imgsrc
+						+ "'></img>";
+				replacedMessage = replacedMessage.replace(entry.getKey(),
+						replacableString);
 			}
 		}
 		return replacedMessage;
@@ -140,12 +148,46 @@ public class ChatWindow {
 		frame.setSize(800, 500);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		
+		createSmileysPopUpMenu();
 
 		createMenuBar();
 
 		createEditorPane();
-		
+
 		createBottomPanel();
+
+	}
+
+	private void createSmileysPopUpMenu() {
+		smileysMenu.setLayout(new GridLayout(4, 3));
+		ImageIcon icon;
+		JMenuItem smileyItem;
+		URL imgsrc;
+		for (final Map.Entry<String, String> entry : smileysToImages.entrySet()) {
+			imgsrc = ClassLoader.getSystemResource(
+					"smileys/" + entry.getValue());
+			icon = new ImageIcon(imgsrc);
+			smileyItem = new JMenuItem();
+			smileyItem.setIcon(icon);
+			smileyItem.addActionListener(new AbstractAction() {
+				
+				/**
+				 * Serial ID.
+				 */
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					textField.setText(textField.getText() + " "
+							+ entry.getKey());
+					smileysMenu.setVisible(false);
+					
+				}
+			});
+
+			smileysMenu.add(smileyItem);
+		}
 	}
 
 	private void createEditorPane() {
@@ -156,7 +198,7 @@ public class ChatWindow {
 		scrollPane.setAutoscrolls(true);
 		frame.getContentPane().add(scrollPane);
 	}
-	
+
 	private void createBottomPanel() {
 		JPanel panel = new JPanel();
 		JLabel lblNewLabel = new JLabel("Message:");
@@ -177,10 +219,14 @@ public class ChatWindow {
 	}
 
 	private void createSmilesButton() {
-		smileysBtn = new JButton("");
 		smileysBtn.setToolTipText("Smileys");
 		smileysBtn.setIcon(new ImageIcon(ChatWindow.class
 				.getResource("/smileys/smile.gif")));
+		smileysBtn.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+					smileysMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
 	}
 
 	private void createSendButton() {
