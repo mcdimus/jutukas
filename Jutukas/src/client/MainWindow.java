@@ -400,7 +400,8 @@ public class MainWindow {
 		statusLine.setText(message);
 		JOptionPane.showMessageDialog(frame, message, "Oops...",
 				JOptionPane.ERROR_MESSAGE);
-		server.killServer();
+//		server.killServer();
+		btnClose.doClick();
 	}
 
 	// private void createSendNameButton() {
