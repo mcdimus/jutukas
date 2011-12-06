@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.sun.xml.internal.ws.util.StringUtils;
 
 /**
  * 
@@ -37,7 +38,7 @@ public class KnownHostsManager {
 	/**
 	 * The instance of the GSON object with pretty printing.
 	 */
-	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	private Gson gson = new GsonBuilder().create();
 
 	/**
 	 * Constructor. Does nothing.
@@ -54,6 +55,19 @@ public class KnownHostsManager {
 	private synchronized String getJsonStringFromFile() {
 		Scanner scanner = null;
 		String jsonString = "";
+		if (!new File(FILE_NAME).exists()) {
+			try {
+				Formatter formatter = new Formatter(new File(FILE_NAME));
+				String[][] data = new String[1][2];
+				data[0][0] = "New user";
+				data[0][1] = "127.0.0.1:8080";
+				formatter.format("%s", gson.toJson(data));
+				formatter.flush();
+				formatter.close();
+			} catch (FileNotFoundException e) {
+				System.err.println("Cannot create file!");
+			}
+		}
 		try {
 			scanner = new Scanner(new File(FILE_NAME));
 		} catch (FileNotFoundException e) {
@@ -156,10 +170,10 @@ public class KnownHostsManager {
 		} catch (FileNotFoundException e) {
 			System.err.println("File cannot be created!");
 		}
-		output.format("%s", jsonString);
+
+		output.format("%s", formatJsonString(jsonString));
 		output.flush();
 		output.close();
-
 		mainWindow.updateKnownUsersList();
 	}
 
@@ -181,5 +195,12 @@ public class KnownHostsManager {
 		String jsonString = getJsonStringFromFile();
 		String[][] knownHosts = gson.fromJson(jsonString, String[][].class);
 		return knownHosts;
+	}
+
+	private String formatJsonString(String oldString) {
+		String newString = oldString.replace("[[", "[\n[")
+				.replace("],[", "],\n[").replace("]]", "]\n]");
+
+		return newString;
 	}
 }
