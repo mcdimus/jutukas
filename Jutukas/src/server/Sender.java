@@ -25,11 +25,11 @@ public class Sender implements Runnable {
 	/**
 	 * Constant integer values representing actions visible to GUI.
 	 */
-	public static final int FINDNAME = 0, SENDMESSAGE = 1;
+	public static final int FINDNAME = 0, SENDNAME = 2;
 	/**
 	 * Constant integer values representing actions invisible to GUI.
 	 */
-	private static final int SENDNAME = 2, ASKNAMES = 3;
+	private static final int  SENDMESSAGE = 1, ASKNAMES = 3;
 	/**
 	 * Map of known hosts (names&IPs) what are being held in the file.
 	 */
@@ -61,8 +61,11 @@ public class Sender implements Runnable {
 
 	/**
 	 * Use this constructor to create new ASKNAMES request.
-	 * @param nameToFind - name which should be found
-	 * @param parent - link to the GUI to display search results
+	 * 
+	 * @param nameToFind
+	 *            - name which should be found
+	 * @param parent
+	 *            - link to the GUI to display search results
 	 */
 	public Sender(String nameToFind, MainWindow parent) {
 		mainWindow = parent;
@@ -103,8 +106,8 @@ public class Sender implements Runnable {
 		encodedName = encodeString(Server.NAME);
 		message = encodeString(message);
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
-				+ "&message=%s&ttl=%d", ip, encodedName,
-				Server.IP + ":" + Server.PORT, message, ttl);
+				+ "&message=%s&ttl=%d", ip, encodedName, Server.IP + ":"
+				+ Server.PORT, message, ttl);
 		action = SENDMESSAGE;
 		new Thread(this).start();
 	}
@@ -116,66 +119,63 @@ public class Sender implements Runnable {
 	 */
 	public void run() {
 		knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
+		knownHosts.remove(Server.NAME);
 		switch (action) {
 		case FINDNAME:
 			Server.print("FINDNAME request");
 			for (String value : knownHosts.values()) {
-				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-					String addr = String.format("http://%s/chat/findname?"
-							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
-							+ ":" + Server.PORT, ttl);
-					try {
-						URL url = new URL(addr);
-						URLConnection urlcon = url.openConnection();
-						BufferedReader br = new BufferedReader(
-								new InputStreamReader(urlcon.getInputStream()));
-						br.close();
-						Server.print(value + ": OK");
-					} catch (IOException e) {
-						Server.print(value + ": " + e.getMessage());
-						continue;
-					}
-					Server.print(addr);
+				String addr = String.format("http://%s/chat/findname?name=%s"
+						+ "&ip=%s&ttl=%d", value, name, Server.IP + ":"
+						+ Server.PORT, ttl);
+				try {
+					URL url = new URL(addr);
+					URLConnection urlcon = url.openConnection();
+					BufferedReader br = new BufferedReader(
+							new InputStreamReader(urlcon.getInputStream()));
+					br.close();
+					Server.print(value + ": OK");
+				} catch (IOException e) {
+					Server.print(value + ": " + e.getMessage());
+					continue;
 				}
+				Server.print(addr);
 			}
 			break;
 		case SENDMESSAGE:
-			Server.print("MESSAGE request");
 			try {
+				Server.print("MESSAGE request");
 				URL url = new URL(address);
 				URLConnection urlcon = url.openConnection();
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						urlcon.getInputStream()));
 				br.close();
-				Server.print(address + ": OK");
+				Server.print("OK");
 			} catch (IOException e) {
 				Server.print(e.getMessage());
 				MainWindow.chatWindows.get(name).appendText("Error",
-						"Failed to deliver the message to " + name + ".",
-						"red");
+								"Failed to deliver the message to " + name
+								+ ".", "red");
 			}
 			break;
-		case SENDNAME:
-			Server.print("SENDNAME request:");
-			for (String value : knownHosts.values()) {
-				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-					String addr = String.format("http://%s/chat/sendname?"
-							+ "name=%s&ip=%s&ttl=%d", value, name, Server.IP
-							+ ":" + Server.PORT, ttl);
-					try {
-						URL url = new URL(addr);
-						URLConnection urlcon = url.openConnection();
-						BufferedReader br = new BufferedReader(
-								new InputStreamReader(urlcon.getInputStream()));
-						br.close();
-						Server.print(value + ": OK");
-					} catch (IOException e) {
-						Server.print(value + ": " + e.getMessage());
-						continue;
-					}
-				}
-			}
-			break;
+//		case SENDNAME:
+//			Server.print("SENDNAME request:");
+//			for (String value : knownHosts.values()) {
+//				String addr = String.format("http://%s/chat/sendname?name=%s"
+//						+ "&ip=%s&ttl=%d", value, Server.NAME, Server.IP + ":"
+//						+ Server.PORT, ttl);
+//				try {
+//					URL url = new URL(addr);
+//					URLConnection urlcon = url.openConnection();
+//					BufferedReader br = new BufferedReader(
+//							new InputStreamReader(urlcon.getInputStream()));
+//					br.close();
+//					Server.print(value + ": OK");
+//				} catch (IOException e) {
+//					Server.print(value + ": " + e.getMessage());
+//					continue;
+//				}
+//			}
+//			break;
 		case ASKNAMES:
 			HashSet<String> visitedHosts = new HashSet<String>();
 			visitedHosts.add(Server.IP + ":" + Server.PORT);
@@ -217,15 +217,18 @@ public class Sender implements Runnable {
 			}
 			if (!found) {
 				mainWindow.userNotFound(name);
+				Server.print("ASKNAMES stop: TTL = 0");
 			}
 			break;
 		}
 	}
-	
+
 	/**
 	 * Encodes the <code>String</code> into the URL format (for example,
 	 * whitespace = '+' OR '%20").
-	 * @param in - <code>String</code> to encode.
+	 * 
+	 * @param in
+	 *            - <code>String</code> to encode.
 	 * @return encoded <code>String</code>
 	 */
 	private String encodeString(String in) {

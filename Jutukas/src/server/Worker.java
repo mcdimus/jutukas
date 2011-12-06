@@ -67,6 +67,7 @@ public class Worker implements Runnable {
 	public void run() {
 		try {
 			knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
+			knownHosts.remove(Server.NAME);
 			out = new OutputStreamWriter(socket.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
@@ -97,12 +98,13 @@ public class Worker implements Runnable {
 			// ?param1=value1&param2=value2
 			String parameters = URLDecoder.decode(strtok.nextToken(" ")
 					.substring(1), "UTF-8");
+			System.out.println(parameters);
 			if (command.equals("findname")) {
 				getParametersValues(parameters, 3);
 				findName();
 			} else if (command.equals("sendname")) {
 				getParametersValues(parameters, 3);
-				acceptAndSendName();
+				acceptName();
 			} else if (command.equals("asknames")) {
 				getParametersValues(parameters, 1);
 				Server.print("ASKNAMES response");
@@ -179,73 +181,64 @@ public class Worker implements Runnable {
 						continue;
 					}
 				}
+			} else {
+				Server.print("FINDNAME response: TTL = 0");
 			}
 		}
 	}
 
 	/**
-	 * Processes SENDNAME request, creates&sends appropriate response.
+	 * Processes SENDNAME request.
 	 */
-	private void acceptAndSendName() {
+	private void acceptName() {
 		String sentName = parametersValues[0], sentIP = parametersValues[1];
+		@SuppressWarnings("unused")
 		int ttl = Integer.parseInt(parametersValues[2]);
 		ttl--;
 		Server.print("SENDNAME response");
-		if (!knownHosts.containsKey(sentName)) {
+		if (sentName.equals(Server.NAME) & !sentIP.equals(Server.IP)) {
 			MainWindow.hostsManager.addNewHost(sentName, sentIP);
-		} else {
-			// TODO: update ip value on given name
-			// drop the name from map.. if the part below is valid.
+			// TODO: Send to GUI that such name already exists, stop the server.
 		}
-		// TODO: vot see part ???
-		if (ttl != 0) {
-			for (String value : knownHosts.values()) {
-				if (!value.equals(Server.IP + ":" + Server.PORT)) {
-					String addr = String
-							.format("http://%s/chat/sendname?name=%s&ip=%s&"
-									+ "ttl=%s", value, sentName, sentIP, ttl);
-					try {
-						URL url = new URL(addr);
-						URLConnection urlcon = url.openConnection();
-						BufferedReader br = new BufferedReader(
-								new InputStreamReader(urlcon.getInputStream()));
-						br.close();
-						Server.print(addr + ": OK");
-					} catch (IOException e) {
-						Server.print(addr + ": host unreachable");
-						continue;
-					}
-				}
-			}
-		}
+//		if (ttl != 0) {
+//			for (String value : knownHosts.values()) {
+//				String addr = String.format("http://%s/chat/sendname?name=%s"
+//								+ "&ip=%s&ttl=%s", value, sentName, sentIP,
+//								ttl);
+//				try {
+//					URL url = new URL(addr);
+//					URLConnection urlcon = url.openConnection();
+//					BufferedReader br = new BufferedReader(
+//							new InputStreamReader(urlcon.getInputStream()));
+//					br.close();
+//					Server.print(addr + ": OK");
+//				} catch (IOException e) {
+//					Server.print(addr + ": host unreachable");
+//					continue;
+//				}
+//			}
+//		}
 	}
 
 	/**
 	 * Processes MESSAGE request, sends received message to GUI.
 	 */
 	private void acceptMessage() {
-		try {
 		String sentName = parametersValues[0], sentIP = parametersValues[1],
 				message = parametersValues[2];
+		ChatWindow chat;
 		if (MainWindow.chatWindows.containsKey(sentName)) {
-			if (!MainWindow.chatWindows.get(sentName).isVisible()) {
-				MainWindow.chatWindows.get(sentName).setVisible(true);
-			}
-			MainWindow.chatWindows.get(sentName).appendText(sentName, message,
-					"blue");
+			chat = MainWindow.chatWindows.get(sentName);
 		} else {
-			ChatWindow chat = new ChatWindow(sentName, sentIP);
-			chat.appendText(sentName, message, "blue");
+			chat = new ChatWindow(sentName, sentIP);
 			MainWindow.chatWindows.put(sentName, chat);
-			chat.setVisible(true);
 		}
+		chat.appendText(sentName, message, "blue");
+		chat.setVisible(true);
 		Server.print("MESSAGE response\n" + sentIP + ": OK\n");
-		if (!knownHosts.containsKey(sentName)) {
-			MainWindow.hostsManager.addNewHost(sentName, sentIP);
-		}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		if (!knownHosts.containsKey(sentName)) {
+//			MainWindow.hostsManager.addNewHost(sentName, sentIP);
+//		}
 	}
 
 	/**

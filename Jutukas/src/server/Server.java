@@ -68,6 +68,7 @@ public class Server implements Runnable {
 		try {
 			acceptSocket = new ServerSocket(PORT);
 			Server.print("Server is listening on port " + PORT);
+			new Sender(Server.NAME, Sender.FINDNAME);
 			while (alive) {
 				try {
 					Socket s = acceptSocket.accept();
