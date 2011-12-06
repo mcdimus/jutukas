@@ -71,7 +71,7 @@ public class MainWindow {
 	private GroupLayout groupLayout;
 
 	private Server server;
-	
+
 	public static HashMap<String, ChatWindow> chatWindows = new HashMap<String, ChatWindow>();
 
 	/**
@@ -153,7 +153,8 @@ public class MainWindow {
 		frame = new JFrame("Jutukas");
 		frame.setSize(526, 301);
 		frame.setResizable(false);
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/chat.png")));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
+				ClassLoader.getSystemResource("img/chat.png")));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 
@@ -299,7 +300,8 @@ public class MainWindow {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				server = new Server(getNicknameValue(),lblIpValue.getText(), getPortValue());
+				server = new Server(getNicknameValue(), lblIpValue.getText(),
+						getPortValue());
 				statusLine.setText("Server is online.");
 				lblStatusValue.setForeground(Color.GREEN);
 				lblStatusValue.setText("running...");
@@ -364,25 +366,25 @@ public class MainWindow {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(!nameToFind.getText().isEmpty()) {
+				if (!nameToFind.getText().isEmpty()) {
 					new Sender(nameToFind.getText(), MainWindow.this);
 				} else {
-					JOptionPane.showMessageDialog(frame, 
+					JOptionPane.showMessageDialog(frame,
 							"You can't leave the field empty! Try again!",
-							"Error",
-							JOptionPane.ERROR_MESSAGE);
+							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
 	}
 
 	public void userNotFound(String name) {
-		statusLine.setText("User " + name + " not found!");
-		JOptionPane.showMessageDialog(frame, "User " + name + " not found!",
-				"Not found!", JOptionPane.INFORMATION_MESSAGE);
+		String message = "User " + name + " not found!";
+		statusLine.setText(message);
+		JOptionPane.showMessageDialog(frame, message, "Not found!",
+				JOptionPane.INFORMATION_MESSAGE);
 
 	}
-	
+
 	public void userFound(String name, String ip) {
 		statusLine.setText("User " + name + " found! Chat started...");
 		ChatWindow chatWindow = new ChatWindow(name, ip);
@@ -390,6 +392,15 @@ public class MainWindow {
 		if (!chatWindow.isVisible()) {
 			chatWindow.setVisible(true);
 		}
+	}
+
+	public void nameIsNotAvailable() {
+		String message = "The chosen name is already taken. "
+				+ "Please choose different one!";
+		statusLine.setText(message);
+		JOptionPane.showMessageDialog(frame, message, "Oops...",
+				JOptionPane.ERROR_MESSAGE);
+		server.killServer();
 	}
 
 	// private void createSendNameButton() {
@@ -490,7 +501,7 @@ public class MainWindow {
 		return ipAddress;
 
 	}
-	
+
 	/**
 	 * Sets horizontal group for the GroupLayout. This method is a true evil,
 	 * try not to read it.
