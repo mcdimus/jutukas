@@ -67,7 +67,6 @@ public class Worker implements Runnable {
 	public void run() {
 		try {
 			knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
-			knownHosts.remove(Server.NAME);
 			out = new OutputStreamWriter(socket.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
@@ -163,6 +162,7 @@ public class Worker implements Runnable {
 				System.exit(0);
 			}
 		} else {
+			knownHosts.remove(Server.NAME);
 			if (ttl != 0) {
 				Server.print("FINDNAME(broadcast) response");
 				for (String value : knownHosts.values()) {
@@ -198,7 +198,8 @@ public class Worker implements Runnable {
 		Server.print("SENDNAME response");
 		if (sentName.equals(Server.NAME) & !sentIP.equals(Server.IP)) {
 			MainWindow.hostsManager.addNewHost(sentName, sentIP);
-			// TODO: Send to GUI that such name already exists, stop the server.
+			Server.print(sentName + ": not available");
+			Server.parent.nameIsNotAvailable();
 		}
 //		if (ttl != 0) {
 //			for (String value : knownHosts.values()) {
