@@ -241,8 +241,10 @@ public class ChatWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String selectedText = textField.getSelectedText();
-				textField.setText(textField.getText().replace(selectedText,
-						"<b>" + selectedText + "</b>"));
+				if (selectedText != null && !selectedText.isEmpty()) {
+					textField.setText(textField.getText().replace(selectedText,
+							"<b>" + selectedText + "</b>"));
+				}
 			}
 		});
 
@@ -256,8 +258,10 @@ public class ChatWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String selectedText = textField.getSelectedText();
-				textField.setText(textField.getText().replace(selectedText,
-						"<i>" + selectedText + "</i>"));
+				if (selectedText != null && !selectedText.isEmpty()) {
+					textField.setText(textField.getText().replace(selectedText,
+							"<i>" + selectedText + "</i>"));
+				}
 			}
 		});
 		toolBar.add(btnI);
@@ -270,8 +274,10 @@ public class ChatWindow {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String selectedText = textField.getSelectedText();
-				textField.setText(textField.getText().replace(selectedText,
-						"<u>" + selectedText + "</u>"));
+				if (selectedText != null && !selectedText.isEmpty()) {
+					textField.setText(textField.getText().replace(selectedText,
+							"<u>" + selectedText + "</u>"));
+				}
 			}
 		});
 		toolBar.add(btnU);
