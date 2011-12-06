@@ -97,7 +97,6 @@ public class Worker implements Runnable {
 			// ?param1=value1&param2=value2
 			String parameters = URLDecoder.decode(strtok.nextToken(" ")
 					.substring(1), "UTF-8");
-			System.out.println(parameters);
 			if (command.equals("findname")) {
 				getParametersValues(parameters, 3);
 				findName();
@@ -196,7 +195,8 @@ public class Worker implements Runnable {
 		int ttl = Integer.parseInt(parametersValues[2]);
 		ttl--;
 		Server.print("SENDNAME response");
-		if (sentName.equals(Server.NAME) & !sentIP.equals(Server.IP)) {
+		if (sentName.equals(Server.NAME) & !sentIP.equals
+				(Server.IP + ":"+ Server.PORT)) {
 			MainWindow.hostsManager.addNewHost(sentName, sentIP);
 			Server.print(sentName + ": not available");
 			Server.parent.nameIsNotAvailable();
