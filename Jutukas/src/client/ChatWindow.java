@@ -16,7 +16,6 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -30,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 import server.Sender;
@@ -39,12 +39,13 @@ public class ChatWindow {
 
 	private JFrame frame;
 	private JTextField textField;
-	private final JEditorPane editorPane = new JEditorPane();
+	private JEditorPane editorPane;
 	private String opponentName;
 	private String opponetnIp;
 	private JButton sendButton;
 	private final JButton smileysBtn = new JButton("");
 	private final JPopupMenu smileysMenu = new JPopupMenu();
+	JPanel bottomPanel;
 	private static HashMap<String, String> smileysToImages = new HashMap<String, String>();
 	private static String[] smileys = { "biggrin.gif", "smile.gif", "sad.gif",
 			"bye.gif", "wink.gif", "tongue.gif", "shy.gif", "dry.gif",
@@ -92,8 +93,7 @@ public class ChatWindow {
 			if (replacedMessage.contains(entry.getKey())) {
 				imgsrc = ClassLoader.getSystemResource(
 						"smileys/" + entry.getValue()).toString();
-				replacableString = "<img src='" + imgsrc
-						+ "'></img>";
+				replacableString = "<img src='" + imgsrc + "'></img>";
 				replacedMessage = replacedMessage.replace(entry.getKey(),
 						replacableString);
 			}
@@ -148,7 +148,7 @@ public class ChatWindow {
 		frame.setSize(800, 500);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		
+
 		createSmileysPopUpMenu();
 
 		createMenuBar();
@@ -165,13 +165,13 @@ public class ChatWindow {
 		JMenuItem smileyItem;
 		URL imgsrc;
 		for (final Map.Entry<String, String> entry : smileysToImages.entrySet()) {
-			imgsrc = ClassLoader.getSystemResource(
-					"smileys/" + entry.getValue());
+			imgsrc = ClassLoader.getSystemResource("smileys/"
+					+ entry.getValue());
 			icon = new ImageIcon(imgsrc);
 			smileyItem = new JMenuItem();
 			smileyItem.setIcon(icon);
 			smileyItem.addActionListener(new AbstractAction() {
-				
+
 				/**
 				 * Serial ID.
 				 */
@@ -182,7 +182,7 @@ public class ChatWindow {
 					textField.setText(textField.getText() + " "
 							+ entry.getKey());
 					smileysMenu.setVisible(false);
-					
+
 				}
 			});
 
@@ -191,6 +191,7 @@ public class ChatWindow {
 	}
 
 	private void createEditorPane() {
+		editorPane = new JEditorPane();
 		editorPane.setContentType("text/html");
 		editorPane.setEditable(false);
 
@@ -200,6 +201,11 @@ public class ChatWindow {
 	}
 
 	private void createBottomPanel() {
+		bottomPanel = new JPanel();
+
+		bottomPanel.setLayout(new BorderLayout());
+
+		createToolBar();
 		JPanel panel = new JPanel();
 		JLabel lblNewLabel = new JLabel("Message:");
 		panel.add(lblNewLabel);
@@ -213,9 +219,34 @@ public class ChatWindow {
 		createSendButton();
 		panel.add(sendButton);
 
-		Box horizontalBox = Box.createHorizontalBox();
-		panel.add(horizontalBox);
-		frame.getContentPane().add(panel, BorderLayout.SOUTH);
+		// Box horizontalBox = Box.createHorizontalBox();
+		// panel.add(horizontalBox);
+
+		bottomPanel.add(panel, BorderLayout.SOUTH);
+		frame.getContentPane().add(bottomPanel, BorderLayout.SOUTH);
+	}
+
+	private void createToolBar() {
+		JToolBar toolBar = new JToolBar("toolbar");
+		toolBar.setFloatable(false);
+
+		JButton btnB = new JButton("");
+		btnB.setIcon(new ImageIcon(ChatWindow.class
+				.getResource("/img/bold.png")));
+
+		toolBar.add(btnB);
+
+		JButton btnI = new JButton("");
+		btnI.setIcon(new ImageIcon(ChatWindow.class
+				.getResource("/img/italic.png")));
+		toolBar.add(btnI);
+
+		JButton btnU = new JButton("");
+		btnU.setIcon(new ImageIcon(ChatWindow.class
+				.getResource("/img/underline.png")));
+		toolBar.add(btnU);
+
+		bottomPanel.add(toolBar, BorderLayout.NORTH);
 	}
 
 	private void createSmilesButton() {
@@ -224,7 +255,7 @@ public class ChatWindow {
 				.getResource("/smileys/smile.gif")));
 		smileysBtn.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-					smileysMenu.show(e.getComponent(), e.getX(), e.getY());
+				smileysMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
 	}
