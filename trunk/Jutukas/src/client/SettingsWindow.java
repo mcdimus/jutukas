@@ -48,7 +48,7 @@ public class SettingsWindow {
 		settingsFrame = new JFrame();
 		settingsFrame.setResizable(false);
 		settingsFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(
-				"settings.png"));
+				ClassLoader.getSystemResource("img/settings.png")));
 		settingsFrame.setTitle("Settings");
 		settingsFrame.setSize(236, 226);
 		settingsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

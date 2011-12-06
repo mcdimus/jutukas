@@ -153,7 +153,7 @@ public class MainWindow {
 		frame = new JFrame("Jutukas");
 		frame.setSize(526, 301);
 		frame.setResizable(false);
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("chat.png"));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("img/chat.png")));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 

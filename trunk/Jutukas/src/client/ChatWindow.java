@@ -2,6 +2,7 @@ package client;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -147,6 +148,8 @@ public class ChatWindow {
 		frame.setTitle("Chatting with " + opponentName);
 		frame.setSize(800, 500);
 		frame.setLocationRelativeTo(null);
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
+				ClassLoader.getSystemResource("img/chatWindow.png")));
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 		createSmileysPopUpMenu();
@@ -233,17 +236,44 @@ public class ChatWindow {
 		JButton btnB = new JButton("");
 		btnB.setIcon(new ImageIcon(ChatWindow.class
 				.getResource("/img/bold.png")));
+		btnB.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String selectedText = textField.getSelectedText();
+				textField.setText(textField.getText().replace(selectedText,
+						"<b>" + selectedText + "</b>"));
+			}
+		});
 
 		toolBar.add(btnB);
 
 		JButton btnI = new JButton("");
 		btnI.setIcon(new ImageIcon(ChatWindow.class
 				.getResource("/img/italic.png")));
+		btnI.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String selectedText = textField.getSelectedText();
+				textField.setText(textField.getText().replace(selectedText,
+						"<i>" + selectedText + "</i>"));
+			}
+		});
 		toolBar.add(btnI);
 
 		JButton btnU = new JButton("");
 		btnU.setIcon(new ImageIcon(ChatWindow.class
 				.getResource("/img/underline.png")));
+		btnU.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String selectedText = textField.getSelectedText();
+				textField.setText(textField.getText().replace(selectedText,
+						"<u>" + selectedText + "</u>"));
+			}
+		});
 		toolBar.add(btnU);
 
 		bottomPanel.add(toolBar, BorderLayout.NORTH);
