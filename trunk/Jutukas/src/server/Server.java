@@ -11,6 +11,8 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import client.MainWindow;
+
 /**
  * Main <code>Server Thread</code>.
  * 
@@ -42,6 +44,10 @@ public class Server implements Runnable {
 	 * Boolean indicates whether the server works (alive) or not (!alive).
 	 */
 	private boolean alive;
+	/**
+	 * Link to the MainWindow.
+	 */
+	static MainWindow parent;
 
 	/**
 	 * Create new <code>Server</code>.
@@ -51,10 +57,11 @@ public class Server implements Runnable {
 	 * @param port
 	 *            - <code>Server</code>'s port
 	 */
-	public Server(String hostsName, String ip, String port) {
+	public Server(MainWindow window, String hostsName, String ip, String port) {
 		NAME = hostsName;
 		IP = ip;
 		PORT = Integer.parseInt(port);
+		parent = window;
 		alive = true;
 		new Thread(this).start();
 	}
