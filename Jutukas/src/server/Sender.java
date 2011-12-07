@@ -103,11 +103,12 @@ public class Sender implements Runnable {
 	 */
 	public Sender(String hostName, String ip, String message) {
 		name = hostName;
-		encodedName = encodeString(Server.NAME);
+		encodedName = encodeString(MainWindow.mainWindow.getNicknameValue());
 		message = encodeString(message);
 		address = String.format("http://%s/chat/sendmessage?name=%s&ip=%s"
-				+ "&message=%s&ttl=%d", ip, encodedName, Server.IP + ":"
-				+ Server.PORT, message, ttl);
+				+ "&message=%s&ttl=%d", ip, encodedName,
+				MainWindow.mainWindow.getIPValue() + ":"
+				+ MainWindow.mainWindow.getPortValue(), message, ttl);
 		action = SENDMESSAGE;
 		new Thread(this).start();
 	}
@@ -119,14 +120,15 @@ public class Sender implements Runnable {
 	 */
 	public void run() {
 		knownHosts = MainWindow.hostsManager.getMapOfKnownHosts();
-		knownHosts.remove(Server.NAME);
+		knownHosts.remove(MainWindow.mainWindow.getNicknameValue());
 		switch (action) {
 		case FINDNAME:
 			Server.print("FINDNAME request");
 			for (String value : knownHosts.values()) {
 				String addr = String.format("http://%s/chat/findname?name=%s"
-						+ "&ip=%s&ttl=%d", value, name, Server.IP + ":"
-						+ Server.PORT, ttl);
+						+ "&ip=%s&ttl=%d", value, name,
+						MainWindow.mainWindow.getIPValue() + ":"
+						+ MainWindow.mainWindow.getPortValue(), ttl);
 				try {
 					URL url = new URL(addr);
 					URLConnection urlcon = url.openConnection();
@@ -178,7 +180,8 @@ public class Sender implements Runnable {
 //			break;
 		case ASKNAMES:
 			HashSet<String> visitedHosts = new HashSet<String>();
-			visitedHosts.add(Server.IP + ":" + Server.PORT);
+			visitedHosts.add(MainWindow.mainWindow.getIPValue() + ":" + 
+					MainWindow.mainWindow.getPortValue());
 			boolean found = false;
 			if (knownHosts.containsKey(name)) {
 				mainWindow.userFound(name, knownHosts.get(name));

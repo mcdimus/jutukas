@@ -33,9 +33,9 @@ public class SettingsWindow {
 	/**
 	 * Create the application.
 	 */
-	public SettingsWindow(String port, String nickname, MainWindow mainWindow) {
+	public SettingsWindow(int port, String nickname, MainWindow mainWindow) {
 		this.parentWindow = mainWindow;
-		this.portValue = port;
+		this.portValue = String.valueOf(port);
 		this.nicknameValue = nickname;
 		initialize();
 		settingsFrame.setVisible(true);

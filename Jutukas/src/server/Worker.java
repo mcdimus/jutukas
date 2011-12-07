@@ -161,7 +161,7 @@ public class Worker implements Runnable {
 				System.exit(0);
 			}
 		} else {
-			knownHosts.remove(Server.NAME);
+			knownHosts.remove(MainWindow.mainWindow.getNicknameValue());
 			if (ttl != 0) {
 				Server.print("FINDNAME(broadcast) response");
 				for (String value : knownHosts.values()) {
@@ -195,11 +195,12 @@ public class Worker implements Runnable {
 		int ttl = Integer.parseInt(parametersValues[2]);
 		ttl--;
 		Server.print("SENDNAME response");
-		if (sentName.equals(Server.NAME) & !sentIP.equals
-				(Server.IP + ":"+ Server.PORT)) {
+		if (sentName.equals(MainWindow.mainWindow.getNicknameValue())
+				& !sentIP.equals(MainWindow.mainWindow.getIPValue() + ":"+
+						MainWindow.mainWindow.getPortValue())) {
 			MainWindow.hostsManager.addNewHost(sentName, sentIP);
 			Server.print(sentName + ": not available");
-			Server.parent.nameIsNotAvailable();
+			MainWindow.mainWindow.nameIsNotAvailable();
 		}
 //		if (ttl != 0) {
 //			for (String value : knownHosts.values()) {
