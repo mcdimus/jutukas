@@ -238,9 +238,9 @@ public class Worker implements Runnable {
 		chat.appendText(sentName, message, "blue");
 		chat.setVisible(true);
 		Server.print("MESSAGE response\n" + sentIP + ": OK\n");
-//		if (!knownHosts.containsKey(sentName)) {
-//			MainWindow.hostsManager.addNewHost(sentName, sentIP);
-//		}
+		if (!knownHosts.containsKey(sentName)) {
+			MainWindow.hostsManager.addNewHost(sentName, sentIP);
+		}
 	}
 
 	/**
