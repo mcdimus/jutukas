@@ -153,6 +153,7 @@ public class MainWindow {
 	public MainWindow() {
 		hostsManager = new KnownHostsManager(MainWindow.this);
 		initialize();
+		mainWindow = this;
 	}
 
 	/**

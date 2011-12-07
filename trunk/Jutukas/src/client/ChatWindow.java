@@ -319,6 +319,7 @@ public class ChatWindow {
 		sendButton.getActionMap().put("buttonClick", buttonClick);
 	}
 
+	@SuppressWarnings("unused")
 	private void createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
