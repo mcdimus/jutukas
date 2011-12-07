@@ -1,6 +1,7 @@
 package client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -146,6 +147,7 @@ public class ChatWindow {
 		frame = new JFrame();
 		frame.setTitle("Chatting with " + opponentName);
 		frame.setSize(800, 500);
+		frame.setMinimumSize(new Dimension(800, 500));
 		frame.setLocationRelativeTo(null);
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
 				ClassLoader.getSystemResource("img/chatWindow.png")));
