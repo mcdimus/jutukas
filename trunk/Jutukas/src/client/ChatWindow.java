@@ -34,7 +34,6 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 import server.Sender;
-import server.Server;
 
 public class ChatWindow {
 
@@ -110,7 +109,7 @@ public class ChatWindow {
 	public void sendMessage() {
 		String messageToSend = textField.getText();
 		if (!messageToSend.isEmpty()) {
-			appendText(Server.NAME, messageToSend, "green");
+			appendText(MainWindow.mainWindow.getNicknameValue(), messageToSend, "green");
 			textField.setText("");
 			new Sender(opponentName, opponetnIp, messageToSend);
 		}

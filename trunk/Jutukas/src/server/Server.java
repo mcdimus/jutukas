@@ -19,19 +19,7 @@ import client.MainWindow;
  * @author nail
  */
 public class Server implements Runnable {
-
-	/**
-	 * Server (this host's) name.
-	 */
-	public static String NAME;
-	/**
-	 * Server IP address.
-	 */
-	public static String IP;
-	/**
-	 * Server port number.
-	 */
-	public static int PORT = 6666;
+	
 	/**
 	 * Socket which this <code>Server</code> is bound to.
 	 */
@@ -44,10 +32,6 @@ public class Server implements Runnable {
 	 * Boolean indicates whether the server works (alive) or not (!alive).
 	 */
 	private boolean alive;
-	/**
-	 * Link to the MainWindow.
-	 */
-	static MainWindow parent;
 
 	/**
 	 * Create new <code>Server</code>.
@@ -57,11 +41,7 @@ public class Server implements Runnable {
 	 * @param port
 	 *            - <code>Server</code>'s port
 	 */
-	public Server(MainWindow window, String hostsName, String ip, String port) {
-		NAME = hostsName;
-		IP = ip;
-		PORT = Integer.parseInt(port);
-		parent = window;
+	public Server() {
 		alive = true;
 		new Thread(this).start();
 	}
@@ -73,9 +53,12 @@ public class Server implements Runnable {
 	 */
 	public void run() {
 		try {
-			acceptSocket = new ServerSocket(PORT);
-			Server.print("Server is listening on port " + PORT);
-			new Sender(Server.NAME, Sender.FINDNAME);
+			acceptSocket = new ServerSocket
+					(MainWindow.mainWindow.getPortValue());
+			Server.print("Server is listening on port "
+					+ MainWindow.mainWindow.getPortValue());
+			new Sender(MainWindow.mainWindow.getNicknameValue(),
+					Sender.FINDNAME);
 			while (alive) {
 				try {
 					Socket s = acceptSocket.accept();

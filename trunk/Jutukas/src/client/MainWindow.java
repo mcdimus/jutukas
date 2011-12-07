@@ -39,6 +39,11 @@ import server.Sender;
 import server.Server;
 
 public class MainWindow {
+	
+	/**
+	 * Public static link to the itself (so the server could have access).
+	 */
+	public static MainWindow mainWindow;
 
 	private JFrame frame;
 	private JLabel lblJutukas;
@@ -89,8 +94,8 @@ public class MainWindow {
 	 * 
 	 * @return - current port value.
 	 */
-	private String getPortValue() {
-		return lblPortValue.getText();
+	public int getPortValue() {
+		return Integer.parseInt(lblPortValue.getText());
 	}
 
 	/**
@@ -120,6 +125,10 @@ public class MainWindow {
 	 */
 	public void setNicknameValue(String nickname) {
 		lblNameValue.setText(nickname);
+	}
+	
+	public String getIPValue() {
+		return lblIpValue.getText();
 	}
 
 	/**
@@ -300,8 +309,7 @@ public class MainWindow {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				server = new Server(MainWindow.this, getNicknameValue(),
-						lblIpValue.getText(), getPortValue());
+				server = new Server();
 				statusLine.setText("Server is online.");
 				lblStatusValue.setForeground(Color.GREEN);
 				lblStatusValue.setText("running...");
