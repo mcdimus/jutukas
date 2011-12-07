@@ -154,7 +154,7 @@ public class ChatWindow {
 
 		createSmileysPopUpMenu();
 
-		createMenuBar();
+//		createMenuBar();
 
 		createEditorPane();
 
